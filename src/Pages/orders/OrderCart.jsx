@@ -160,13 +160,63 @@ return(
           </button>
         </div>
       </div>
-    
-  
-  
-
-
-
-
+      <div className="content-card p-4 mb-4 shadow-sm">
+                  <h6 className="fw-bold text-dark mb-3" style={{ fontSize: '0.85rem' }}>Order Summary</h6>
+      
+                  <div className="d-flex justify-content-between py-2 border-bottom text-muted" style={{ fontSize: '0.78rem' }}>
+                    <span className="d-flex align-items-center gap-2">
+                      <BsReceipt className="text-muted" /> Sub Total :
+                    </span>
+                    <strong className="text-dark">$777.00</strong>
+                  </div>
+                  <div className="d-flex justify-content-between py-2 border-bottom text-muted" style={{ fontSize: '0.78rem' }}>
+                    <span className="d-flex align-items-center gap-2">
+                      <BsTag className="text-muted" /> Discount :
+                    </span>
+                    <strong className="text-dark">-$60.00</strong>
+                  </div>
+                  <div className="d-flex justify-content-between py-2 border-bottom text-muted" style={{ fontSize: '0.78rem' }}>
+                    <span className="d-flex align-items-center gap-2">
+                      <BsTruck className="text-muted" /> Delivery Charge :
+                    </span>
+                    <strong className="text-dark">$00.00</strong>
+                  </div>
+                  <div className="d-flex justify-content-between py-2 border-bottom text-muted" style={{ fontSize: '0.78rem' }}>
+                    <span className="d-flex align-items-center gap-2">
+                      <BsFileEarmarkText className="text-muted" /> Estimated Tax (15.5%) :
+                    </span>
+                    <strong className="text-dark">$20.00</strong>
+                  </div>
+                  <div className="d-flex justify-content-between pt-3 mb-3 text-dark" style={{ fontSize: '0.85rem' }}>
+                    <strong className="fw-bold">Total Amount</strong>
+                    <strong className="fw-bold">$737.00</strong>
+                  </div>
+                  <div
+                                className="rounded-3 p-2 d-flex align-items-center gap-2 text-dark"
+                                style={{ backgroundColor: '#fef3c7', fontSize: '0.75rem' }}
+                              >
+                                <BsTruck className="text-warning fs-5" />
+                                <span>Estimated Delivery by <strong>25 April, 2024</strong></span>
+                              </div>
+                            </div>
+                  <div className="d-flex gap-2">
+            <button
+              className="btn btn-add-product flex-fill btn-sm py-2"
+              type="button"
+              style={{ fontSize: '0.8rem' }}
+              onClick={handleContinueShopping}
+            >
+              Continue Shopping
+            </button>
+            <button
+              className="btn btn-success flex-fill btn-sm py-2"
+              type="button"
+              style={{ fontSize: '0.8rem', backgroundColor: '#10b981', borderColor: '#10b981' }}
+              onClick={handleBuyNow}
+            >
+              Buy Now
+            </button>
+          </div>
     </div>
   </div>
   </>
