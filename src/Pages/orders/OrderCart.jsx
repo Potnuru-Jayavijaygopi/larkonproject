@@ -1,18 +1,18 @@
-import React, { useState, usestate } from 'react' ;
+import React, { useState} from 'react' ;
 import { useNavigate } from 'react-router-dom';
 import{
   BsImage,
-  BsTrash,
+  BsTruck,
   BsHeart,
   BsReceipt,
   BsTag, 
   BsTrusk,
-  BsFileEarMarkText,
+  BsFileEarmarkText,
 } from 'react-icons/bs';
 
 function OrderCart({onNavigate}){
   const navigate = useNavigate();
-  const initialIteams = [
+  const initialItems = [
     {
       id : 1,
       name : 'Men Black Slim Fit T-shirt',
@@ -55,8 +55,9 @@ function OrderCart({onNavigate}){
       total :223.0, 
     },
   ];
-const [cartitems, setCartItems] = useState(initialItems);
+const [cartItems, setCartItems] = useState(initialItems);
 const [promoCode, setPromoCode] = useState('CODE123');
+
 const handleQuantityChange = (id, delta) => {
   setCartItems(
     cartItems.map((item) => {
@@ -70,7 +71,11 @@ const handleQuantityChange = (id, delta) => {
 };
 
 const handleRemove = (id) => {
-   setCartItems(cartItems.filter((ite) => item.id !== id));
+   setCartItems(cartItems.filter((item) => item.id !== id));
+};
+
+const handlieClearCart =() =>{
+    setCartItems([]);
 };
 
 const handleContinueShopping = () => {
@@ -79,6 +84,13 @@ const handleContinueShopping = () => {
   }else if (onNavigate){
     onNavigate('create-invoice');
   }
+};
+const handleBuyNow = () =>{
+    if(navigate) {
+        navigate('/prders/checkout');
+    }else if (onNavigate) {
+        onNavigate('create-invoice');
+    }
 };
 
 return(
@@ -96,14 +108,14 @@ return(
         <div key={item.id} className='content-card p-4 mb-4 shadow-sm'>
           <div className='d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3'>
             <div className='d-flex align-items-center gap-3'>
-              <div className='rounderd bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center' style={{width:"64px", height:"64px"}}>
+              <div className='rounded bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center' style={{width:"64px", height:"64px"}}>
                 <BsImage className='fs-3 text-dark opacity-50' />
               </div>
               <div>
                 <strong className='d-block text-dark mb-1'style={{fontSize:'0.9rem'}}> {item.name}</strong>
                 <span className='text-muted small d-block mb-2' style={{fontSize:'0.75rem'}}> Color : {item.color} &nbsp; Size :{item.size}</span>
                 <div className="d-inline-flex align-items-center border rounded">
-                  <button className='btn btn-sm btn-light border-0 px-2 py-0 text-muted' type="button"onClick={() => handleQuatityChange(item.id, -1)}>
+                  <button className='btn btn-sm btn-light border-0 px-2 py-0 text-muted' type="button"onClick={() => handleQuantityChange(item.id, -1)}>
                     - 
                   </button>
                   <span className='px-3 text-dark fw-medium' style={{fontSize:'0.8rem'}}>
@@ -143,7 +155,7 @@ return(
 
     <div className="col-xl-4 col-lg-5">
       <div className='rounded-3 p-4 mb-4 text-white shadow-sm position-relative overflow-hidden'style={{backgroundColor:'#ff5e29'}}>
-        <div className='postion-absolute'style={{ 
+        <div className='position-absolute'style={{ 
                 right: '-20px',
                 top: '-20px',
                 width: '100px',
@@ -154,7 +166,7 @@ return(
         </div>
         <h6 className='fw-bold mb-3' style={{fontSize:'0.9rem'}}>Have a Promo Code ?</h6>
         <div className='d-flex gap-2'>
-          <input type='text'className='form-control form-control-sm border-0 text-white'placeholder='CODE123'valu={promoCode} onChange={(e) => setPromoCode(e.target.value)}style={{backgroundColor:'rgba(255, 255, 255, 0.25)',fontSize:'0.8rem'}}/>
+          <input type='text'className='form-control form-control-sm border-0 text-white'placeholder='CODE123'value={promoCode} onChange={(e) => setPromoCode(e.target.value)}style={{backgroundColor:'rgba(255, 255, 255, 0.25)',fontSize:'0.8rem'}}/>
           <button className="btn btn-light btn-sm px-3 fw-bold" type="button"style={{fontSize:'0.8rem',color:'#ff5e29'}}>
             Apply
           </button>
