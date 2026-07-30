@@ -2,11 +2,11 @@ import React, { useState} from 'react' ;
 import { useNavigate } from 'react-router-dom';
 import{
   BsImage,
-  BsTruck,
+  BsTrash,
   BsHeart,
   BsReceipt,
   BsTag, 
-  BsTrusk,
+  BsTruck,
   BsFileEarmarkText,
 } from 'react-icons/bs';
 
@@ -63,18 +63,19 @@ const handleQuantityChange = (id, delta) => {
     cartItems.map((item) => {
       if (item.id === id) {
         const newQty = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQty };
-      }
+        const newTotal = (item.price + item.tax) * newQty;
+        return { ...item, quantity: newQty,total: newTotal, };
+      };
       return item;
     })
   );
 };
 
 const handleRemove = (id) => {
-   setCartItems(cartItems.filter((item) => item.id !== id));
+  setCartItems(cartItems.filter((item) => item.id !== id));
 };
 
-const handlieClearCart =() =>{
+const handleClearCart =() =>{
     setCartItems([]);
 };
 
@@ -87,7 +88,7 @@ const handleContinueShopping = () => {
 };
 const handleBuyNow = () =>{
     if(navigate) {
-        navigate('/prders/checkout');
+        navigate('/orders/checkout');
     }else if (onNavigate) {
         onNavigate('create-invoice');
     }
