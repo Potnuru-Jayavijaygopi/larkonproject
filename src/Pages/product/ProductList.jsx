@@ -1,9 +1,13 @@
-import React from 'react'
-
-function ProductList() {
+import React from "react";
+import ProductTable from "../../Components/ProductTable";
+import Pagination from "../../Components/Pagination";
+const ProductList = (onNavigate) => {
   return (
-    <div>ProductList</div>
-  )
-}
+    <>
+      <ProductTable onNavigate={onNavigate} />
+      <Pagination />
+    </>
+  );
+};
 
-export default ProductList
+export default ProductList;

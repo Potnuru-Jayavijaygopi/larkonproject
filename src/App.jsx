@@ -44,19 +44,19 @@ const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: 'dashboard', element: <Dashboard /> },
 
-     
+
       { path: 'products/list', element: <ProductList /> },
       { path: 'products/grid', element: <ProductGrid /> },
       { path: 'products/details', element: <ProductDetails /> },
       { path: 'products/add', element: <AddProduct /> },
       { path: 'products/create', element: <CreateProduct /> },
 
-   
+
       { path: 'category/list', element: <CategoryList /> },
       { path: 'category/edit', element: <AddCategory /> },
       { path: 'category/create', element: <CreateCategory /> },
 
-      
+
       { path: 'inventory/warehouse', element: <InventoryList /> },
       { path: 'inventory/received', element: <ReceivedOrders /> },
 
@@ -66,22 +66,22 @@ const router = createBrowserRouter([
       { path: 'orders/cart', element: <OrderCart /> },
       { path: 'orders/checkout', element: <OrderCheckout /> },
 
-     
+
       { path: 'purchases/list', element: <PurchaseList /> },
       { path: 'purchases/orders', element: <OrdersList /> },
       { path: 'purchases/returns', element: <ReturnOrders /> },
 
-      
+
       { path: 'attributes/list', element: <AttributeList /> },
       { path: 'attributes/edit', element: <AddAttribute /> },
       { path: 'attributes/create', element: <CreateAttribute /> },
 
-      
+
       { path: 'invoices/list', element: <InvoiceList /> },
       { path: 'invoices/details', element: <InvoiceDetails /> },
       { path: 'invoices/create', element: <CreateInvoice /> },
 
-     
+
       { path: 'settings', element: <Settings /> },
 
       { path: '*', element: <Dashboard /> },
