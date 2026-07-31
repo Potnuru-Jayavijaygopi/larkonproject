@@ -48,19 +48,19 @@ function Sidebar() {
 
   const handleSubItemClick = (e, menuKey, routePath) => {
     if (e) e.preventDefault();
-    setOpenMenu(menuKey); 
+    setOpenMenu(menuKey);
     navigate(routePath);
   };
 
   const handleStandaloneClick = (e, routePath) => {
     if (e) e.preventDefault();
-    setOpenMenu(null); 
+    setOpenMenu(null);
     navigate(routePath);
   };
 
   return (
     <aside className="sidebar">
-  
+
       <div className="sidebar-brand">
         <div
           className="logo-text cursor-pointer"
@@ -76,7 +76,7 @@ function Sidebar() {
       <div className="sidebar-menu">
         <div className="menu-category">General</div>
 
-     
+
         <NavLink
           to="/"
           className={({ isActive }) =>
@@ -156,6 +156,7 @@ function Sidebar() {
             </div>
             {openMenu === 'category' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
+
 
           {openMenu === 'category' && (
             <div className="submenu">
@@ -584,7 +585,7 @@ function Sidebar() {
           )}
         </div>
       </div>
-    </aside>
+    </aside >
   );
 }
 
