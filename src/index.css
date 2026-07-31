@@ -413,6 +413,7 @@ body {
 
 .cursor-pointer {
   cursor: pointer;
+  color: "#ea580c";
 }
 
 .footer-custom {
