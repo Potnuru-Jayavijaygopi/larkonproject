@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.png';
 import {
-  BsBoxFill,
   BsGrid,
   BsBox,
   BsTag,
@@ -66,10 +66,10 @@ function Sidebar() {
           className="logo-text cursor-pointer"
           onClick={(e) => handleStandaloneClick(e, '/')}
         >
-          <span className="logo-icon">
-            <BsBoxFill />
-          </span>
-          Larkon
+          
+          <img src={logo} alt="logo" width="140" style={{marginLeft:20}}/>
+        
+        
         </div>
       </div>
 
