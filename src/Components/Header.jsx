@@ -1,37 +1,44 @@
-import React from 'react';
-import { BsMoon, BsBell, BsSnow, BsClock, BsCalendar4Event, BsSearch } from 'react-icons/bs';
+import React from "react";
+import {
+  BsSearch,
+  BsGearFill,
+  BsGear,
+  BsImage,
+  BsClockFill,
+  BsMoonFill,
+  BsBellFill,
+} from "react-icons/bs";
 
-function Header({ title = 'ACCORDION' }) {
+function Header({ title = "ACCORDION" }) {
   return (
     <header className="top-header">
-     
       <h5 className="header-title mb-0">{title}</h5>
 
-     
       <div className="d-flex align-items-center gap-3">
-        
         <button className="header-icon-btn" type="button" title="Toggle Theme">
-          <BsMoon />
+          <BsMoonFill />
         </button>
 
-       
         <button className="header-icon-btn" type="button" title="Notifications">
-          <BsBell />
+          <BsBellFill />
           <span className="notification-dot">3</span>
         </button>
 
-      
         <button className="header-icon-btn" type="button" title="Settings">
-          <BsSnow />
+          <BsGearFill />
         </button>
 
         <button className="header-icon-btn" type="button" title="Schedule">
-          <BsClock />
+          <BsClockFill />
         </button>
-
-        <button className="header-icon-btn" type="button" title="Calendar">
-          <BsCalendar4Event />
-        </button>
+        <div
+          className="rounded-4 bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0"
+          style={{ width: 26, height: 26 }}
+        >
+          <button className="header-icon-btn" type="button" title="Calendar">
+            <BsImage />
+          </button>
+        </div>
 
         <div className="header-search">
           <BsSearch className="position-absolute start-0 ms-3 top-50 translate-middle-y text-muted" />
