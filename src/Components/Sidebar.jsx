@@ -32,6 +32,7 @@ import {
   BsChevronDown,
   BsChevronRight,
 } from 'react-icons/bs';
+import logo from '../assets/logo.png';
 
 
 function Sidebar() {
@@ -66,10 +67,7 @@ function Sidebar() {
           className="logo-text cursor-pointer"
           onClick={(e) => handleStandaloneClick(e, '/')}
         >
-          <span className="logo-icon">
-            <BsBoxFill />
-          </span>
-          Larkon
+         <img src={logo} alt="logo" width="120" style={{marginLeft:20}}/>
         </div>
       </div>
 
