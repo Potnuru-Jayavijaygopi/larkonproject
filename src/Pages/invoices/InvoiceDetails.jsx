@@ -38,12 +38,12 @@ function InvoiceDetails({onNavigate}) {
                     Phone:+(1)(142)-532-9019
                   </p>
                 </div>
-                <div className="col-sm-6 text-sm-end">
+                <div className="col-sm-6 text-start ps-3">
                   <div className="text-muted small" style={{fontSize:'0.78rem',lineHeight:'1.6'}}>
-                    <div><strong className="text-dark">Invoice :</strong> #INV-0758267/90</div>
-                    <div><strong className="text-dark">Issue Date :</strong> 23 April 2024</div>
-                    <div><strong className="text-dark">Due date :</strong> 26 April 2024</div>
-                    <div><strong className="text-dark">Invoice :</strong> $737.00</div>
+                    <div><strong className="text-dark d-inline-block"style={{width: "87px"}}>Invoice :</strong><span className="text-nowrap">#INV-0758267/90</span></div>
+                    <div><strong className="text-dark d-inline-block" style={{width: "90px"}}>Issue Date :</strong><span>23 April 2024</span></div>
+                    <div><strong className="text-dark d-inline-block" style={{width: "90px"}}>Due date :</strong><span>26 April 2024</span></div>
+                    <div><strong className="text-dark d-inline-block" style={{width: "90px"}}>Amount :</strong><span>$737.00</span></div>
                     <div className="mt-1">
                       <strong className="text-dark me-3">Status :</strong>{''}
                       <span className="badge bg-success px-2 py-1" style={{fontSize: '0.68rem', backgroundColor: '#10b981'}}>
