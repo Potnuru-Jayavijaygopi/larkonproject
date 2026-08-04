@@ -288,7 +288,7 @@ function InventoryList() {
                     />
                   </td>
                   <td className="fw-medium text-muted">{item.id}</td>
-                  <td className="fw-medium text-dark">{item.name}</td>
+                  <td className="fw-medium text-muted">{item.name}</td>
                   <td className="text-muted">{item.location}</td>
                   <td className="text-muted">{item.manager}</td>
                   <td className="text-muted">{item.contact}</td>
