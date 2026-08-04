@@ -7,6 +7,7 @@ import {
   BsEye,
   BsTrash,
   BsPencil,
+  BsListUl,
 } from "react-icons/bs";
 
 function InventoryList() {
@@ -149,31 +150,13 @@ function InventoryList() {
     <>
       <div className="row g-3 mb-4">
         <div className="col-xl-3 col-sm-6">
-          <div className="content-card p-3 d-flex align-items-center justify-content-between">
+          <div className="content-card h-100 p-3 d-flex align-items-center justify-content-between">
             <div>
-              <span className="fw-medium text-dark d-block mb-2">
+              <span className="small fw-medium text-dark d-block mb-1">
                 Total Product Items
               </span>
-              <h3 className="fw-light text-secondary mb-0">
-                3521 <span className="text-muted fs-6 fw-normal">(Items)</span>
-              </h3>
-            </div>
-            <div
-              className="rounded-3 d-flex align-items-center justify-content-center p-3"
-              style={{ backgroundColor: "#fff7ed", color: "#ea580c" }}
-            >
-              <BsBoxSeam className="fs-4" />
-            </div>
-          </div>
-        </div>
-        <div className="col-xl-3 col-sm-6">
-          <div className="content-card p-3 d-flex align-items-center justify-content-between">
-            <div>
-              <span className="text-muted small d-block mb-1">
-                In Stock Product
-              </span>
-              <h4 className="fw-bold text-dark mb-0">
-                1311 <span className="text-muted fs-6 fw-normal">(items)</span>
+              <h4 className="small fw-light text-secondary mb-1">
+                3521 <span className="text-muted small fw-normal">(Items)</span>
               </h4>
             </div>
             <div
@@ -185,13 +168,31 @@ function InventoryList() {
           </div>
         </div>
         <div className="col-xl-3 col-sm-6">
-          <div className="content-card p-3 d-flex align-items-center justify-content-between">
+          <div className="content-card h-100 p-3 d-flex align-items-center justify-content-between">
             <div>
-              <span className="text-muted small d-block mb-1">
+              <span className="small fw-medium text-dark d-block mb-1">
+                In Stock Product
+              </span>
+              <h4 className="small fw-light text-secondary mb-1">
+                1311 <span className="text-muted small fw-normal">(Items)</span>
+              </h4>
+            </div>
+            <div
+              className="rounded-3 d-flex align-items-center justify-content-center p-3"
+              style={{ backgroundColor: "#fff7ed", color: "#ea580c" }}
+            >
+              <BsListUl className="fs-4" />
+            </div>
+          </div>
+        </div>
+        <div className="col-xl-3 col-sm-6">
+          <div className="content-card h-100 p-3 d-flex align-items-center justify-content-between">
+            <div>
+              <span className="small fw-medium text-dark d-block mb-1">
                 Out Of Stock Product
               </span>
-              <h4 className="fw-bold text-dark mb-0">
-                231 <span className="text-muted fs-6 fw-normal">(Items)</span>
+              <h4 className="small fw-light text-secondary mb-1">
+                231 <span className="text-muted small fw-normal">(Items)</span>
               </h4>
             </div>
             <div
@@ -204,24 +205,21 @@ function InventoryList() {
         </div>
 
         <div className="col-xl-3 col-sm-6">
-          <div className="content-card p-3 d-flex align-items-center justify-content-between">
+          <div className="content-card h-100 p-3 d-flex align-items-center justify-content-between">
             <div>
-              <span className="text-muted small d-block mb-1">
+              <span className="small fw-medium text-dark d-block mb-1">
                 Total Visited Customer
               </span>
-              <h4 className="fw-bold text-dark mb-0">
+              <h4 className="small fw-light text-secondary mb-1">
                 2334{" "}
                 <span
                   className="badge bg-danger-subtle text-danger border border-danger-subtle px-1 py-0 ms-1"
                   style={{ fontSize: "0.65rem" }}
                 >
-                  +4.5%
+                  ↓4.5%
                 </span>
               </h4>
-              <span
-                className="text-muted small d-block"
-                style={{ fontSize: "0.7rem" }}
-              >
+              <span className="text-muted small fw-normal ms-2">
                 (Last Week)
               </span>
             </div>
