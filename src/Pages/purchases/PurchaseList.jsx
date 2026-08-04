@@ -91,25 +91,28 @@ import { BsEye, BsImage, BsPencil, BsTrash } from 'react-icons/bs';
   ];
   const paymentStatusMap ={
     Completed : {
-      bg : "bg-success-subtle",
-      text : "text-success",
-      border : "border-success-subtle",
+      style :{
+        color : "rgba(34,197,94,1)",
+        backgroundColor :"rgba(211,243,223,1)",
+      },
 
     },
     Cancel : {
-      bg : "bg-danger-subtle",
-      text : "text-danger",
-      border :"border-danger-subtle",
+      className : "bg-danger-subtle text-danger",
     },
     Pending : {
-      bg : "bg-warning-subtle",
-      text : "text-warning",
-      border : "border-warning-subtle",
-    }
+      className: "border",
+      style : {
+        color : "#FF6C2F",
+        backgroundColor : "rgba(255,108,47,0.1)",
+        // borderColor : "#FF6C2F",
+      },
+
+    },
   };
   const actionButtons = [
-    {icon : <BsEye/>,title : "View",className : ""},
-    {icon : <BsPencil/>,title : "Edit",className : "text-warning"},
+    {icon : <BsEye/>,title : "View",className : "",style:{backgroundColor: "rgba(238, 242, 247, 1)"}},
+    {icon : <BsPencil/>,title : "Edit", style : {color : "#FF6C2F",backgroundColor:"rgba(255, 108, 47, 0.1)"},},
   ];
   function PurchaseList() {
     const [purchases,setPurchases] = useState(initialPurchases);
@@ -124,9 +127,9 @@ import { BsEye, BsImage, BsPencil, BsTrash } from 'react-icons/bs';
     const handleDeleteRow = (id)=>setPurchases((prev)=>prev.filter((item)=>item.id !== id));
 
     const renderPaymentStatusBadge = (status)=>{
-      const style = paymentStatusMap[status] || paymentStatusMap.Pending;
+      const badge = paymentStatusMap[status];
       return (
-        <span className={`badge ${style.bg} ${style.text} border ${style.border} px-2 py-1`} style={{fontSize : "0.7rem"}}>{status}
+        <span className={`badge ${badge.className} px-2 py-1`} style={{fontSize:"0.7rem",...badge.style}} >{status}
 
         </span>
       );
@@ -142,21 +145,21 @@ import { BsEye, BsImage, BsPencil, BsTrash } from 'react-icons/bs';
         </select>
       </div>
       <div className='table-responsive'>
-        <table className='table table-custom align-middle mb-0' style={{fontSize : "0.825rem"}}>
+        <table className='table table-custom align-middle mb-0 text-nowrap' style={{fontSize : "0.825rem",minWidth:"1200px",tableLayout:"auto"}}>
           <thead>
-            <tr className='text-muted' style={{fontSize : "0.75rem"}}>
+            <tr className='text-muted' style={{fontSize : "0.75rem",whiteSpace: "nowrap"}}>
               <th style={{width : "30px"}}>
                 <input type="checkbox" className='form-check-input'checked = {purchases.length > 0 && selectedIds.length === purchases.length} onChange={handleSelectAll} />
               </th>
               <th>ID</th>
               <th>Order By</th>
               <th>Items</th>
-              <th>Purchase Status</th>
+              <th >Purchase Status</th>
               <th>Date</th>
               <th>Total</th>
-              <th>Payment Method</th>
-              <th>Payment Status</th>
-              <th className='text-end'>Action</th>
+              <th >Payment Method</th>
+              <th >Payment Status</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -166,8 +169,8 @@ import { BsEye, BsImage, BsPencil, BsTrash } from 'react-icons/bs';
                   <td>
                     <input type="checkbox" className='form-check-input' checked = {selectedIds.includes(item.id)} onChange={()=>handleSelectRow(item.id)}/>
                   </td>
-                  <td className='fw-medium text-dark'>{item.id}</td>
-                  <td>
+                  <td className='fw-medium text-dark text-nowrap'>{item.id}</td>
+                  <td className="text-nowrap" style={{ minWidth: "220px" }}>
                     <div className='d-flex align-items-center gap-2'>
                       <div className='rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0' style={{width : 26,height : 26}}>
                         <BsImage className='text-dark opacity-75' style={{fontSize : 12}}/>
@@ -176,22 +179,22 @@ import { BsEye, BsImage, BsPencil, BsTrash } from 'react-icons/bs';
                       <span className='fw-medium text-dark'>{item.orderBy}</span>
                     </div>
                   </td>
-                  <td className='text-muted'>{item.items}</td>
-                  <td>
-                    <span className='badge bg-success text-white px-2 py-1' style={{fontSize : "0.68rem",backgroundColor : "#10b981",}}>{item.purchaseStatus}</span>
+                  <td className='text-muted text-nowrap' style={{minWidth:"180px"}}>{item.items}</td>
+                  <td className='text-nowrap' style={{minWidth:"150px"}}>
+                    <span className='badge  text-white px-2 py-1' style={{fontSize : "0.68rem",backgroundColor : "rgba(34, 197, 94, 1)",}}>{item.purchaseStatus}</span>
                   </td>
-                  <td className='text-muted'>{item.date}</td>
-                  <td className='fw-bold text-dark'>{item.total}</td>
-                  <td className='text-muted'>{item.paymentMethod}</td>
-                  <td>{renderPaymentStatusBadge(item.paymentStatus)}</td>
-                  <td className='text-end'>
+                  <td className='text-muted text-nowrap'>{item.date}</td>
+                  <td className='fw-bold text-dark text-nowrap'>{item.total}</td>
+                  <td className='text-muted text-nowrap' style={{minWidth:"130px"}}>{item.paymentMethod}</td>
+                  <td className='text-nowrap' style={{minWidth:"130px"}}>{renderPaymentStatusBadge(item.paymentStatus)}</td>
+                  <td className='text-end text-nowrap' style={{minWidth:"120px"}}>
                     <div className='d-inline-flex gap-1'>
                       {
                         actionButtons.map((btn)=>(
-                          <button key={btn.title} type='button' title={btn.title} className={`action-btn ${btn.className}`}>{btn.icon}</button>
+                          <button key={btn.title} type='button' title={btn.title} className={`action-btn ${btn.className || ""}`} style={btn.style}>{btn.icon}</button>
                         ))
                       }
-                      <button type='button' title='Delete' className='action-btn delete-btn text-danger' onClick={()=> handleDeleteRow(item.id)}>
+                      <button type='button' title='Delete' className='action-btn delete-btn text-danger' onClick={()=> handleDeleteRow(item.id)} style={{color : "#EF5F5F",backgroundColor:"rgba(239, 95, 95, 0.1)",}}>
                         <BsTrash/>
                       </button>
                     </div>

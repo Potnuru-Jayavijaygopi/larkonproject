@@ -94,17 +94,18 @@ function AttributeList() {
         icon : <BsEye/>,
         title : "View",
         className : "",
+        style:{backgroundColor: "rgba(238, 242, 247, 1)"},
         onClick : handleEditAttribute,
       },
       {
         icon : <BsPencil/>,
         title : "Edit",
-        className : "text-warning",
+        style : {color : "#FF6C2F",backgroundColor:"rgba(255, 108, 47, 0.1)"},
         onClick : handleEditAttribute,
       },{
         icon : <BsTrash/>,
         title : "Delete",
-        className : "delete-btn text-danger",
+        style : {color : "#EF5F5F",backgroundColor:"rgba(239, 95, 95, 0.1)",},
         onClick : ()=>handleDeleteRow(id),
       },
     ];
@@ -134,7 +135,7 @@ function AttributeList() {
               <th>Option</th>
               <th>Created On</th>
               <th>Published</th>
-              <th className='text-end'>Action</th>
+              <th>Action</th>
 
             </tr>
           </thead>
@@ -157,11 +158,11 @@ function AttributeList() {
                 <td className='text-end'>
                   <div className='d-inline-flex gap-1'>
                     {
-                      actionButtons(item.id).map(({icon,title,className,onClick}) =>(
+                      actionButtons(item.id).map(({icon,title,className,onClick,style}) =>(
                         <button key={title}
                         type='button'
                         title={title}
-                        className={`action-btn ${className}`} onClick={onclick}>{icon}</button>
+                        className={`action-btn ${className}`} onClick={onclick} style={style}>{icon}</button>
 
                       ))
                     }
