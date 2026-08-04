@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Sidebar from '../../components/Sidebar';
-import Header from '../../Components/Header';
-import Footer from '../../Components/Footer';
+import logo from "../../assets/logo.png";
+
 
 import{
-  BsBoxFill,
+ 
   BsExclamationCircleFill,
   BsImage,
 } from 'react-icons/bs';
@@ -31,6 +31,16 @@ function CreateInvoice({onNavigate}) {
   const[forPhone, setForPhone] = useState('');
   const[forEmail, setForEmail] = useState('');
 
+  const[items, setItems] = useState([
+    {id:1, name: '', size: '', quantity: 1, price:'000', tax:'000', total: '000'},
+
+  ]);
+
+  const[subTotal, setSubTotal] = useState('000');
+  const[discount, setDiscount] = useState('000');
+  const[taxAmount, setTaxAmount] = useState('000');
+  const[grandAmount, setGrandAmount] = useState('000');
+
   const handleAddMore = () => {
     setItems([
       ...items,
@@ -40,7 +50,7 @@ function CreateInvoice({onNavigate}) {
     
     const handleClearProducts = () => {
      setItems([
-      ...items,
+      
       {id: 1, name: '', size: '', quantity:1, price: '000', tax: '000', total: '000'},
      ]); 
     };
@@ -58,7 +68,7 @@ function CreateInvoice({onNavigate}) {
       <div className="app-container">
         <Sidebar activePage="create-invoice" onNavigate={onNavigate}/>
         <div className="main-content">
-          <Header title="ACCORDION"/>
+          
           <main className="page-container">
            <div className="mx-auto" style={{maxWidth: '920px'}}>
             <form onSubmit={handleSubmit}>
@@ -66,14 +76,12 @@ function CreateInvoice({onNavigate}) {
                <div className="row g-3 mb-4">
                 <div className="col-sm-6">
                   <div
-                  className="border border-2 border-dashed rounded-3 px-3 py-1 d-inline-flex align-items-center gap-2 mb-3"
-                  style={{borderColor: '#ff5e29'}}
-                  >
-                    <span className="logo-icon bg-primary-orange text-white rounded p-1 d-inline-flex">
-                      <BsBoxFill style={{fontSize: '0.9rem'}}/>
-                    </span>
-                    <span className="fw-bold text-dark small">Larkon</span>
-                 </div>
+  className="d-inline-flex align-items-center px-3 py-2 mb-3"
+  style={{ border: "1px dashed #FF8A4C", borderRadius: "12px", gap: "6px", }} >
+  <img src={logo} alt="logo" width="22" height="22" />
+
+  <span className="fw-bold" style={{ fontSize: "18px", color: "#111827", lineHeight: "22px", }} > Larkon </span>
+</div>
 
                  <div className="mb-2">
                   <label htmlFor="senderNameInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Sender Name</label>
@@ -116,7 +124,7 @@ function CreateInvoice({onNavigate}) {
               </div>
               <div className="col-sm-6">
                 <div className="mb-2">
-                  <label htmlFor="invoNoInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Invoice Number</label>
+                  <label htmlFor="invoNoInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Invoice Number :</label>
                   <input
                   id="invoNoInput"
                   type="text"
@@ -128,7 +136,7 @@ function CreateInvoice({onNavigate}) {
                 </div>
 
                 <div className="mb-2">
-                  <label htmlFor="issueDateInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Issue Date</label>
+                  <label htmlFor="issueDateInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Issue Date :</label>
                   <input
                   id="issueDateInput"
                   type="text"
@@ -141,19 +149,19 @@ function CreateInvoice({onNavigate}) {
                 </div>
 
                 <div className="mb-2">
-                  <label htmlFor="dueDateInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Due Date</label>
+                  <label htmlFor="dueDateInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Due Date :</label>
                   <input
                   id="dueDateInput"
                   type="text"
                   className="form-control form-control-sm"
                   placeholder="dd-mm-yy"
                   style={{fontSize: '0.78rem'}}
-                  value={issueDate}
+                  value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
                   />
                 </div>
                 <div className="mb-2">
-                  <label htmlFor="invAmountInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Amount</label>
+                  <label htmlFor="invAmountInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Amount :</label>
                   <div className="input-group input-group-sm">
                     <span className="input-group-text" style={{fontSize: '0.78rem'}}>$</span>
                     <input
@@ -162,14 +170,14 @@ function CreateInvoice({onNavigate}) {
                   className="form-control"
                   placeholder="000"
                   style={{fontSize: '0.78rem'}}
-                  value={issueDate}
+                  value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   />
                 </div>
                </div>
 
                <div className="mb-2">
-                <label htmlFor="invStatysSelect" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Status</label>
+                <label htmlFor="invStatysSelect" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Status :</label>
                 <select
                 id="invStatusSelect"
                 className="form-select form-select-sm"
@@ -188,7 +196,7 @@ function CreateInvoice({onNavigate}) {
 
                <div className="row g-3 mb-4">
                 <div className="col-sm-6">
-                  <h6 className="fw-bold text-dark mb-2" style={{fontSize: '0.825rem'}}>Issue From</h6>
+                  <h6 className="fw-bold text-dark mb-2" style={{fontSize: '0.825rem'}}>Issue From :</h6>
                   <div className="mb-2">
                     <input
                     type="text"
@@ -242,7 +250,7 @@ function CreateInvoice({onNavigate}) {
                 </div>
 
                 <div className="col-sm-6">
-                  <h6 className="fw-bold text-dark mb-2" style={{fontSize: '0.825rem'}}>Issue For</h6>
+                  <h6 className="fw-bold text-dark mb-2" style={{fontSize: '0.825rem'}}>Issue For :</h6>
                   <div className="mb-2">
                     <input
                     type="text"
@@ -325,6 +333,19 @@ function CreateInvoice({onNavigate}) {
                              }}
                              />
 
+                             <input
+                                type="text"
+                               className="form-control form-control-sm mb-1"
+                              placeholder="Product Size"
+                               style={{fontSize: '0.78rem'}}
+                               value={item.size}
+                             onChange={(e) => {
+                              const updated = [...items];
+                              updated[index].size= e.target.value;
+                              setItems(updated);
+                             }}
+                             />
+
                               </div>
                             </div>
                           </td>
@@ -337,6 +358,7 @@ function CreateInvoice({onNavigate}) {
                               onClick={() => {
                                 const updated = [...items];
                                 updated[index].quantity = Math.max(1, updated[index].quantity -1);
+                                setItems(updated)
 
                               }}
                               >
@@ -394,16 +416,136 @@ function CreateInvoice({onNavigate}) {
                               />
                             </div>
                           </td>
+                          <td>
+                            <div className="input-group input-group-sm">
+                              <span className="input-group-text" style={{fontSize: '0.75rem'}}>$</span>
+                              <input
+                              type="text"
+                              className="form-control"
+                              placeholder="000"
+                              style={{fontSize: '0.75rem'}}
+                              value={item.total}
+                              onChange={(e) => {
+                                const updated = [...items];
+                                updated[index].total = e.target.value;
+                                setItems(updated);
+                              }}
+                              />
+                              </div>
+
+                          </td>
                           
                         </tr>
                       ))}
                     </tbody>
                   </table>
                   </div> 
-              </div>
+
+
+                  <div className="d-flex justify-content-end gap-2 mb-3 w-100">
+                    <button
+                    className="btn btn-add-product btn-sm px-3 py-1"
+                    type="button"
+                    style={{fontSize: '0.78rem'}}
+                    onClick={handleClearProducts}
+                    >
+                      Clear Product
+                    </button>
+
+                    <button
+                    className="btn btn-outline-danger btn-sm px-3 py-1"
+                    type="button"
+                    style={{fontSize: '0.78rem', borderColor: '#ff5e29', color: '#ff5e29'}}
+                    onClick={handleAddMore}
+                    >
+                      Add More
+                    </button>
+
+                  </div>
+
+                  <div className="row justify-content-end mb-4">
+                    <div className="col-sm-6 col-md-5">
+                      <div className="mb-2">
+                        <label htmlFor="subTotalInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Sub Total :</label>
+                        <div className="input-group input-group-sm">
+                          <span className="input-group-text" style={{fontSize: '0.75rem'}}>$</span>
+                          <input
+                          id="subTotalInput"
+                          type="text"
+                          className="form-control"
+                          placeholder="000"
+                          style={{fontSize: '0.75rem'}}
+                          value={subTotal}
+                          onChange={(e) => setSubTotal(e.target.value)}
+                          />
+                        </div>
+                    </div>
+
+                    <div className="mb-2">
+                      <label htmlFor="discountInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Discount :</label>
+                      <div className="input-group input-group-sm">
+                          <span className="input-group-text" style={{fontSize: '0.75rem'}}>$</span>
+                          <input
+                          id="discountInput"
+                          type="text"
+                          className="form-control"
+                          placeholder="000"
+                          style={{fontSize: '0.75rem'}}
+                          value={discount}
+                          onChange={(e) => setDiscount(e.target.value)}
+                          />
+                        </div>
+                     </div>
+
+                     <div className="mb-2">
+                      <label htmlFor="taxAmountInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Estimated Tax (15.5%) :</label>
+                      <div className="input-group input-group-sm">
+                          <span className="input-group-text" style={{fontSize: '0.75rem'}}>$</span>
+                          <input
+                          id="taxAmountInput"
+                          type="text"
+                          className="form-control"
+                          placeholder="000"
+                          style={{fontSize: '0.75rem'}}
+                          value={taxAmount}
+                          onChange={(e) => setTaxAmount(e.target.value)}
+                          />
+                        </div>
+                     </div>
+
+                     <div className="mb-2">
+                      <label htmlFor="grandAmountInput" className="form-label text-muted" style={{fontSize: '0.75rem'}}>Grand Amount :</label>
+                      <div className="input-group input-group-sm">
+                          <span className="input-group-text" style={{fontSize: '0.75rem'}}>$</span>
+                          <input
+                          id="grandAmountInput"
+                          type="text"
+                          className="form-control"
+                          placeholder="000"
+                          style={{fontSize: '0.75rem'}}
+                          value={grandAmount}
+                          onChange={(e) => setGrandAmount(e.target.value)}
+                          />
+                        </div>
+                     </div>
+                    </div>
+                  </div>
+
+                  <div
+                  className="p-3 rounded-3 d-flex align-items-start gap-2"
+                  style={{backgroundColor: '#fff5f5', color: '#d9534f', fontSize: '0.75rem', lineHeight: '1.5'}}
+                  >
+                    <BsExclamationCircleFill className="mt-1 flex-shrink-0" style={{fontSize: '14px'}}/>
+                    <span>
+                      All accounts are to be paid within 7 days from receipt of invoice. To be paid by cheque or credit or direct payment online. If account is not paid within 7 days the credits details supplied as confirmation of work undertaken will be charged the agreed quoted fee noted above.
+                    </span>
+                  </div>
+                  </div>
             </form>
             </div> 
           </main>
+
+          
         </div>
       </div>
     );
