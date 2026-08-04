@@ -139,7 +139,7 @@ function InventoryList() {
     if (selectedIds.includes(id)) {
       setSelectedIds(selectedIds.filter((item) => item !== id));
     } else {
-      setSelectedIds([...selectedIds, id]);
+      setSelectedIds([id]);
     }
   };
   const handleDeleteRow = (id) => {
