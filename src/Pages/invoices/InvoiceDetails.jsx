@@ -1,8 +1,10 @@
 import Sidebar from '../../Components/Sidebar';
+import checkBadge from "../../assets/image.png";
+
 
 import {
   BsBoxFill,
-  BsCheckCircleFill,
+  
   BsExclamationCircleFill,
   BsImage
 } from 'react-icons/bs';
@@ -54,10 +56,10 @@ function InvoiceDetails({onNavigate}) {
                 </div>
               </div>
               <div
-              className="position-absolute top-100 start-50 translate-middle rounded-circle bg-white shadow-sm p-1 d-flex align-items-center justify-content-center"
-              style={{zIndex: 5, width: '44px', height: '44px'}}
+              className="position-absolute top-100 start-50 translate-middle "
+              style={{zIndex: 10}}
               >
-                <BsCheckCircleFill className="fs-2" style={{color: '#2dd4bf'}}/>
+                <img src={checkBadge} alt="Paid"style={{ width: "55px",height: "55px",objectFit: "contain",display: "block",}}/>
               </div>
             </div>
             <div className="p-4 pt-5">

@@ -78,7 +78,7 @@ function CreateInvoice({onNavigate}) {
                   <div
   className="d-inline-flex align-items-center px-3 py-2 mb-3"
   style={{ border: "1px dashed #FF8A4C", borderRadius: "12px", gap: "6px", }} >
-  <img src={logo} alt="logo" width="22" height="22" />
+  <img src={logo} alt="logo" width="60" height="auto" />
 
   <span className="fw-bold" style={{ fontSize: "18px", color: "#111827", lineHeight: "22px", }} > Larkon </span>
 </div>
