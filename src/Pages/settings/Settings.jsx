@@ -66,7 +66,7 @@ function Settings({ onNavigate}) {
    };
 
    return(
-    <div className="app-container">
+    <div className="container-fluid px-2">
       <Sidebar activePage="settings" onNavigate={onNavigate}/>
       <div className="main-content">
         <main className="page-container">
@@ -274,7 +274,7 @@ function Settings({ onNavigate}) {
             </div>
 
             <div className="row g-3 mb-3">
-              <div className="col=md-6">
+              <div className="col-md-6">
                 <label htmlFor="loccountrySelect" className="form-label text-muted small" style={{fontSize: '0.75rem'}}>Country</label>
                  <select
                  id="loccountrySelect"
@@ -287,7 +287,7 @@ function Settings({ onNavigate}) {
                  </select>
 
               </div>
-              <div className="col=md-6">
+              <div className="col-md-6">
                 <label htmlFor="langSelect" className="form-label text-muted small" style={{fontSize: '0.75rem'}}>Language</label>
                  <select
                  id="langSelect"
@@ -302,7 +302,7 @@ function Settings({ onNavigate}) {
               </div>
 
               <div className="row g-3 mb-3">
-              <div className="col=md-6">
+              <div className="col-md-6">
                 <label htmlFor="currencySelect" className="form-label text-muted small" style={{fontSize: '0.75rem'}}>Currency</label>
                  <select
                  id="currencySelect"
@@ -331,7 +331,7 @@ function Settings({ onNavigate}) {
 
 
               <div className="row g-3 mb-3">
-              <div className="col=md-6">
+              <div className="col-md-6">
                 <label htmlFor="weightSelect" className="form-label text-muted small" style={{fontSize: '0.75rem'}}>Weight Class</label>
                  <select
                  id="weightSelect"
@@ -347,8 +347,8 @@ function Settings({ onNavigate}) {
             </div>
 
             <div className="row g-3 mb-4">
-              <div className="col-xl-3 col-md-6">
-                <div className="content-card p-4 mb-4 shadow-sm">
+              <div className="col-lg-3 col-md-6">
+                <div className="content-card p-4 shadow-sm ">
               <div className="d-flex align-items-center gap-2 mb-3">
                 <BsTags className="text-warning fs-5" style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Categories Settings</h6>
@@ -359,7 +359,7 @@ function Settings({ onNavigate}) {
               <div className="d-flex gap-3" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="catCountRadio"
                   id="catCountYes"
@@ -367,12 +367,12 @@ function Settings({ onNavigate}) {
                   onChange={() => setCategoryProductCount('yes')}
                   />
 
-                  <lablel className="form-check-label text-dark" htmlFor="catCountYes">Yes</lablel>
+                  <label className="form-check-label text-dark" htmlFor="catCountYes">Yes</label>
                   </div>
 
                   <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="catCountRadio"
                   id="catCountNo"
@@ -380,7 +380,7 @@ function Settings({ onNavigate}) {
                   onChange={() => setCategoryProductCount('no')}
                   />
 
-                  <lablel className="form-check-label text-dark" htmlFor="catCounNo">No</lablel>
+                  <label className="form-check-label text-dark" htmlFor="catCounNo">No</label>
                   </div>
                 </div>
               </div>
@@ -401,8 +401,8 @@ function Settings({ onNavigate}) {
           </div>
 
           
-              <div className="col-xl-3 col-md-6">
-                <div className="content-card p-4 mb-4 shadow-sm">
+              <div className="col-lg-3 col-md-6">
+                <div className="content-card p-4 shadow-sm ">
               <div className="d-flex align-items-center gap-2 mb-3">
                 <BsStar className="text-warning fs-5" style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Reviews Settings</h6>
@@ -413,7 +413,7 @@ function Settings({ onNavigate}) {
               <div className="d-flex gap-3" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="revRadio"
                   id="revYes"
@@ -421,12 +421,12 @@ function Settings({ onNavigate}) {
                   onChange={() => setAllowReviews('yes')}
                   />
 
-                  <lablel className="form-check-label text-dark" htmlFor="revYes">Yes</lablel>
+                  <label className="form-check-label text-dark" htmlFor="revYes">Yes</label>
                   </div>
 
                   <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="revRadio"
                   id="revNo"
@@ -445,7 +445,7 @@ function Settings({ onNavigate}) {
               <div className="d-flex gap-3" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="guestRevRadio"
                   id="guestRevYes"
@@ -453,12 +453,12 @@ function Settings({ onNavigate}) {
                   onChange={() => setAllowGuestReviews('yes')}
                   />
 
-                  <lablel className="form-check-label text-dark" htmlFor="guestRevYes">Yes</lablel>
+                  <label className="form-check-label text-dark" htmlFor="guestRevYes">Yes</label>
                   </div>
 
                   <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="guestRevRadio"
                   id="guestRevNo"
@@ -466,15 +466,15 @@ function Settings({ onNavigate}) {
                   onChange={() => setAllowGuestReviews('no')}
                   />
 
-                  <lablel className="form-check-label text-dark" htmlFor="guestRevNo">No</lablel>
+                  <label className="form-check-label text-dark" htmlFor="guestRevNo">No</label>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        
 
-        <div className="col-xl-3 col-md-6">
-                <div className="content-card p-4 h-100 shadow-sm">
+        <div className="col-lg-3 col-md-6">
+                <div className="content-card p-4  shadow-sm">
               <div className="d-flex align-items-center gap-2 mb-3">
                 <BsTicketPerforated className="text-warning " style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Vouchers Settings</h6>
@@ -507,8 +507,8 @@ function Settings({ onNavigate}) {
             </div>
 
 
-            <div className="col-xl-3 col-md-6">
-                <div className="content-card p-4 h-100 shadow-sm">
+            <div className="col-lg-3 col-md-6">
+                <div className="content-card p-4  shadow-sm">
               <div className="d-flex align-items-center gap-2 mb-3">
                 <BsPercent className="text-warning " style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Tax Settings</h6>
@@ -519,7 +519,7 @@ function Settings({ onNavigate}) {
               <div className="d-flex gap-3" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="taxRadio"
                   id="taxYes"
@@ -531,7 +531,7 @@ function Settings({ onNavigate}) {
                   </div>
                   <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="taxRadio"
                   id="taxNo"
@@ -539,7 +539,7 @@ function Settings({ onNavigate}) {
                   onChange={() => setPricesWithTax('no')}
                   />
 
-                  <lablel className="form-check-label text-dark" htmlFor="taxNo">No</lablel>
+                  <label className="form-check-label text-dark" htmlFor="taxNo">No</label>
                 </div>
               </div>
             </div>
@@ -556,13 +556,15 @@ function Settings({ onNavigate}) {
                 </div>
               </div>
             </div>
+            </div>
           
 
-          <div className="content-card p-4 mb-4 shadow-sm">
+          <div className="content-card p-4 shadow-sm">
               <div className="d-flex align-items-center gap-2 mb-3">
                 <BsPeople className="text-warning " style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Customers Settings</h6>
             </div>
+            <div className="mt-3">
 
             <div className="row g-3 mb-3">
               <div className="col-md-2 col-sm-4">
@@ -570,7 +572,7 @@ function Settings({ onNavigate}) {
               <div className="d-flex gap-2" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="cOnline"
                   id="cOnlineYes"
@@ -583,7 +585,7 @@ function Settings({ onNavigate}) {
 
                   <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="cOnline"
                   id="cOnlineNo"
@@ -601,7 +603,7 @@ function Settings({ onNavigate}) {
               <div className="d-flex gap-2" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="cAct"
                   id="cActYes"
@@ -614,7 +616,7 @@ function Settings({ onNavigate}) {
 
                   <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="cAct"
                   id="cActNo"
@@ -632,7 +634,7 @@ function Settings({ onNavigate}) {
               <div className="d-flex gap-2" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="cSearch"
                   id="cSerachYes"
@@ -645,7 +647,7 @@ function Settings({ onNavigate}) {
 
                   <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="cSearch"
                   id="cSearchNo"
@@ -663,7 +665,7 @@ function Settings({ onNavigate}) {
               <div className="d-flex gap-2" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="guestChk"
                   id="guestChkYes"
@@ -676,7 +678,7 @@ function Settings({ onNavigate}) {
 
                   <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="guestChk"
                   id="guestChkNo"
@@ -694,7 +696,7 @@ function Settings({ onNavigate}) {
               <div className="d-flex gap-2" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="loginPrice"
                   id="loginPriceYes"
@@ -707,7 +709,7 @@ function Settings({ onNavigate}) {
 
                   <div className="form-check">
                   <input
-                  className="form-check-point"
+                  className="form-check-input"
                   type="radio"
                   name="loginPrice"
                   id="loginPriceNo"
@@ -724,6 +726,7 @@ function Settings({ onNavigate}) {
             <div className="row">
               <div className="col-md-6">
                 <label htmlFor="maxAttemptsInput" className="form-label text-muted small" style={{fontSize: '0.75rem'}}>Max Login Attempts</label>
+                </div>
                  <input 
                  id="maxAttemptsInput"
                  type="text"
@@ -747,7 +750,7 @@ function Settings({ onNavigate}) {
               </button>
 
               <button
-              className="btn btn-danger btn-sm px-4 py-1"
+              className="btn btn-success btn-sm px-4 py-1"
               type="submit"
               style={{fontSize: '0.8rem', backgroundColor: '#10b981'}}
               
