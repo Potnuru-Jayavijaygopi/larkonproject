@@ -289,7 +289,7 @@ function CreateProduct({ onNavigate }) {
             </div>
           </div>
 
-          <div className="d-flex justify-content-end gap-2">
+          <div className="content-card p-3 d-flex justify-content-end gap-2">
             <button className="btn btn-outline-secondary btn-sm px-4" type="submit">
               Create Product
             </button>
