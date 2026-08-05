@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Sidebar from '../../components/Sidebar';
-import logo from "../../assets/logo.png";
+import logo2 from "../../assets/logo2.png";
 
 
 import{
@@ -77,10 +77,24 @@ function CreateInvoice({onNavigate}) {
                 <div className="col-sm-6">
                   <div
   className="d-inline-flex align-items-center px-3 py-2 mb-3"
-  style={{ border: "1px dashed #FF8A4C", borderRadius: "12px", gap: "6px", }} >
-  <img src={logo} alt="logo" width="60" height="auto" />
+  style={{
+    border: "1px dashed #FF8A4C",
+    borderRadius: "10px",
+    gap: "8px",
+    minWidth: "155px",
+  }}
+>
+  <img
+    src={logo2}
+    alt="logo"
+    style={{
+      width: "20 px",
+      height: "20 px",
+      objectFit: "contain",
+    }}
+  />
 
-  <span className="fw-bold" style={{ fontSize: "18px", color: "#111827", lineHeight: "22px", }} > Larkon </span>
+  
 </div>
 
                  <div className="mb-2">

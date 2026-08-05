@@ -4,7 +4,6 @@ import checkBadge from "../../assets/image.png";
 
 import {
   BsBoxFill,
-  
   BsExclamationCircleFill,
   BsImage
 } from 'react-icons/bs';
@@ -15,11 +14,11 @@ function InvoiceDetails({onNavigate}) {
   };
   return (
     <div className="app-container " style={{marginTop:'-40px',marginRight:'100px'}}>
-      <Sidebar activePage="invoice-details" onNavigate={onNavigate}/>
+    <Sidebar activePage="invoice-details" onNavigate={onNavigate}/>
       <div className="main-content">
         
         <main className="page-container">
-          <div className="mx-auto" style={{maxWidth:'920px',transform: 'translateX(-60px)'}}>
+        <div className="mx-auto" style={{maxWidth:'920px',transform: 'translateX(-60px)'}}>
           <div className="content-card p-0 mb-4 overflow-hidden shadow-sm">
             <div
             className="p-4 position-relative"
@@ -245,10 +244,10 @@ function InvoiceDetails({onNavigate}) {
           </div>
        </div>
     </div>
-            </main>
+    </main>
             
-      </div>
     </div>
+  </div>
   );
 }
 export default InvoiceDetails;
