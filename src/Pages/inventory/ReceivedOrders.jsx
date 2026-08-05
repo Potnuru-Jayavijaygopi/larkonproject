@@ -61,7 +61,7 @@ function ReceivedOrders() {
       customer: "Joe K. Hall",
       items: "02",
       amount: "$424.00",
-      paymentStatus: "paid",
+      paymentStatus: "Paid",
       receivedStatus: "Failed",
     },
 
@@ -88,7 +88,7 @@ function ReceivedOrders() {
       customer: "Leonie Meister",
       items: "06",
       amount: "$299.00",
-      paymentStatus: "paid",
+      paymentStatus: "Paid",
       receivedStatus: "Failed",
     },
   ];
@@ -102,13 +102,14 @@ function ReceivedOrders() {
 
   const renderPaymentBadge = (status) => {
     if (status === "Paid") {
-      return;
-      <span
-        className="badge bg-secondary px-2 py-1"
-        style={{ fontSize: "0.68rem", backgroundColor: "#334155" }}
-      >
-        Paid
-      </span>;
+      return (
+        <span
+          className="badge px-2 py-1 text-white"
+          style={{ fontSize: "0.68rem", backgroundColor: "#334155" }}
+        >
+          Paid
+        </span>
+      );
     } else {
       return (
         <span
