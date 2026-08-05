@@ -129,7 +129,7 @@ import { BsEye, BsImage, BsPencil, BsTrash } from 'react-icons/bs';
     const renderPaymentStatusBadge = (status)=>{
       const badge = paymentStatusMap[status];
       return (
-        <span className={`badge ${badge.className} px-2 py-1`} style={{fontSize:"0.7rem",...badge.style}} >{status}
+        <span className={`badge ${badge.className} px-2 py-2`} style={{fontSize:"0.8rem",...badge.style}} >{status}
 
         </span>
       );
@@ -181,7 +181,7 @@ import { BsEye, BsImage, BsPencil, BsTrash } from 'react-icons/bs';
                   </td>
                   <td className='text-muted text-nowrap' style={{minWidth:"180px"}}>{item.items}</td>
                   <td className='text-nowrap' style={{minWidth:"150px"}}>
-                    <span className='badge  text-white px-2 py-1' style={{fontSize : "0.68rem",backgroundColor : "rgba(34, 197, 94, 1)",}}>{item.purchaseStatus}</span>
+                    <span className='badge  text-white px-2 py-2' style={{fontSize : "0.8rem",backgroundColor : "rgba(34, 197, 94, 1)",}}>{item.purchaseStatus}</span>
                   </td>
                   <td className='text-muted text-nowrap'>{item.date}</td>
                   <td className='fw-bold text-dark text-nowrap'>{item.total}</td>

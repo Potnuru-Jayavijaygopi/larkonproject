@@ -127,7 +127,7 @@ function OrdersList() {
   const renderOrderStatusBadge = (status)=>{
     const badge = statusColors[status];
     return(
-      <span className={`badge ${badge.bg} px-2 py-1`} style={{fontSize:"0.7rem",...badge.style,}}>
+      <span className={`badge ${badge.bg} px-2 py-2`} style={{fontSize:"0.8rem",...badge.style,}}>
         {status}
 
       </span>
