@@ -7,6 +7,7 @@ import settingsImg from '../assets/settings1.png';
 import clockImg from '../assets/solar_clock-circle-bold-duotone.png';
 import calendarImg from '../assets/image.png';
 
+
 function Header({ title = 'ACCORDION' }) {
   return (
     <header className="top-header">

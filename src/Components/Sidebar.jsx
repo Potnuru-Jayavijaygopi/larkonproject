@@ -51,7 +51,6 @@ import disableItemIcon from '../assets/disable item.png';
 
 import logoImg from '../assets/logo.png';
 
-
 function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -72,12 +71,13 @@ function Sidebar() {
 
   const handleStandaloneClick = (e, routePath) => {
     if (e) e.preventDefault();
-    setOpenMenu(null); 
+    setOpenMenu(null);
     navigate(routePath);
   };
 
   return (
     <aside className="sidebar">
+
       <div className="sidebar-brand d-flex align-items-center justify-content-between px-3 py-3">
         <div
           className="logo-text cursor-pointer d-flex align-items-center"
@@ -92,8 +92,8 @@ function Sidebar() {
         <BsChevronDoubleRight className="text-secondary cursor-pointer small opacity-75" />
       </div>
 
-      <div className="sidebar-menu px-2 pb-4">
 
+      <div className="sidebar-menu px-2 pb-4">
         <div className="menu-category text-uppercase small text-secondary px-3 mt-3 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           General
         </div>
@@ -285,6 +285,7 @@ function Sidebar() {
           )}
         </div>
 
+
         <div>
           <a
             href="#purchases"
@@ -405,6 +406,7 @@ function Sidebar() {
           )}
         </div>
 
+
         <NavLink
           to="/settings"
           className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
@@ -514,7 +516,6 @@ function Sidebar() {
           </div>
         </NavLink>
 
-
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Other Apps
         </div>
@@ -562,6 +563,8 @@ function Sidebar() {
             <span>Todo</span>
           </div>
         </NavLink>
+
+
 
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Support
@@ -886,7 +889,7 @@ function Sidebar() {
             {openMenu === 'menuItem' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
         </div>
-        
+
         <div className="nav-link-custom opacity-50 cursor-not-allowed">
           <div className="nav-link-left">
             <img src={disableItemIcon} alt="Disable Item" className="sidebar-icon-img" />
