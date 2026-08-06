@@ -2,6 +2,11 @@ import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import MainLayout from './components/MainLayout';
 import Dashboard from './pages/Dashboard';
+import Buttons from './pages/base-ui/Buttons';
+import Card from './pages/base-ui/Card';
+import Carousel from './pages/base-ui/Carousel';
+import Collapse from './pages/base-ui/Collapse';
+import Dropdown from './pages/base-ui/Dropdown';
 
 // import ProductList from './pages/product/ProductList';
 // import ProductGrid from './pages/product/ProductGrid';
@@ -76,6 +81,12 @@ const router = createBrowserRouter([
       { path: 'attributes/edit', element: <AddAttribute /> },
       { path: 'attributes/create', element: <CreateAttribute /> },
 
+      { path: 'base-ui/buttons', element: <Buttons /> },
+      { path: 'base-ui/card', element: <Card /> },
+      { path: 'base-ui/cards', element: <Card /> },
+      { path: 'base-ui/carousel', element: <Carousel /> },
+      { path: 'base-ui/collapse', element: <Collapse /> },
+      { path: 'base-ui/dropdown', element: <Dropdown /> },
       
       // { path: 'invoices/list', element: <InvoiceList /> },
       // { path: 'invoices/details', element: <InvoiceDetails /> },
