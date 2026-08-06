@@ -39,7 +39,7 @@ import authenticationIcon from '../assets/authentication.png';
 import widgetsIcon from '../assets/widgets.png';
 
 import baseUiIcon from '../assets/base ui.png';
-// import advancedUiIcon from '../assets/advanced ui.png';
+import advancedUiIcon from '../assets/advanced ui.png';
 import chartsIcon from '../assets/charts.png';
 import formsIcon from '../assets/forms.png';
 import tablesIcon from '../assets/tables.png';
@@ -784,10 +784,10 @@ function Sidebar() {
             className="nav-link-custom"
             onClick={(e) => toggleParentMenu(e, 'advancedUi')}
           >
-            {/* <div className="nav-link-left">
+            <div className="nav-link-left">
               <img src={advancedUiIcon} alt="Advanced UI" className="sidebar-icon-img" />
               <span>Advanced UI</span>
-            </div> */}
+            </div>
             {openMenu === 'advancedUi' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
         </div>

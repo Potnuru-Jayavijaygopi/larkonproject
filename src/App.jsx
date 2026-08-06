@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import MainLayout from './components/MainLayout';
 
 import Dashboard from './pages/Dashboard';
+import Calendar from "./Pages/Support/Calendar";
 
 
 
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Dashboard /> },
       { path: 'dashboard', element: <Dashboard /> },
+      { path: 'calendar', element: <Calendar /> },
 
       
 
