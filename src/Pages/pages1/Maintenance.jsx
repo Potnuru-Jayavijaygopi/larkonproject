@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Maintenance = () => {
+function Maintenance() {
   return (
     <div>Maintenance</div>
   )
