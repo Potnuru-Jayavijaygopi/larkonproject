@@ -1,16 +1,15 @@
 import { useState } from "react";
 import Sidebar from "../../components/Sidebar";
-import{
-  BsGear,
-  BsShop,
-  BsGlobe,
-  BsTags,
-  BsTicketPerforated,
-  BsPercent,
-  BsPeople,
-  BsStar,
-} from 'react-icons/bs';
-
+import {
+  LuSettings,
+  LuStore,
+  LuGlobe,
+  LuLayoutGrid,
+  LuReceipt,
+  LuUsers,
+  LuMessageSquare,
+  LuTicket,
+} from "react-icons/lu";
 function Settings({ onNavigate}) {
   const[metaTitle, setMetaTitle] = useState('');
   const[metaTagKeyword, setMetaTagKeyword] = useState('');
@@ -60,20 +59,20 @@ function Settings({ onNavigate}) {
    };
 
    const handleCancel = () => {
-    if (onabort) {
+    if (onNavigate) {
       onNavigate('dashboard')
     }
    };
 
    return(
-    <div className="container-fluid px-2">
+    <div className="container-fluid " style={{marginRight: "200px"}}>
       <Sidebar activePage="settings" onNavigate={onNavigate}/>
       <div className="main-content">
         <main className="page-container">
           <form onSubmit={handleSave}>
             <div className="content-card p-4 mb-4 shadow-sm">
               <div className="d-flex align-items-center gap-2 mb-3">
-                <BsGear className="text-warning fs-5" style={{color: '#f97316'}}/>
+                <LuSettings className="text-warning fs-5" style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>General Settings</h6>
               </div>
 
@@ -150,7 +149,7 @@ function Settings({ onNavigate}) {
           </div>
              <div className="content-card p-4 mb-4 shadow-sm">
               <div className="d-flex align-items-center gap-2 mb-3">
-                <BsShop className="text-warning fs-5" style={{color: '#f97316'}}/>
+                <LuStore className="text-warning fs-5" style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Store Settings</h6>
               </div>
 
@@ -187,7 +186,7 @@ function Settings({ onNavigate}) {
                  <label htmlFor="ownerPhoneInput" className="form-label text-muted small" style={{fontSize: '0.75rem'}}>Owner Phone number</label>
                  <input
                  id="ownerPhoneInput"
-                 className="form-select form-select-sm"
+                 className="form-control form-control-sm"
                  placeholder="Number"
                  style={{fontSize: '0.78rem'}}
                  value={ownerPhone}
@@ -201,7 +200,7 @@ function Settings({ onNavigate}) {
                  <input
                  id="ownerEmailInput"
                  type="email"
-                 className="form-select form-select-sm"
+                 className="form-control form-control-sm"
                  placeholder="Email"
                  style={{fontSize: '0.78rem'}}
                  value={ownerEmail}
@@ -230,7 +229,7 @@ function Settings({ onNavigate}) {
                  <input
                  id="zipInput"
                  type="text"
-                 className="form-select form-select-sm"
+                 className="form-control form-control-sm"
                  placeholder="zip-code"
                  style={{fontSize: '0.78rem'}}
                  value={zipCode}
@@ -269,7 +268,7 @@ function Settings({ onNavigate}) {
 
             <div className="content-card p-4 mb-4 shadow-sm">
               <div className="d-flex align-items-center gap-2 mb-3">
-                <BsGlobe className="text-warning fs-5" style={{color: '#f97316'}}/>
+                <LuGlobe className="text-warning fs-5" style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Localization Settings</h6>
             </div>
 
@@ -350,7 +349,7 @@ function Settings({ onNavigate}) {
               <div className="col-lg-3 col-md-6">
                 <div className="content-card p-4 shadow-sm ">
               <div className="d-flex align-items-center gap-2 mb-3">
-                <BsTags className="text-warning fs-5" style={{color: '#f97316'}}/>
+                <LuLayoutGrid className="text-warning fs-5" style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Categories Settings</h6>
             </div>
 
@@ -380,7 +379,7 @@ function Settings({ onNavigate}) {
                   onChange={() => setCategoryProductCount('no')}
                   />
 
-                  <label className="form-check-label text-dark" htmlFor="catCounNo">No</label>
+                  <label className="form-check-label text-dark" htmlFor="catCountNo">No</label>
                   </div>
                 </div>
               </div>
@@ -390,7 +389,7 @@ function Settings({ onNavigate}) {
                  <input
                  id="defaultItemsInput"
                  type="text"
-                 className="form-select form-select-sm"
+                 className="form-controlo form-control-sm"
                  placeholder="000"
                  style={{fontSize: '0.78rem'}}
                  value={defaultItemsPerPage}
@@ -404,7 +403,7 @@ function Settings({ onNavigate}) {
               <div className="col-lg-3 col-md-6">
                 <div className="content-card p-4 shadow-sm ">
               <div className="d-flex align-items-center gap-2 mb-3">
-                <BsStar className="text-warning fs-5" style={{color: '#f97316'}}/>
+                < LuReceipt className="text-warning fs-5" style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Reviews Settings</h6>
             </div>
 
@@ -434,7 +433,7 @@ function Settings({ onNavigate}) {
                   onChange={() => setAllowReviews('no')}
                   />
 
-                  <lablel className="form-check-label text-dark" htmlFor="revNo">No</lablel>
+                  <label className="form-check-label text-dark" htmlFor="revNo">No</label>
                   </div>
                 </div>
               </div>
@@ -476,7 +475,7 @@ function Settings({ onNavigate}) {
         <div className="col-lg-3 col-md-6">
                 <div className="content-card p-4  shadow-sm">
               <div className="d-flex align-items-center gap-2 mb-3">
-                <BsTicketPerforated className="text-warning " style={{color: '#f97316'}}/>
+                <LuUsers className="text-warning " style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Vouchers Settings</h6>
             </div>
 
@@ -485,7 +484,7 @@ function Settings({ onNavigate}) {
                  <input 
                  id="minVouchersInput"
                  type="text"
-                 className="form-select form-select-sm"
+                 className="form-control form-control-sm"
                  style={{fontSize: '0.78rem'}}
                  value={minimumVouchers}
                  onChange={(e) => setMinimumVouchers(e.target.value)}
@@ -495,9 +494,9 @@ function Settings({ onNavigate}) {
                 <div>
                 <label htmlFor="maxVoucherInput" className="form-label text-muted small" style={{fontSize: '0.75rem'}}>Maximum Vouchers</label>
                  <input 
-                 id="minVouchersInput"
+                 id="maxVouchersInput"
                  type="text"
-                 className="form-select form-select-sm"
+                 className="form-control form-control-sm"
                  style={{fontSize: '0.78rem'}}
                  value={maximumVouchers}
                  onChange={(e) => setMaximumVouchers(e.target.value)}
@@ -510,7 +509,7 @@ function Settings({ onNavigate}) {
             <div className="col-lg-3 col-md-6">
                 <div className="content-card p-4  shadow-sm">
               <div className="d-flex align-items-center gap-2 mb-3">
-                <BsPercent className="text-warning " style={{color: '#f97316'}}/>
+                <LuMessageSquare className="text-warning " style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Tax Settings</h6>
             </div>
 
@@ -561,7 +560,7 @@ function Settings({ onNavigate}) {
 
           <div className="content-card p-4 shadow-sm">
               <div className="d-flex align-items-center gap-2 mb-3">
-                <BsPeople className="text-warning " style={{color: '#f97316'}}/>
+                <LuTicket className="text-warning " style={{color: '#f97316'}}/>
                 <h6 className="fw-bold text-dark mb-0" style={{fontSize: '0.85rem'}}>Customers Settings</h6>
             </div>
             <div className="mt-3">
@@ -724,18 +723,25 @@ function Settings({ onNavigate}) {
             </div>
 
             <div className="row">
-              <div className="col-md-6">
-                <label htmlFor="maxAttemptsInput" className="form-label text-muted small" style={{fontSize: '0.75rem'}}>Max Login Attempts</label>
-                </div>
-                 <input 
-                 id="maxAttemptsInput"
-                 type="text"
-                 className="form-control form-control-sm"
-                 style={{fontSize: '0.78rem'}}
-                 value={maxLoginAttempts}
-                 onChange={(e) => setMaxLoginAttempts(e.target.value)}
-                 />
-                </div>
+  <div className="col-md-6">
+    <label
+      htmlFor="maxAttemptsInput"
+      className="form-label text-muted small"
+      style={{ fontSize: "0.75rem" }}
+    >
+      Max Login Attempts
+    </label>
+
+    <input
+      id="maxAttemptsInput"
+      type="text"
+      className="form-control form-control-sm"
+      style={{ fontSize: "0.78rem" }}
+      value={maxLoginAttempts}
+      onChange={(e) => setMaxLoginAttempts(e.target.value)}
+    />
+  </div>
+</div>
               </div>
             </div>
 

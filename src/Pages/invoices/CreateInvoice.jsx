@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Sidebar from '../../components/Sidebar';
-import logo2 from "../../assets/logo2.png";
+
 
 
 import{
@@ -84,15 +84,8 @@ function CreateInvoice({onNavigate}) {
     minWidth: "155px",
   }}
 >
-  <img
-    src={logo2}
-    alt="logo"
-    style={{
-      width: "20 px",
-      height: "20 px",
-      objectFit: "contain",
-    }}
-  />
+  
+  
 
   
 </div>

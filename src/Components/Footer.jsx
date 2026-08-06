@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { BsHeartFill } from 'react-icons/bs';
 
 function Footer() {
