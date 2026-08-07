@@ -1,6 +1,37 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.png';
 import {
+<<<<<<< HEAD
+=======
+  BsGrid,
+  BsBox,
+  BsTag,
+  BsLayers,
+  BsBag,
+  BsCart,
+  BsSliders,
+  BsReceipt,
+  BsGear,
+  BsPerson,
+  BsShieldLock,
+  BsKey,
+  BsPeople,
+  BsShop,
+  BsTicketPerforated,
+  BsStar,
+  BsChatDots,
+  BsEnvelope,
+  BsCalendarEvent,
+  BsCheck2Square,
+  BsQuestionCircle,
+  BsInfoCircle,
+  BsShieldCheck,
+  BsFileEarmarkText,
+  BsLock,
+  BsXDiamond,
+  BsUiChecksGrid,
+>>>>>>> origin/Profiles
   BsChevronDown,
   BsChevronRight,
   BsChevronDoubleRight,
@@ -84,6 +115,7 @@ function Sidebar() {
 
   return (
     <aside className="sidebar">
+<<<<<<< HEAD
       <style>{`
         .sidebar,
         .sidebar-menu {
@@ -98,15 +130,26 @@ function Sidebar() {
       `}</style>
 
       <div className="sidebar-brand d-flex align-items-center justify-content-between px-3 py-3">
+=======
+
+      <div className="sidebar-brand">
+>>>>>>> origin/Profiles
         <div
           className="logo-text cursor-pointer d-flex align-items-center"
           onClick={(e) => handleStandaloneClick(e, '/')}
         >
+<<<<<<< HEAD
           <img
             src={logoImg}
             alt="Larkon Logo"
             style={{ height: '36px', maxWidth: '140px', objectFit: 'contain' }}
           />
+=======
+          
+          <img src={logo} alt="logo" width="140" style={{marginLeft:20}}/>
+        
+        
+>>>>>>> origin/Profiles
         </div>
         <BsChevronDoubleRight className="text-secondary cursor-pointer small opacity-75" />
       </div>
@@ -119,6 +162,10 @@ function Sidebar() {
           General
         </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/Profiles
         <NavLink
           to="/"
           className={({ isActive }) =>
@@ -198,6 +245,7 @@ function Sidebar() {
             </div>
             {openMenu === 'category' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
+
 
           {openMenu === 'category' && (
             <div className="submenu">
@@ -999,7 +1047,7 @@ function Sidebar() {
           </div>
         </div>
       </div>
-    </aside>
+    </aside >
   );
 }
 

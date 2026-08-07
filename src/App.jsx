@@ -1,4 +1,5 @@
 import React from 'react';
+<<<<<<< HEAD
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainLayout from './Components/MainLayout';
 import Dashboard from './Pages/Dashboard';
@@ -8,6 +9,12 @@ import RoleEdit from './Pages/Roles/Roleedit';
 import RoleCreate from './Pages/Roles/RoleCreate';
 import Permissions from './Pages/Permissions/Permissions';
 import Permissions2 from './Pages/Permissions/Permissions2';
+=======
+
+
+
+
+>>>>>>> origin/Profiles
 const router = createBrowserRouter([
   {
     path: '/',
@@ -16,6 +23,7 @@ const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: 'dashboard', element: <Dashboard /> },
 
+<<<<<<< HEAD
       { path: 'profile', element: <Profile /> },
       { path: 'pages/profile', element: <Profile /> },
 
@@ -27,6 +35,9 @@ const router = createBrowserRouter([
       { path: 'permissions', element: <Permissions /> },
       { path: 'permissions2', element: <Permissions2 /> },
 
+=======
+
+>>>>>>> origin/Profiles
 
       { path: '*', element: <Dashboard /> },
     ],
