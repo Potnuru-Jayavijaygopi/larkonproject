@@ -1,20 +1,14 @@
 import React from 'react';
-<<<<<<< HEAD
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainLayout from './Components/MainLayout';
 import Dashboard from './Pages/Dashboard';
 import Profile from './Pages/Profile';
 import RolesList from './Pages/Roles/RolesList';
-import RoleEdit from './Pages/Roles/Roleedit';
+import RoleEdit from './Pages/Roles/RoleEdit';
 import RoleCreate from './Pages/Roles/RoleCreate';
 import Permissions from './Pages/Permissions/Permissions';
 import Permissions2 from './Pages/Permissions/Permissions2';
-=======
 
-
-
-
->>>>>>> origin/Profiles
 const router = createBrowserRouter([
   {
     path: '/',
@@ -23,7 +17,6 @@ const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: 'dashboard', element: <Dashboard /> },
 
-<<<<<<< HEAD
       { path: 'profile', element: <Profile /> },
       { path: 'pages/profile', element: <Profile /> },
 
@@ -35,15 +28,9 @@ const router = createBrowserRouter([
       { path: 'permissions', element: <Permissions /> },
       { path: 'permissions2', element: <Permissions2 /> },
 
-=======
-
->>>>>>> origin/Profiles
-
       { path: '*', element: <Dashboard /> },
     ],
   },
 ]);
 
-export default function App() {
-  return <RouterProvider router={router} />;
-}
+export default router;

@@ -1,37 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import logo from '../assets/logo.png';
 import {
-<<<<<<< HEAD
-=======
-  BsGrid,
-  BsBox,
-  BsTag,
-  BsLayers,
-  BsBag,
-  BsCart,
-  BsSliders,
-  BsReceipt,
-  BsGear,
-  BsPerson,
-  BsShieldLock,
-  BsKey,
-  BsPeople,
-  BsShop,
-  BsTicketPerforated,
-  BsStar,
-  BsChatDots,
-  BsEnvelope,
-  BsCalendarEvent,
-  BsCheck2Square,
-  BsQuestionCircle,
-  BsInfoCircle,
-  BsShieldCheck,
-  BsFileEarmarkText,
-  BsLock,
-  BsXDiamond,
-  BsUiChecksGrid,
->>>>>>> origin/Profiles
   BsChevronDown,
   BsChevronRight,
   BsChevronDoubleRight,
@@ -46,23 +15,29 @@ import purchasesIcon from '../assets/purchases.png';
 import attributesIcon from '../assets/attributes.png';
 import invoicesIcon from '../assets/invoices.png';
 import settingsIcon from '../assets/settings.png';
+
 import profileIcon from '../assets/profile.png';
 import rolesIcon from '../assets/roles.png';
 import permissionsIcon from '../assets/permissions.png';
 import customerIcon from '../assets/customer.png';
 import sellersIcon from '../assets/sellers.png';
+
 import couponsIcon from '../assets/coupons.png';
 import reviewsIcon from '../assets/reviews.png';
+
 import chatIcon from '../assets/chat.png';
 import emailIcon from '../assets/email.png';
 import calendarIcon from '../assets/calendar.png';
 import todoIcon from '../assets/todo.png';
+
 import helpCenterIcon from '../assets/help center.png';
 import faqsIcon from '../assets/FAQS.png';
 import privacyPolicyIcon from '../assets/privacy policy.png';
+
 import pagesIcon from '../assets/pages.png';
 import authenticationIcon from '../assets/authentication.png';
 import widgetsIcon from '../assets/widgets.png';
+
 import baseUiIcon from '../assets/base ui.png';
 import advancedUiIcon from '../assets/advanced ui.png';
 import chartsIcon from '../assets/charts.png';
@@ -73,6 +48,7 @@ import mapsIcon from '../assets/maps.png';
 import badgeMenuIcon from '../assets/badge menu.png';
 import menuItemIcon from '../assets/menu item.png';
 import disableItemIcon from '../assets/disable item.png';
+
 import logoImg from '../assets/logo.png';
 
 function Sidebar() {
@@ -115,7 +91,7 @@ function Sidebar() {
 
   return (
     <aside className="sidebar">
-<<<<<<< HEAD
+      {/* CSS Rule to hide scrollbars on the sidebar */}
       <style>{`
         .sidebar,
         .sidebar-menu {
@@ -130,26 +106,15 @@ function Sidebar() {
       `}</style>
 
       <div className="sidebar-brand d-flex align-items-center justify-content-between px-3 py-3">
-=======
-
-      <div className="sidebar-brand">
->>>>>>> origin/Profiles
         <div
           className="logo-text cursor-pointer d-flex align-items-center"
           onClick={(e) => handleStandaloneClick(e, '/')}
         >
-<<<<<<< HEAD
           <img
             src={logoImg}
             alt="Larkon Logo"
             style={{ height: '36px', maxWidth: '140px', objectFit: 'contain' }}
           />
-=======
-          
-          <img src={logo} alt="logo" width="140" style={{marginLeft:20}}/>
-        
-        
->>>>>>> origin/Profiles
         </div>
         <BsChevronDoubleRight className="text-secondary cursor-pointer small opacity-75" />
       </div>
@@ -162,10 +127,6 @@ function Sidebar() {
           General
         </div>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/Profiles
         <NavLink
           to="/"
           className={({ isActive }) =>
@@ -245,7 +206,6 @@ function Sidebar() {
             </div>
             {openMenu === 'category' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
-
 
           {openMenu === 'category' && (
             <div className="submenu">
@@ -544,6 +504,7 @@ function Sidebar() {
           )}
         </div>
 
+        {/* --- PERMISSIONS ACCORDION MENU --- */}
         <div>
           <a
             href="#permissions"
@@ -1047,7 +1008,7 @@ function Sidebar() {
           </div>
         </div>
       </div>
-    </aside >
+    </aside>
   );
 }
 
