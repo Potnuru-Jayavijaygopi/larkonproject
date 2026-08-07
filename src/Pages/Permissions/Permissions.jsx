@@ -1,0 +1,365 @@
+import React, { useState } from 'react';
+
+import userIcon from '../../assets/solar_users-group-two-rounded-bold-duotone.svg';
+import buildingIcon from '../../assets/solar_backpack-bold-duotone (1).svg';
+import rocketIcon from '../../assets/solar_rocket-2-bold-duotone.svg';
+import notebookIcon from '../../assets/solar_notebook-bold-duotone_.svg';
+
+import viewIcon from '../../assets/solar_eye-broken.svg';
+import editIcon from '../../assets/solar_pen-2-broken.svg';
+import deleteIcon from '../../assets/solar_trash-bin-minimalistic-2-broken.svg';
+
+const samplePermissions = [
+  { id: 1, name: 'User Management', assignedTo: ['Manager'], createdDate: '4 Mar 2023, 08:30 am', lastUpdate: 'Today' },
+  { id: 2, name: 'Financial Management', assignedTo: ['Administrator', 'Developer'], createdDate: '27 Jun 2024, 12:00 am', lastUpdate: 'Yesterday' },
+  { id: 3, name: 'Content Management', assignedTo: ['Manager', 'Administrator'], createdDate: '02 Dec 2023, 02:30 am', lastUpdate: '09 Dec 2023' },
+  { id: 4, name: 'Payroll', assignedTo: ['Manager', 'Administrator', 'Analyst', 'Trial'], createdDate: '27 Jun 2024, 12:00 am', lastUpdate: '14 May 2024' },
+  { id: 5, name: 'Reporting', assignedTo: ['Manager', 'Trial', 'Developer'], createdDate: '13 Aug 2024, 07:05 am', lastUpdate: 'Today' },
+  { id: 6, name: 'API Controls', assignedTo: ['Manager', 'Analyst'], createdDate: '20 Sep 2023, 01:20 pm', lastUpdate: '10 Oct 2023' },
+  { id: 7, name: 'Disputes Management', assignedTo: ['Manager', 'Developer'], createdDate: '10 Feb 2025, 05:00 pm', lastUpdate: 'Yesterday' },
+  { id: 8, name: 'Database Management', assignedTo: ['Manager', 'Administrator', 'Developer'], createdDate: '19 Jul 2024, 03:45 pm', lastUpdate: 'Yesterday' },
+  { id: 9, name: 'Repository Management', assignedTo: ['Administrator', 'Developer'], createdDate: '05 Jan 2024, 11:00 am', lastUpdate: '09 Dec 2023' },
+];
+
+const getTagColorClass = (role) => {
+  switch (role) {
+    case 'Manager': return 'role-pill-manager';
+    case 'Administrator': return 'role-pill-administrator';
+    case 'Developer': return 'role-pill-developer';
+    case 'Analyst': return 'role-pill-analyst';
+    case 'Trial': return 'role-pill-trial';
+    default: return 'role-pill-default';
+  }
+};
+
+const Permissions = () => {
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedItems(samplePermissions.map((p) => p.id));
+    } else {
+      setSelectedItems([]);
+    }
+  };
+
+  const handleSelectItem = (id) => {
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
+    } else {
+      setSelectedItems([...selectedItems, id]);
+    }
+  };
+
+  return (
+    <div className="permissions-wrapper page-container w-100">
+      <style>{`
+        html, body, .permissions-wrapper {
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+          font-family: 'Public Sans', sans-serif !important;
+          color: #334155;
+          overflow-x: hidden;
+          box-sizing: border-box;
+        }
+
+        html::-webkit-scrollbar, 
+        body::-webkit-scrollbar, 
+        .permissions-wrapper::-webkit-scrollbar {
+          display: none !important;
+        }
+
+        .metric-label {
+          font-family: 'Public Sans', sans-serif !important;
+          font-weight: 600 !important;
+          font-size: 0.825rem !important;
+          color: #1e293b !important;
+          line-height: 100% !important;
+        }
+
+        .stat-number {
+          font-family: 'Public Sans', sans-serif !important;
+          font-weight: 700;
+          color: #1e293b;
+          font-size: 1.25rem;
+          line-height: 1.2;
+        }
+
+        .metric-card {
+          border: 1px solid var(--border-color, #e2e8f0);
+          background-color: var(--card-bg, #ffffff);
+          border-radius: 8px;
+          padding: 12px 16px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .metric-icon-box {
+          width: 38px;
+          height: 38px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(255, 94, 41, 0.1);
+        }
+
+        .table-card {
+          border: 1px solid var(--border-color, #e2e8f0);
+          background-color: var(--card-bg, #ffffff);
+          border-radius: 8px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .permissions-table th {
+          font-family: 'Public Sans', sans-serif !important;
+          font-size: 0.75rem !important;
+          font-weight: 700 !important;
+          color: #64748b !important;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          border-bottom: 1px solid var(--border-color, #e2e8f0);
+          padding: 0.75rem 1rem;
+        }
+
+        .permissions-table td {
+          vertical-align: middle;
+          padding: 0.85rem 1rem;
+          border-bottom: 1px solid var(--border-color, #e2e8f0);
+          font-size: 0.85rem;
+          color: #334155;
+        }
+
+        .role-pill {
+          font-family: 'Public Sans', sans-serif !important;
+          font-size: 11px;
+          font-weight: 700;
+          line-height: 100%;
+          padding: 3px 7px;
+          border-radius: 4px;
+          display: inline-block;
+          border: none;
+        }
+
+        .role-pill-manager {
+          background-color: rgba(255, 94, 41, 0.1);
+          color: var(--primary-orange, #ff5e29);
+        }
+
+        .role-pill-administrator {
+          background-color: #E6F8F7;
+          color: #4ECAC2;
+        }
+
+        .role-pill-analyst {
+          background-color: #DCFCE7;
+          color: #22C55E;
+        }
+
+        .role-pill-developer {
+          background-color: #f1f5f9;
+          color: #334155;
+        }
+
+        .role-pill-trial {
+          background-color: #fef9c3;
+          color: #854d0e;
+        }
+
+        .role-pill-default {
+          background-color: #f8fafc;
+          color: #64748b;
+        }
+
+        .action-btn-custom {
+          width: 44px;
+          height: 32px;
+          border-radius: 8px;
+          border: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          transition: opacity 0.2s ease;
+        }
+
+        .action-btn-custom:hover {
+          opacity: 0.8;
+        }
+
+        .btn-view-bg {
+          background-color: #EEF2F7;
+        }
+
+        .btn-edit-bg {
+          background-color: rgba(255, 108, 47, 0.1);
+        }
+
+        .btn-delete-bg {
+          background-color: rgba(239, 95, 95, 0.1);
+        }
+
+        .page-link-custom {
+          padding: 3px 8px;
+          border-radius: 6px !important;
+          border: 1px solid var(--border-color, #e2e8f0);
+          color: #64748b;
+          font-size: 12px;
+          text-decoration: none;
+        }
+
+        .page-link-custom.active {
+          background-color: var(--primary-orange, #ff5e29);
+          color: #ffffff;
+          border-color: var(--primary-orange, #ff5e29);
+        }
+      `}</style>
+
+      <div className="container-fluid p-0">
+        <div className="row g-3 mb-3">
+          <div className="col-md-3">
+            <div className="metric-card shadow-sm d-flex align-items-center justify-content-between">
+              <div>
+                <small className="metric-label d-block mb-1">
+                  Employees
+                </small>
+                <div className="stat-number">54</div>
+              </div>
+              <div className="metric-icon-box">
+                <img src={userIcon} alt="Employees" style={{ width: '20px', height: '20px' }} />
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="metric-card shadow-sm d-flex align-items-center justify-content-between">
+              <div>
+                <small className="metric-label d-block mb-1">
+                  Assigned Manager
+                </small>
+                <div className="stat-number">13</div>
+              </div>
+              <div className="metric-icon-box">
+                <img src={buildingIcon} alt="Assigned Manager" style={{ width: '20px', height: '20px' }} />
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="metric-card shadow-sm d-flex align-items-center justify-content-between">
+              <div>
+                <small className="metric-label d-block mb-1">
+                  Project
+                </small>
+                <div className="stat-number">19</div>
+              </div>
+              <div className="metric-icon-box">
+                <img src={rocketIcon} alt="Project" style={{ width: '20px', height: '20px' }} />
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="metric-card shadow-sm d-flex align-items-center justify-content-between">
+              <div>
+                <small className="metric-label d-block mb-1">
+                  License Used
+                </small>
+                <div className="stat-number">36/50</div>
+              </div>
+              <div className="metric-icon-box">
+                <img src={notebookIcon} alt="License Used" style={{ width: '20px', height: '20px' }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="table-card shadow-sm p-3 p-md-4">
+          <div className="d-flex align-items-center justify-content-between pb-2 mb-2">
+            <h6 className="fw-bold text-dark mb-0" style={{ fontSize: '0.95rem' }}>
+              All Permissions List
+            </h6>
+
+            <select className="form-select form-select-sm border-light-subtle text-muted" style={{ width: '120px', fontSize: '12px', cursor: 'pointer' }}>
+              <option>This Month</option>
+              <option>Last Month</option>
+              <option>This Year</option>
+            </select>
+          </div>
+
+          <div className="table-responsive">
+            <table className="table permissions-table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th style={{ width: '4%' }}>
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      onChange={handleSelectAll}
+                      checked={selectedItems.length === samplePermissions.length}
+                    />
+                  </th>
+                  <th style={{ width: '22%' }}>Name</th>
+                  <th style={{ width: '30%' }}>Assigned To</th>
+                  <th style={{ width: '20%' }}>Created Date & Time</th>
+                  <th style={{ width: '14%' }}>Last Update</th>
+                  <th className="text-end" style={{ width: '10%' }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {samplePermissions.map((row) => (
+                  <tr key={row.id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        checked={selectedItems.includes(row.id)}
+                        onChange={() => handleSelectItem(row.id)}
+                      />
+                    </td>
+
+                    <td>{row.name}</td>
+
+                    <td>
+                      <div className="d-flex flex-wrap gap-1">
+                        {row.assignedTo.map((role, idx) => (
+                          <span key={idx} className={`role-pill ${getTagColorClass(role)}`}>
+                            {role}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="text-secondary">{row.createdDate}</td>
+                    <td className="text-secondary">{row.lastUpdate}</td>
+                    <td>
+                      <div className="d-flex align-items-center justify-content-end gap-1">
+                        <button className="action-btn-custom btn-view-bg" title="View">
+                          <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
+                        </button>
+                        <button className="action-btn-custom btn-edit-bg" title="Edit">
+                          <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
+                        </button>
+                        <button className="action-btn-custom btn-delete-bg" title="Delete">
+                          <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="d-flex align-items-center justify-content-end gap-1 pt-3 border-top mt-3" style={{ borderColor: 'var(--border-color)' }}>
+            <a href="#prev" className="page-link-custom">Previous</a>
+            <a href="#page1" className="page-link-custom active">1</a>
+            <a href="#page2" className="page-link-custom">2</a>
+            <a href="#page3" className="page-link-custom">3</a>
+            <a href="#next" className="page-link-custom">Next</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Permissions;
