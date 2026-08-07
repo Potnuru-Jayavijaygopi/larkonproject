@@ -31,11 +31,11 @@ function Maintenance() {
             <BsImage style={{fontSize:'4rem',color:'#000000',opacity:0.85}}/>
           </div>
 
-          <h3 className='fw-bold mb-2' style={{color:'#1e293b',fontSize:'1.5rem'}}>
+          <h3 className='fw-bold mb-2' style={{color:'#1e293b',fontSize:'1.10rem'}}>
             We are currently performing maintenance
           </h3>
 
-          <p className='text-muted mx-auto mb-4' style={{maxWidth:'460px',fontSize:'0.85rem',lineHeight:'1.6'}}>
+          <p className='text-muted mx-auto mb-4' style={{maxWidth:'460px',fontSize:'0.55rem',lineHeight:'1.6'}}>
             We're making the system more awesome. We'll be back shortly.
           </p>
 
