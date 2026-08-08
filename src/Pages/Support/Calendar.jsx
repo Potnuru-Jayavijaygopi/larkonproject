@@ -7,7 +7,8 @@ import Dot4 from "../../assets/dot-4.png";
 
 function Calendar() {
     return (
-        <div>
+        <div className="w-full h-[2010px]">
+           
             <div className="w-full h-[760px] bg-[#FFFFFF] !rounded-[12px] shadow-[0px_3px_4px_rgba(0,0,0,0.03)]">
                 <div className="pt-[24px] pl-[24px]">
                     <div className="flex items-center gap-[14px]">
