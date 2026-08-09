@@ -1,17 +1,18 @@
 import React from 'react';
 
-
 import imageIcon from '../../assets/image.png'; 
 import settingsIcon from '../../assets/settings1.png';
 import invoiceIcon from '../../assets/invoices.png';
+import ordersIcon from '../../assets/ordericon.png';     
+import expensesIcon from '../../assets/expenses.png'; 
 
 export default function DetailsPage() {
   return (
     <div className="container-fluid p-3 min-vh-100 bg-light">
       
-      
       <div className="row g-3 mb-3">
         
+
         <div className="col-lg-4">
           <div className="card border-0 shadow-sm rounded-3 bg-white h-100 overflow-hidden d-flex flex-column justify-content-between">
             <div 
@@ -55,17 +56,23 @@ export default function DetailsPage() {
           </div>
         </div>
 
-        
+
         <div className="col-lg-8 d-flex flex-column gap-3">
+          
+
           <div className="row g-3">
+
             <div className="col-md-4">
               <div className="card border-0 shadow-sm rounded-3 p-3 flex-row justify-content-between align-items-center bg-white">
                 <div>
                   <p className="text-muted mb-1 small fw-medium" style={{ fontSize: '13px' }}>Total Invoice</p>
                   <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '22px' }}>234</h4>
                 </div>
-                <div className="d-flex align-items-center justify-content-center" style={{ width: '56px', height: '56px', borderRadius: '12px', backgroundColor: '#FFF0EA' }}>
-                  <img src={invoiceIcon} alt="Invoice Icon" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                <div 
+                  className="d-flex align-items-center justify-content-center flex-shrink-0" 
+                  style={{ width: '56px', height: '56px', borderRadius: '12px', backgroundColor: '#FFF0EA', padding: '12px' }}
+                >
+                  <img src={invoiceIcon} alt="Invoice Icon" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
               </div>
             </div>
@@ -76,8 +83,11 @@ export default function DetailsPage() {
                   <p className="text-muted mb-1 small fw-medium" style={{ fontSize: '13px' }}>Total Order</p>
                   <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '22px' }}>219</h4>
                 </div>
-                <div className="d-flex align-items-center justify-content-center" style={{ width: '56px', height: '56px', borderRadius: '12px', backgroundColor: '#FFF0EA' }}>
-                  <img src={invoiceIcon} alt="Order Icon" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                <div 
+                  className="d-flex align-items-center justify-content-center flex-shrink-0" 
+                  style={{ width: '56px', height: '56px', borderRadius: '12px', backgroundColor: '#FFF0EA', padding: '12px' }}
+                >
+                  <img src={ordersIcon} alt="Order Icon" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
               </div>
             </div>
@@ -88,8 +98,11 @@ export default function DetailsPage() {
                   <p className="text-muted mb-1 small fw-medium" style={{ fontSize: '13px' }}>Total Expense</p>
                   <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '22px' }}>$2,189</h4>
                 </div>
-                <div className="d-flex align-items-center justify-content-center" style={{ width: '56px', height: '56px', borderRadius: '12px', backgroundColor: '#FFF0EA' }}>
-                  <img src={invoiceIcon} alt="Expense Icon" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                <div 
+                  className="d-flex align-items-center justify-content-center flex-shrink-0" 
+                  style={{ width: '56px', height: '56px', borderRadius: '12px', backgroundColor: '#FFF0EA', padding: '12px' }}
+                >
+                  <img src={expensesIcon} alt="Expense Icon" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
               </div>
             </div>
@@ -137,9 +150,9 @@ export default function DetailsPage() {
         </div>
       </div>
 
-      
       <div className="row g-3">
         
+
         <div className="col-lg-4 d-flex flex-column gap-3">
           <div className="card border-0 shadow-sm rounded-3 bg-white p-3">
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -184,7 +197,6 @@ export default function DetailsPage() {
           </div>
         </div>
 
-        
         <div className="col-lg-4">
           <div className="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 d-flex flex-column justify-content-between">
             <div className="rounded-3 d-flex align-items-center justify-content-center w-100 bg-light" style={{ minHeight: '300px' }}>
@@ -204,11 +216,9 @@ export default function DetailsPage() {
           </div>
         </div>
 
-        
         <div className="col-lg-4 d-flex flex-column gap-3">
           <div className="card shadow-sm rounded-3 p-3 bg-white flex-grow-1 d-flex flex-column justify-content-between">
             <div>
-              
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <div className="d-flex align-items-center gap-2">
                   <div className="d-flex align-items-center justify-content-center rounded-circle" style={{ width: '36px', height: '36px', backgroundColor: '#D9D9D9' }}>
@@ -220,13 +230,11 @@ export default function DetailsPage() {
                   </div>
                 </div>
 
-                
                 <button className="btn p-0 border-0 d-flex align-items-center justify-content-center" style={{ width: '24px', height: '24px' }}>
                   <img src={settingsIcon} alt="Settings" style={{ width: '19px', height: '20px', objectFit: 'contain' }} />
                 </button>
               </div>
 
-              
               <div className="d-flex justify-content-between align-items-center mb-1">
                 <p className="text-muted small mb-0" style={{ fontSize: '12px' }}>
                   <strong className="text-dark">All Account</strong> • Total Balance
@@ -239,7 +247,6 @@ export default function DetailsPage() {
                 <span className="text-muted small" style={{ fontSize: '12px' }}>+$232</span>
               </div>
 
-              
               <div className="py-2" style={{ height: '160px', width: '100%' }}>
                 <svg viewBox="0 0 500 200" className="w-100 h-100" preserveAspectRatio="none">
                   <defs>
@@ -262,7 +269,7 @@ export default function DetailsPage() {
           </div>
         </div>
       </div>
-      
+
     </div>
   );
 }
