@@ -176,12 +176,13 @@ body {
 
 .top-header {
   height: 60px;
-  background-color: #ffffff;
-  border-bottom: 1px solid var(--border-color);
+  background-color: #F9F7F7;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem;
+  padding-left:50px;
+  padding-left:50px;
+  padding-top: 30px;
   position: sticky;
   top: 0;
   z-index: 999;
@@ -427,6 +428,7 @@ body {
 
 
 .footer-custom {
+  width: 1640px;
   padding: 1.5rem 1.5rem 1rem;
   background-color: transparent;
   color: #94a3b8;

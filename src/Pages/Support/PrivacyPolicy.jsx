@@ -2,7 +2,7 @@ import TodoSearch from "../../assets/todosearch.png";
 import PrivacyIcon1 from "../../assets/privacyicon-1.png";
 function PrivacyPolicy() {
     return (
-        <div className="h-[2010px] w-[1640px] p-[50px]">
+        <div className="h-[2010px] w-[1640px] px-[50px]">
             <div className="w-[1534px] h-[158px] rounded-[12px] bg-[#D9D9D9] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center">
                 <h1 className="!text-[24px] font-[Hanken Grotesk] font-[600] leading-[100%] tracking-[0%] !text-[#FFFFFF]">Privacy Policy</h1>
                 <p className="!text-[14px] font-[Play] font-[400] leading-[100%] tracking-[0%] !text-[#FFFFFF]/50">

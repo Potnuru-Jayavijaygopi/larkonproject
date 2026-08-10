@@ -5,7 +5,7 @@ import Email1 from "../../assets/email-1.png";
 import Twitter from "../../assets/twitter.png";
 function Faqs() {
     return (
-        <div className="h-[2010px] w-[1640px] p-[50px]">
+        <div className="h-[2010px] w-[1640px] px-[50px]">
             <div className="w-[1534px] h-[158px] rounded-[12px] bg-[#D9D9D9] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center">
                 <h1 className="!text-[24px] font-[Hanken Grotesk] font-[600] leading-[100%] tracking-[0%] !text-[#FFFFFF]">Frequently Asked Questions</h1>
                 <p className="!text-[14px] font-[Play] font-[400] leading-[100%] tracking-[0%] !text-[#FFFFFF]/50">
@@ -116,7 +116,7 @@ function Faqs() {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="flex flex-col w-[713px] h-[287px]">
                         <p className="w-[58px] h-[21px] text-[16px] font-[Hanken_Grotesk] font-[600] leading-[100%] tracking-[0%] text-[#313B5E]">Support</p>
                         <div className="w-[713px] h-[243px] border border-[#EAEDF1] rounded-[11px] overflow-hidden">

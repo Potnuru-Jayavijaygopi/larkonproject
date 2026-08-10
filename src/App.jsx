@@ -10,16 +10,16 @@ import PrivacyPolicy from "./Pages/Support/PrivacyPolicy";
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <MainLayout />,
+    element: <MainLayout/>,
     children: [
-      { index: true, element: <Dashboard /> },
-      { path: 'dashboard', element: <Dashboard /> },
-      { path: 'calendar', element: <Calendar /> },
+      { index: true, element: <Dashboard/> },
+      { path: 'dashboard', element: <Dashboard/> },
+      { path: 'calendar', element: <Calendar/> },
       { path: 'todo', element: <Todo/> },
       { path: 'help-center', element: <HelpCenter/> },
       { path: 'faqs', element: <Faqs/> },
       { path: 'privacy-policy', element: <PrivacyPolicy/> },
-      { path: '*', element: <Dashboard /> },
+      { path: '*', element: <Dashboard/> },
     ],
   },
   
