@@ -4,19 +4,22 @@ import {
   BsLightbulb,
   BsBag,
   BsBox,
+  BsImage,
   BsCurrencyDollar,
   BsBackpack,
   BsGrid,
-  BsBuilding,
+  BsShop,
   BsGift,
   BsAward,
+  BsLayers,
   BsThreeDotsVertical,
-  BsCheckSquareFill,
-  BsSquare,
+  BsCheckCircleFill,
+  BsCircle,
   BsPersonCircle,
 } from "react-icons/bs";
 import { BiCube } from "react-icons/bi";
 import { TbShoppingBag } from "react-icons/tb";
+import { TbCategory } from "react-icons/tb";
 import barChartImg from "../../assets/Chart (1).png";
 import chartImg from "../../assets/chart.png";
 import doughnutChartImg from "../../assets/doughnut-chart.png";
@@ -85,7 +88,7 @@ function Widgets() {
       <div className="row g-3 mb-4">
         <div className="col-xl-3 col-md-6">
           <div className="card border-0 shadow-sm rounded-3 p-3 overflow-hidden bg-white">
-            <div className="d-flex align-items-center justify-content-between mb-2">
+            <div className="d-flex align-items-center justify-content-between mb-2 ">
               <div
                 className="rounded-3 p-2 d-flex align-items-center justify-content-center"
                 style={{
@@ -108,17 +111,17 @@ function Widgets() {
               </div>
             </div>
 
-            <div className="px-3 py-2 bg-light d-flex justify-content-between align-items-center border-top border-light-subtle">
+            <div className="px-3 py-2 bg-light d-flex justify-content-between align-items-center border-top border-light-subtle mx-n3 mb-n3 rounded-bottom-3 mt-auto w-100">
               <span
                 className="text-success fw-semibold"
                 style={{ fontSize: "0.75rem" }}
               >
                 ▲ 2.3%
-                <span className="text-muted fw-normal">Last Week</span>
+                <span className="text-muted fw-normal ms-1">Last Week</span>
               </span>
               <a
                 href="#more"
-                className="text-muted text-decoration-none"
+                className="text-secondary text-decoration-none fw-semibold"
                 style={{ fontSize: "0.75rem" }}
               >
                 View More
@@ -152,9 +155,9 @@ function Widgets() {
               </div>
             </div>
 
-            <div className="px-3 py-2 bg-light d-flex justify-content-between align-items-center border-top border-light-subtle">
+            <div className="px-3 py-2 bg-light d-flex justify-content-between  border-top border-light-subtle">
               <span
-                className="text-success fw-semibold"
+                className="text-success justify-content-start fw-semibold"
                 style={{ fontSize: "0.75rem" }}
               >
                 ▲ 8.1% <span className="text-muted fw-normal">Last Month</span>
@@ -197,7 +200,7 @@ function Widgets() {
 
             <div className="px-3 py-2 bg-light d-flex justify-content-between align-items-center border-top border-light-subtle">
               <span
-                className=" text-danger fw-semibold"
+                className=" text-danger justify-content-start fw-semibold"
                 style={{ fontSize: "0.75rem" }}
               >
                 ▼ 0.3% <span className="text-muted fw-normal">Last Month</span>
@@ -238,9 +241,9 @@ function Widgets() {
               </div>
             </div>
 
-            <div className="px-3 py-2 bg-light d-flex justify-content-between align-items-center border-top border-light-subtle">
+            <div className="px-3 py-2 bg-light d-flex justify-content-between align-items-center border-top border-light-subtle ">
               <span
-                className=" text-danger fw-semibold"
+                className=" text-danger justify-content-start fw-semibold"
                 style={{ fontSize: "0.75rem" }}
               >
                 ▼ 10.6% <span className="text-muted fw-normal">Last Month</span>
@@ -257,16 +260,16 @@ function Widgets() {
         </div>
       </div>
 
-      <div className="row row-col-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-5 g-3 mb-4">
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-5 g-3 mb-4">
         <div className="col">
-          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white position-relative overflow-hidden h-100">
+          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white position-relative overflow-hidden h-100 text-start">
             <BiCube
-              className="text-teal mb-2"
-              style={{ color: "#0d9488", fontSize: "1.2rem" }}
+              className="text-teal mb-3"
+              style={{ color: "#00c9a7", fontSize: "1.2rem" }}
             />
-            <h5 className="fw-normal text-dark mb-0">$59.6k</h5>
+            <h5 className="fw-normal text-dark mb-1">$59.6k</h5>
             <span
-              className="text-muted small d-block mb-2"
+              className="text-muted small d-block mb-3"
               style={{ fontSize: "0.7rem" }}
             >
               Total Income
@@ -280,55 +283,55 @@ function Widgets() {
             <img
               src={doughnutChartImg}
               alt="Doughnut Chart Icon"
-              className="position-right bottom-0 end-0 opacity-15 ml-4"
-              style={{ width: "32px", height: "32px", objectFit: "contain" }}
+              className="position-absolute bottom-0 end-0 opacity-50 m-0"
+              style={{ width: "45px", height: "45px", objectFit: "contain" }}
             />
           </div>
         </div>
 
         <div className="col">
-          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white position-relative overflow-hidden h-100">
-            <BsGrid
-              className="text-teal mb-2"
-              style={{ color: "#0d9488", fontSize: "1.2rem" }}
+          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white position-relative overflow-hidden h-100 text-start">
+            <TbCategory
+              className="text-teal mb-3"
+              style={{ color: "#22c55e", fontSize: "1.2rem" }}
             />
-            <h5 className="fw-normal text-dark mb-0">$24.03k</h5>
+            <h5 className="fw-normal text-dark mb-1">$24.03k</h5>
             <span
-              className="text-muted small d-block mb-2"
+              className="text-muted small d-block mb-3"
               style={{ fontSize: "0.7rem" }}
             >
-              Total Expensives
+              Total Expenses
             </span>
             <span
-              className="badge bg-success-subtle text-success border border-success-subtle"
+              className="badge bg-danger-subtle text-danger border border-danger-subtle"
               style={{ fontSize: "0.65rem", width: "fit-content" }}
             >
-              ▲ 3.28%
+              ▼ 3.28%
             </span>
             <img
               src={chartAltImg}
               alt="chart Alter Icon"
-              lassName="position-absolute bottom-0 end-0 opacity-25 m-2"
-              style={{ width: "32px", height: "32px", objectFit: "contain" }}
+              className="position-absolute bottom-0 end-0 opacity-50 m-0"
+              style={{ width: "45px", height: "45px", objectFit: "contain" }}
             />
           </div>
         </div>
 
         <div className="col">
-          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white position-relative overflow-hidden h-100">
-            <BsBuilding
-              className="text-teal mb-2"
-              style={{ color: "#0d9488", fontSize: "1.2rem" }}
+          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white position-relative overflow-hidden h-100 text-start">
+            <BsShop
+              className="text-teal mb-3"
+              style={{ color: "#8b5cf6", fontSize: "1.2rem" }}
             />
-            <h5 className="fw-normal text-dark mb-0">$48.7k</h5>
+            <h5 className="fw-normal text-dark mb-1">$48.7k</h5>
             <span
-              className="text-muted small d-block mb-2"
+              className="text-muted small d-block mb-3"
               style={{ fontSize: "0.7rem" }}
             >
               Investments
             </span>
             <span
-              className="badge bg-success-subtle text-success border border-success-subtle"
+              className="badge bg-danger-subtle text-danger border "
               style={{ fontSize: "0.65rem", width: "fit-content" }}
             >
               ▲ 5.69%
@@ -336,27 +339,27 @@ function Widgets() {
             <img
               src={buildingHouseImg}
               alt="building House Icon"
-              lassName="position-absolute bottom-0 end-0 opacity-25 m-2"
-              style={{ width: "32px", height: "32px", objectFit: "contain" }}
+              className="position-absolute bottom-0 end-0 opacity-50 m-0"
+              style={{ width: "45px", height: "45px", objectFit: "contain" }}
             />
           </div>
         </div>
 
         <div className="col">
-          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white position-relative overflow-hidden h-100">
+          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white position-relative overflow-hidden h-100 text-start">
             <BsGift
-              className="text-teal mb-2"
-              style={{ color: "#0d9488", fontSize: "1.2rem" }}
+              className="text-teal mb-3"
+              style={{ color: "#f97316", fontSize: "1.2rem" }}
             />
-            <h5 className="fw-bold text-dark mb-0">$11.3k</h5>
+            <h5 className="fw-normal text-dark mb-1">$11.3k</h5>
             <span
-              className="text-muted small d-block mb-2"
+              className="text-muted small d-block mb-3"
               style={{ fontSize: "0.7rem" }}
             >
               Savings
             </span>
             <span
-              className="badge bg-success-subtle text-success border border-success-subtle"
+              className="badge bg-success-subtle text-success border "
               style={{ fontSize: "0.65rem", width: "fit-content" }}
             >
               ▲ 10.58%
@@ -364,21 +367,21 @@ function Widgets() {
             <img
               src={bowlHotImg}
               alt="bowl Hot Icon"
-              lassName="position-absolute bottom-0 end-0 opacity-25 m-2"
-              style={{ width: "32px", height: "32px", objectFit: "contain" }}
+              className="position-absolute bottom-0 end-0 opacity-50 m-0"
+              style={{ width: "45px", height: "45px", objectFit: "contain" }}
             />
           </div>
         </div>
 
         <div className="col">
-          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white position-relative overflow-hidden h-100">
+          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white position-relative overflow-hidden h-100 text-start">
             <BsAward
-              className="text-teal mb-2"
-              style={{ color: "#0d9488", fontSize: "1.2rem" }}
+              className="text-teal mb-3"
+              style={{ color: "#eab308", fontSize: "1.2rem" }}
             />
-            <h5 className="fw-bold text-dark mb-0">$5.5k</h5>
+            <h5 className="fw-normal text-dark mb-1">$5.5k</h5>
             <span
-              className="text-muted small d-block mb-2"
+              className="text-muted small d-block mb-3"
               style={{ fontSize: "0.7rem" }}
             >
               Profits
@@ -392,8 +395,8 @@ function Widgets() {
             <img
               src={cricketBallImg}
               alt="cricket Ball Icon"
-              lassName="position-absolute bottom-0 end-0 opacity-25 m-2"
-              style={{ width: "32px", height: "32px", objectFit: "contain" }}
+              className="position-absolute bottom-0 end-0 opacity-50 m-0"
+              style={{ width: "45px", height: "45px", objectFit: "contain" }}
             />
           </div>
         </div>
@@ -412,10 +415,10 @@ function Widgets() {
 
               <a
                 href="#export"
-                className="text-muted text-decoration-none small"
-                style={{ fontSize: "0.75rem" }}
+                className="text-decoration-none small"
+                style={{ fontSize: "0.75rem", color: "#f97316" }}
               >
-                Export ↗
+                Export 📤
               </a>
             </div>
 
@@ -424,112 +427,169 @@ function Widgets() {
                 className="table table-borderless align-middle mb-0"
                 style={{ fontSize: "0.78rem" }}
               >
-                <thead className="table-light">
+                <thead className="border-bottom border-light-subtle">
                   <tr
-                    className="text-muted text-uppercase"
+                    className="text-secondary text-muted"
                     style={{ fontSize: "0.68rem" }}
                   >
-                    <td>Project</td>
-                    <td>Client</td>
-                    <td>Team</td>
-                    <td>Deadline</td>
-                    <td>Work Progress</td>
+                    <th>Project</th>
+                    <th>Client</th>
+                    <th>Team</th>
+                    <th>Deadline</th>
+                    <th>Work Progress</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  <tr>
-                    <td className="fw-medium">Zelogy</td>
+                  <tr className="border-bottom border-light-subtle">
+                    <td className="text-muted">Zelogy</td>
                     <td className="text-muted">Daniel Olsen</td>
-                    <td>
+                    <td className="py-3">
                       <div className="d-flex gap-1">
-                        <BsPersonCircle />
-                        <BsPersonCircle />
-                        <BsPersonCircle />
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
                       </div>
                     </td>
                     <td className="text-muted">12 April 2024</td>
                     <td>
                       <div className="progress" style={{ height: "4px" }}>
                         <div
-                          className="progress-bar bg-warning"
-                          style={{ width: "60%" }}
+                          className="progress-bar "
+                          style={{ width: "40%", backgroundColor: "#f97316" }}
                         ></div>
                       </div>
                     </td>
                   </tr>
 
-                  <tr>
-                    <td className="fw-medium">Shiaz</td>
+                  <tr className="border-bottom border-light-subtle">
+                    <td className="text-muted">Shiaz</td>
                     <td className="text-muted">Jack Roldan</td>
-                    <td>
+                    <td className="py-3">
                       <div className="d-flex gap-1">
-                        <BsPersonCircle />
-                        <BsPersonCircle />
-                        <BsPersonCircle />
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
                       </div>
                     </td>
                     <td className="text-muted">10 April 2024</td>
                     <td>
                       <div className="progress" style={{ height: "4px" }}>
                         <div
-                          className="progress-bar bg-success"
-                          style={{ width: "85%" }}
+                          className="progress-bar"
+                          style={{ width: "80%", backgroundColor: "#22c55e" }}
                         ></div>
                       </div>
                     </td>
                   </tr>
 
-                  <tr>
-                    <td className="fw-medium">Holderick</td>
+                  <tr className="border-bottom border-light-subtle">
+                    <td className="text-muted">Holderick</td>
                     <td className="text-muted">Betty Cox</td>
                     <td>
                       <div className="d-flex gap-1">
-                        <BsPersonCircle />
-                        <BsPersonCircle />
-                        <BsPersonCircle />
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
                       </div>
                     </td>
                     <td className="text-muted">31 March 2024</td>
                     <td>
                       <div className="progress" style={{ height: "4px" }}>
                         <div
-                          className="progress-bar bg-success"
-                          style={{ width: "85%" }}
+                          className="progress-bar"
+                          style={{ width: "60%", backgroundColor: "#eab308" }}
                         ></div>
                       </div>
                     </td>
                   </tr>
 
-                  <tr>
-                    <td className="fw-medium">Feyuvx</td>
+                  <tr className="border-bottom border-light-subtle">
+                    <td className="text-muted">Feyuvx</td>
                     <td className="text-muted">Carlos Johnson</td>
-                    <td>
+                    <td className="py-3">
                       <div className="d-flex gap-1">
-                        <BsPersonCircle />
-                        <BsPersonCircle />
-                        <BsPersonCircle />
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
                       </div>
                     </td>
                     <td className="text-muted">25 March 2024</td>
                     <td>
                       <div className="progress" style={{ height: "4px" }}>
                         <div
-                          className="progress-bar bg-success"
-                          style={{ width: "85%" }}
+                          className="progress-bar"
+                          style={{ width: "90%", backgroundColor: "#f97316" }}
                         ></div>
                       </div>
                     </td>
                   </tr>
 
-                  <tr>
-                    <td className="fw-medium">Xavlox</td>
-                    <td className="text-muted">Lorane Cox</td>
-                    <td>
+                  <tr className="border-bottom border-light-subtle">
+                    <td className="text-muted">Xavlox</td>
+                    <td className="text-muted">Lorraine Cox</td>
+                    <td className="py-3">
                       <div className="d-flex gap-1">
-                        <BsPersonCircle />
-                        <BsPersonCircle />
-                        <BsPersonCircle />
+                        <span
+                          className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                          style={{ width: "24px", height: "24px" }}
+                        >
+                          <BsImage style={{ fontSize: "0.65rem" }} />
+                        </span>
                       </div>
                     </td>
                     <td className="text-muted">22 March 2024</td>
@@ -537,7 +597,7 @@ function Widgets() {
                       <div className="progress" style={{ height: "4px" }}>
                         <div
                           className="progress-bar bg-success"
-                          style={{ width: "85%" }}
+                          style={{ width: "45%", backgroundColor: "#f97316" }}
                         ></div>
                       </div>
                     </td>
@@ -553,7 +613,7 @@ function Widgets() {
             <div className="d-flex justify-content-between align-items-center mb-3">
               <h6
                 className="fw-bold text-dark mb-0"
-                style={{ fontSize: "0.875rem" }}
+                style={{ fontSize: "0.875rem", color: "#2f365f" }}
               >
                 Today's Schedules
               </h6>
@@ -564,7 +624,7 @@ function Widgets() {
             </div>
 
             <div
-              className="d-flex flex-column g-3"
+              className="d-flex flex-column gap-3"
               style={{ fontSize: "0.78rem" }}
             >
               <div className="d-flex align-items-start gap-3">
@@ -572,22 +632,22 @@ function Widgets() {
                   className="text-muted fw-semibold pt-1"
                   style={{ width: "45px", fontSize: "0.75rem" }}
                 >
-                  09:00-10:00
+                  09:00
                 </span>
 
                 <div
                   className="p-3 rounded-3 w-100"
-                  style={{ backgroundColor: "#ffefe9" }}
+                  style={{ backgroundColor: "#fde8e0" }}
                 >
                   <div
-                    className="fw-bold text-dark mb-1"
-                    style={{ fontSize: "0.825rem" }}
+                    className="fw-semibold mb-1"
+                    style={{ fontSize: "0.825rem", color: "#9c4629" }}
                   >
                     Setup Github Repository
                   </div>
                   <span
-                    className="text-muted d-block"
-                    style={{ fontSize: "0.725rem" }}
+                    className="d-block"
+                    style={{ fontSize: "0.725rem", color: "#b0684f" }}
                   >
                     09:00 - 10:00
                   </span>
@@ -603,17 +663,17 @@ function Widgets() {
                 </span>
                 <div
                   className="p-3 rounded-3 w-100"
-                  style={{ backgroundColor: "#e6f7ed" }}
+                  style={{ backgroundColor: "#dcf5e7" }}
                 >
                   <div
-                    className="fw-bold text-dark mb-1"
-                    style={{ fontSize: "0.825rem" }}
+                    className="fw-semibold mb-1"
+                    style={{ fontSize: "0.825rem", color: "#1e6b41" }}
                   >
                     Design Review - Larkon Admin
                   </div>
                   <span
-                    className="text-muted d-block"
-                    style={{ fontSize: "0.725rem" }}
+                    className="d-block"
+                    style={{ fontSize: "0.725rem", color: "#1e6b41" }}
                   >
                     10:00 - 10:30
                   </span>
@@ -629,17 +689,17 @@ function Widgets() {
                 </span>
                 <div
                   className="p-3 rounded-3 w-100"
-                  style={{ backgroundColor: "#e6f7ed" }}
+                  style={{ backgroundColor: "#e0f7f5" }}
                 >
                   <div
-                    className="fw-bold text-dark mb-1"
-                    style={{ fontSize: "0.825rem" }}
+                    className=" fw-semibold mb-1"
+                    style={{ fontSize: "0.825rem", color: "#1b7875" }}
                   >
                     Meeting with BD Team
                   </div>
                   <span
-                    className="text-muted d-block"
-                    style={{ fontSize: "0.725rem" }}
+                    className="d-block"
+                    style={{ fontSize: "0.725rem", color: "#1b7875" }}
                   >
                     11:00 - 12:30
                   </span>
@@ -655,17 +715,17 @@ function Widgets() {
                 </span>
                 <div
                   className="p-3 rounded-3 w-100"
-                  style={{ backgroundColor: "#e6f7ed" }}
+                  style={{ backgroundColor: "#fef0cb" }}
                 >
                   <div
-                    className="fw-bold text-dark mb-1"
-                    style={{ fontSize: "0.825rem" }}
+                    className="fw-semibold mb-1"
+                    style={{ fontSize: "0.825rem", color: "#8c651e" }}
                   >
                     Meeting with Design Studio
                   </div>
                   <span
-                    className="text-muted d-block"
-                    style={{ fontSize: "0.725rem" }}
+                    className="d-block"
+                    style={{ fontSize: "0.725rem", color: "#8c651e" }}
                   >
                     1:00-2:00
                   </span>
@@ -676,9 +736,20 @@ function Widgets() {
         </div>
       </div>
 
-      <div className="row gap-3 mb-4">
-        <div className="col-xl-3 col-md-6">
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
+        <div className="col">
           <div className="card border-0 shadow-sm rounded-3 p-3 bg-white d-flex flex-row align-items-center justify-content-between">
+            <div
+              className="rounded-3 p-2 d-flex align-items-center justify-content-center flex-shrink-0"
+              style={{
+                backgroundColor: "#ff6838",
+                color: "#ffffff",
+                width: "48px",
+                height: "48px",
+              }}
+            >
+              <BsLayers style={{ fontSize: "1.3rem" }} />
+            </div>
             <div>
               <span
                 className="text-muted small d-block"
@@ -686,25 +757,25 @@ function Widgets() {
               >
                 Campagin Sent
               </span>
-              <h4 className="fw-bold text-dark mb-0">13,647</h4>
-            </div>
-
-            <div
-              className="rounded-3 p-2 d-flex align-items-center justify-content-center"
-              style={{
-                backgroundColor: "#ffede7",
-                color: "#ff5e29",
-                width: "40px",
-                height: "40px",
-              }}
-            >
-              <BsBagCheck style={{ fontSize: "1.2rem" }} />
+              <h4 className="text-normal text-dark mb-0">13,647</h4>
             </div>
           </div>
         </div>
 
-        <div className="col-xl-3 col-md-6">
+        <div className="col">
           <div className="card border-0 shadow-sm rounded-3 p-3 bg-white d-flex flex-row align-items-center justify-content-between">
+            <div
+              className="rounded-3 p-2 d-flex align-items-center justify-content-center flex-shrink-0"
+              style={{
+                backgroundColor: "#22c55e",
+                color: "#ffffff",
+                width: "48px",
+                height: "48px",
+              }}
+            >
+              <BsAward style={{ fontSize: "1.3rem" }} />
+            </div>
+
             <div>
               <span
                 className="text-muted small d-block"
@@ -712,25 +783,24 @@ function Widgets() {
               >
                 New Leads
               </span>
-              <h4 className="fw-bold text-dark mb-0">9,526</h4>
-            </div>
-
-            <div
-              className="rounded-3 p-2 d-flex align-items-center justify-content-center"
-              style={{
-                backgroundColor: "#dcfce7",
-                color: "#22c55e",
-                width: "40px",
-                height: "40px",
-              }}
-            >
-              <BsLightbulb style={{ fontSize: "1.2rem" }} />
+              <h4 className="text-normal text-dark mb-0">9,526</h4>
             </div>
           </div>
         </div>
 
-        <div className="col-xl-3 col-md-6">
+        <div className="col">
           <div className="card border-0 shadow-sm rounded-3 p-3 bg-white d-flex flex-row align-items-center justify-content-between">
+            <div
+              className="rounded-3 p-2 d-flex align-items-center justify-content-center flex-shrink-0"
+              style={{
+                backgroundColor: "#f85151",
+                color: "#ffffff",
+                width: "48px",
+                height: "48px",
+              }}
+            >
+              <BsBag style={{ fontSize: "1.3rem" }} />
+            </div>
             <div>
               <span
                 className="text-muted small d-block"
@@ -738,25 +808,24 @@ function Widgets() {
               >
                 Deals
               </span>
-              <h4 className="fw-bold text-dark mb-0">976</h4>
-            </div>
-
-            <div
-              className="rounded-3 p-2 d-flex align-items-center justify-content-center"
-              style={{
-                backgroundColor: "#fee2e2",
-                color: "#ef4444",
-                width: "40px",
-                height: "40px",
-              }}
-            >
-              <BsBox style={{ fontSize: "1.2rem" }} />
+              <h4 className="text-normal text-dark mb-0">976</h4>
             </div>
           </div>
         </div>
 
-        <div className="col-xl-3 col-md-6">
+        <div className="col">
           <div className="card border-0 shadow-sm rounded-3 p-3 bg-white d-flex flex-row align-items-center justify-content-between">
+            <div
+              className="rounded-3 p-2 d-flex align-items-center justify-content-center flex-shrink-0"
+              style={{
+                backgroundColor: "#f59e0b",
+                color: "#ffffff",
+                width: "48px",
+                height: "48px",
+              }}
+            >
+              <BsCurrencyDollar style={{ fontSize: "1.3rem" }} />
+            </div>
             <div>
               <span
                 className="text-muted small d-block"
@@ -764,19 +833,7 @@ function Widgets() {
               >
                 Booked Revenue
               </span>
-              <h4 className="fw-bold text-dark mb-0">$123</h4>
-            </div>
-
-            <div
-              className="rounded-3 p-2 d-flex align-items-center justify-content-center"
-              style={{
-                backgroundColor: "#fef9c3",
-                color: "#eab308",
-                width: "40px",
-                height: "40px",
-              }}
-            >
-              <BsCurrencyDollar style={{ fontSize: "1.2rem" }} />
+              <h4 className="text-normal text-dark mb-0">$123</h4>
             </div>
           </div>
         </div>
@@ -836,7 +893,7 @@ function Widgets() {
                 >
                   Last Week
                 </span>
-                <h5 className="fw-bold text-dark mb-0">41.05k</h5>
+                <h5 className="text-normal text-dark mb-0">41.05k</h5>
               </div>
             </div>
 
@@ -853,13 +910,13 @@ function Widgets() {
           <div className="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 ">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <h6
-                className="fw-bold text-dark mb-0"
+                className="text-normal text-dark mb-0"
                 style={{ fontSize: "0.875rem" }}
               >
                 Performance
               </h6>
               <div className="btn-group btn-group-sm">
-                <div className="btn btn-light-active">ALL</div>
+                <div className="btn btn-light">ALL</div>
                 <div className="btn btn-light">1M</div>
                 <div className="btn btn-light">6M</div>
                 <div className="btn btn-light">1Y</div>
@@ -902,7 +959,7 @@ function Widgets() {
                   height: "40px",
                 }}
               >
-                <BsBagCheck style={{ fontSize: "1.2rem" }} />
+                <BsLayers style={{ fontSize: "1.2rem" }} />
               </div>
               <div className="text-end">
                 <span
@@ -911,7 +968,7 @@ function Widgets() {
                 >
                   Campaign Sent
                 </span>
-                <h4 className="fw-bold text-dark mb-0">13,647</h4>
+                <h4 className="text-normal text-dark mb-0">13,647</h4>
               </div>
             </div>
 
@@ -945,7 +1002,7 @@ function Widgets() {
                   height: "40px",
                 }}
               >
-                <BsLightbulb style={{ fontSize: "1.2rem" }} />
+                <BsAward style={{ fontSize: "1.2rem" }} />
               </div>
               <div className="text-end">
                 <span
@@ -954,7 +1011,7 @@ function Widgets() {
                 >
                   New Leads
                 </span>
-                <h4 className="fw-bold text-dark mb-0">9,526</h4>
+                <h4 className="text-normal text-dark mb-0">9,526</h4>
               </div>
             </div>
 
@@ -988,7 +1045,7 @@ function Widgets() {
                   height: "40px",
                 }}
               >
-                <BsBox style={{ fontSize: "1.2rem" }} />
+                <BsBackpack style={{ fontSize: "1.2rem" }} />
               </div>
               <div className="text-end">
                 <span
@@ -997,13 +1054,13 @@ function Widgets() {
                 >
                   Deals
                 </span>
-                <h4 className="fw-bold text-dark mb-0">976</h4>
+                <h4 className="text-normal text-dark mb-0">976</h4>
               </div>
             </div>
 
             <div className="d-flex justify-content-between align-items-center pt-2 border-top border-light">
               <span
-                className="text-success fw-semibold"
+                className="text-danger fw-semibold"
                 style={{ fontSize: "0.75rem" }}
               >
                 ▲ 0.3% <span className="text-muted fw-normal">Last Month</span>
@@ -1025,7 +1082,7 @@ function Widgets() {
               <div
                 className="rounded-3 p-2 d-flex align-items-center justify-content-center"
                 style={{
-                  backgroundColor: "fef9c3",
+                  backgroundColor: "#fef9c3",
                   color: "#eab308",
                   width: "40px",
                   height: "40px",
@@ -1046,7 +1103,7 @@ function Widgets() {
 
             <div className="d-flex justify-content-between align-items-center pt-2 border-top border-light">
               <span
-                className="text-success fw-semibold"
+                className="text-danger fw-semibold"
                 style={{ fontSize: "0.75rem" }}
               >
                 ▲ 10.6% <span className="text-muted fw-normal">Last Month</span>
@@ -1064,9 +1121,9 @@ function Widgets() {
       </div>
 
       <div className="row g-3 mb-4">
-        <div calssName="col-xl-4 col-md-6">
-          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white h-100">
-            <div className="d-flex justify-content-between align-items-center mb-3">
+        <div className="col-xl-4 col-lg-4 col-md-6">
+          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 d-flex flex-column">
+            <div className="d-flex justify-content-between align-items-center mb-3 py-2 border-bottom border-light-subtle">
               <h6
                 className="fw-bold text-dark mb-0"
                 style={{ fontSize: "0.875rem" }}
@@ -1082,24 +1139,24 @@ function Widgets() {
             </div>
 
             <div
-              className="d-flex flex-column gap-2"
+              className="d-flex flex-column justify-content-between flex-grow-1 gap-2"
               style={{ fontSize: "0.78rem" }}
             >
               {tasks.map((task) => (
                 <div
                   key={task.id}
-                  className="d-flex align-items-center gap-2 cursor-pointer"
+                  className="d-flex align-items-start py-1 gap-2 cursor-pointer"
                   onClick={() => toggleTask(task.id)}
                 >
                   {task.completed ? (
-                    <BsCheckSquareFill
-                      className="text-danger"
+                    <BsCheckCircleFill
+                      className="text-danger mt-1 flex-shrink-0"
                       style={{ fontSize: "0.9rem", color: "#ff5e29" }}
                     />
                   ) : (
-                    <BsSquare
-                      className="text-muted"
-                      style={{ fontSize: "0.9rem" }}
+                    <BsCircle
+                      className="text-muted mt-1 flex-shrink-0"
+                      style={{ fontSize: "0.9rem", lineHeight: "1.3" }}
                     />
                   )}
                   <span
@@ -1118,22 +1175,18 @@ function Widgets() {
         </div>
 
         <div className="col-xl-4 col-md-6">
-          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white h-100">
-            <div className="d-flex justify-content-between align-items-center mb-3">
+          <div className="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 d-flex flex-column">
+            <div className="d-flex justify-content-between pb-2 border-bottom border-light-subtle align-items-center mb-3">
               <h6
                 className="fw-bold text-dark mb-0"
                 style={{ fontSize: "0.875rem" }}
               >
                 Friends Request (10)
               </h6>
-              <BsThreeDotsVertical
-                className="text-muted"
-                style={{ cursor: "pointer" }}
-              />
             </div>
 
             <div
-              className="d-flex flex-column gap-3"
+              className="d-flex flex-column justify-content-between flex-grow-1 my-1"
               style={{ fontSize: "0.78rem" }}
             >
               {[
@@ -1149,16 +1202,19 @@ function Widgets() {
                   className="d-flex align-items-center justify-content-between"
                 >
                   <div className="d-flex align-items-center gap-2">
-                    <BsPersonCircle
-                      style={{ fontSize: "1.8rem", color: "#94a3b8" }}
-                    />
+                    <span
+                      className="rounded-circle bg-secondary-subtle d-inline-flex align-items-center justify-content-center"
+                      style={{ width: "32px", height: "32px" }}
+                    >
+                      <BsImage style={{ fontSize: "0.65rem" }} />
+                    </span>
                     <div>
-                      <div className="fw-bold text-dark">{friend.name}</div>
+                      <div className="fw-semibold text-dark">{friend.name}</div>
                       <span className="text-muted small">{friend.mutual}</span>
                     </div>
                   </div>
                   <BsThreeDotsVertical
-                    className="text-muted"
+                    className="text-muted pb-2 border-bottom border-light-subtle"
                     style={{ cursor: "pointer" }}
                   />
                 </div>
@@ -1184,7 +1240,7 @@ function Widgets() {
             </div>
             <div className="table-responsive">
               <table
-                className="table table-borderless align-middle mb-0"
+                className="table table-borderless text-muted align-middle mb-0"
                 style={{ fontSize: "0.75rem" }}
               >
                 <tbody>
@@ -1246,10 +1302,12 @@ function Widgets() {
                       isCr: true,
                     },
                   ].map((tx, idx) => (
-                    <tr key={idx}>
-                      <td className="text-muted">{tx.date}</td>
-                      <td className="fw-bold text-dark">{tx.amount}</td>
-                      <td>
+                    <tr key={idx} className="border-bottom border-light-subtle">
+                      <td className="text-muted text-nowrap py-3">{tx.date}</td>
+                      <td className="fw-semibold text-secondary py-3">
+                        {tx.amount}
+                      </td>
+                      <td className="py-3">
                         <span
                           className={`badge ${tx.isCr ? "bg-success" : "bg-danger"}`}
                           style={{ fontSize: "0.65rem" }}
@@ -1257,7 +1315,9 @@ function Widgets() {
                           {tx.type}
                         </span>
                       </td>
-                      <td className="text-muted text-end">{tx.category}</td>
+                      <td className="text-secondary text-start py-3">
+                        {tx.category}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
