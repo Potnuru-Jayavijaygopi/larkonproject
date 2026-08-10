@@ -21,9 +21,9 @@ function Pagination(){
             <p className="text-muted small mb-3" style={{fontSize: '0.78rem'}}>
               Use the button classes on an <code>&lt;a&gt;</code>, <code>&lt;button&gt</code> or <code>&lt;input&gt;</code> element.
             </p>
-            <div className="d-flex-column gap-3">
+            <div className="d-flex flex-column gap-3">
               <nav aria-label="Page navigation example">
-                <ul className="pagination mb-0 gap-1" style={{fontSize:'0.825rem'}}>
+                <ul className="pagination mb-0 gap-2" style={{fontSize:'0.825rem'}}>
                   <li className={`page-item ${page1 === 1 ? 'disabled' : ''}`}>
                     <button className="page-item-btn btn border-light-subtle text-secondary px-3 py-1.5" onClick={() => setPage1((p) => Math.max(1, p - 1))}>
                       Previous
@@ -32,7 +32,7 @@ function Pagination(){
                   {[1,2, 3].map((num) =>(
                     <li key={num} className="page-item">
                       <button
-                      className={`btn ${page1 === num ? 'text-white' : 'text-secondary border-light-subtle'} px-3 py-1.5`}
+                      className={`btn ${page1 === num ? 'text-white' : 'text-secondary border-light-subtle'} px-2 py-1.5`}
                       style={{backgroundColor: page1 === num ? '#ff5e29' : 'transparent', borderRadius: '0.25rem'}}
                       onClick={() => setPage1(num)}
                       >
@@ -47,11 +47,11 @@ function Pagination(){
                   </li>
                 </ul>
               </nav>
-              <nav aria-label="Page navigation example with icons">
+              <nav aria-label="Page navigation example with icons"className="mt-2">
                 <ul className="pagination mb-0 gap-1" style={{fontSize:'0.825rem'}}>
                   <li className="page-item">
-                    <button className="btn border-light-subtle text-secondary px-2.5 py-1.5" onClick={() => setPage2((p) => Math.max(1, p - 1))}>
-                      <BsChevronLeft style={{fontSize: '0.75rem'}}/>
+                    <button className="btn border-light-subtle text-secondary px-2.5 py-1" onClick={() => setPage2((p) => Math.max(1, p - 1))}>
+                      <BsChevronLeft style={{fontSize: '0.7rem'}}/>
                     </button>
                   </li>
                   {[1, 2, 3].map((num)=>(
@@ -66,8 +66,8 @@ function Pagination(){
                     </li>
                   ))}
                   <li className="page-item">
-                    <button className="btn border-light-subtle text-secondary px-2.5 py-1.5" onClick={() => setPage2((p) => Math.min(3, p + 1))}>
-                      <BsChevronRight style={{fontSize: '0.75rem'}}/>
+                    <button className="btn border-light-subtle text-secondary px-2 py-1" onClick={() => setPage2((p) => Math.min(3, p + 1))}>
+                      <BsChevronRight style={{fontSize: '0.7rem'}}/>
                     </button>
                   </li>
                 </ul>
@@ -82,9 +82,9 @@ function Pagination(){
             </p>
             <div className="d-flex-column gap-3">
               <nav aria-label=" Rounded Page navigation">
-                <ul className="pagination mb-0 gap-1" style={{fontSize:'0.825rem'}}>
+                <ul className="pagination mb-0 gap-2" style={{fontSize:'0.825rem'}}>
                   <li className="page-item">
-                    <button className="btn rounded-pill btn border-light-subtle text-secondary px-3 py-1.5" onClick={() => setRoundedPage1((p) => Math.max(1, p - 1))}>
+                    <button className="btn rounded-pill btn border-light-subtle text-secondary px-2 py-1.5" onClick={() => setRoundedPage1((p) => Math.max(1, p - 1))}>
                       Previous
                     </button>
                   </li>
@@ -92,7 +92,7 @@ function Pagination(){
                     <li key={num} className="page-item">
                       <button
                       className={`btn rounded-circle ${roundedpage1 === num ? 'text-white' : 'text-secondary border-light-subtle'} d-flex align-items-center justify-content-center`}
-                      style={{ width: '32px', height: '32px',backgroundColor: roundedpage1 === num ? '#ff5e29' : 'transparent' }}
+                      style={{ width: '30px', height: '30px',backgroundColor: roundedpage1 === num ? '#ff5e29' : 'transparent' }}
                       onClick={() => setRoundedPage1(num)}
                       >
                         {num}
@@ -100,16 +100,16 @@ function Pagination(){
                     </li>
                   ))}
                   <li className={"page-item"}>
-                    <button className="btn rounded-pill border-light-subtle text-secondary px-3 py-1.5" onClick={() => setRoundedPage1((p) => Math.min(3, p+1))}>
+                    <button className="btn rounded-pill border-light-subtle text-secondary px-2 py-1.5" onClick={() => setRoundedPage1((p) => Math.min(3, p+1))}>
                       Next
                     </button>
                   </li>
                 </ul>
               </nav>
-              <nav aria-label=" Rounded icon Page navigation">
-                <ul className="pagination mb-0 gap-2" style={{fontSize:'0.825rem'}}>
+              <nav aria-label=" Rounded icon Page navigation"className="mt-2">
+                <ul className="pagination mb-0 gap-1" style={{fontSize:'0.825rem'}}>
                   <li className="page-item">
-                    <button className="btn rounded-circle border-light-subtle text-secondary d-flex align-items-center justify-content-center" style={{ width: '32px', height: '32px' }}onClick={() => setRoundedPage2((p) => Math.max(1, p - 1))}>
+                    <button className="btn rounded-circle border-light-subtle text-secondary d-flex align-items-center justify-content-center" style={{ width: '30px', height: '30px' }}onClick={() => setRoundedPage2((p) => Math.max(1, p - 1))}>
                       <BsChevronLeft style={{fontSize: '0.75rem'}}/>
                     </button>
                   </li>
@@ -125,7 +125,7 @@ function Pagination(){
                     </li>
                   ))}
                   <li className="page-item">
-                    <button className="btn rounded-circle border-light-subtle text-secondary d-flex align-items-center justify-content-center" style={{width:'32px',height:'32px'}}onClick={() => setRoundedPage2((p) => Math.min(3, p + 1))}>
+                    <button className="btn rounded-circle border-light-subtle text-secondary d-flex align-items-center justify-content-center" style={{width:'30px',height:'30px'}}onClick={() => setRoundedPage2((p) => Math.min(3, p + 1))}>
                       <BsChevronRight style={{fontSize: '0.75rem'}}/>
                     </button>
                   </li>
@@ -139,7 +139,7 @@ function Pagination(){
             <p className="text-muted small mb-3" style={{fontSize: '0.78rem'}}>
                Change the alignment of pagination components with flexibox utilities.
             </p>
-            <div className="d-flex-column gap-3">
+            <div className="d-flex flex-column gap-4">
               <nav aria-label="Center aligned pagination">
                 <ul className="pagination justify-content-center mb-0 gap-1" style={{fontSize:'0.825rem'}}>
                   <li className="page-item">
@@ -198,14 +198,14 @@ function Pagination(){
             <p className="text-muted small mb-3" style={{fontSize: '0.78rem'}}>
                Add <code>.pagination-lg</code> or <code>.pagination-sm</code> for additional sizes.
             </p>
-            <div className="d-flex-column gap-3">
+            <div className="d-flex flex-column gap-1">
               <nav aria-label="Large pagination">
                 <ul className="pagination pagination-lg  mb-0 gap-1">
                   
                   {[1,2, 3].map((num) =>(
                     <li key={num} className="page-item">
                       <button
-                      className={`btn ${sizeLg === num ? 'text-white' : 'text-secondary border-light-subtle'} px-4 py-2 fs-5`}
+                      className={`btn ${sizeLg === num ? 'text-white' : 'text-secondary border-light-subtle'} px-3 py-2 fs-5`}
                       style={{backgroundColor: sizeLg === num ? '#ff5e29' : 'transparent', borderRadius: '0.375rem'}}
                       onClick={() => setSizeLg(num)}
                       >
@@ -217,8 +217,8 @@ function Pagination(){
               </nav>
 
 
-              <nav aria-label=" Default pagination">
-                <ul className="pagination mb-0 gap-1" style={{fontSize:'0.825rem'}}>
+              <nav aria-label=" Default pagination"className="mt-2">
+                <ul className="pagination mb-0 gap-2" style={{fontSize:'0.825rem'}}>
                   
                   {[1, 2, 3].map((num)=>(
                     <li key={num} className="page-item">
@@ -234,13 +234,13 @@ function Pagination(){
                 </ul>
               </nav>
 
-               <nav aria-label=" Small pagination">
-                <ul className="pagination pagination-sm mb-0 gap-1" style={{fontSize:'0.75rem'}}>
+               <nav aria-label=" Small pagination"className="mt-3">
+                <ul className="pagination pagination-sm mb-0 gap-2" style={{fontSize:'0.75rem'}}>
                   
                   {[1, 2, 3].map((num)=>(
                     <li key={num} className="page-item">
                       <button
-                      className={`btn ${sizeSm === num ? 'text-white' : 'text-secondary border-light-subtle'} px-2.5 py-1`}
+                      className={`btn ${sizeSm === num ? 'text-white' : 'text-secondary border-light-subtle'} px-2 py-1`}
                       style={{backgroundColor:sizeSm === num ? '#ff5e29' : 'transparent', borderRadius: '0.25rem'}}
                       onClick={() => setSizeSm(num)}
                       >
@@ -256,7 +256,7 @@ function Pagination(){
 
         <div className="col-xl-3 col-lg-4">
           <div className="card border-0 shadow-sm rounded-3 p-3 bg-white sticky-top" style={{top:'80px', zIndex: 10}}>
-            <div className="d-flex flex-column gap-2" style={{fontSize: '0.8re'}}>
+            <div className="d-flex flex-column gap-2" style={{fontSize: '0.8rem'}}>
               <a href="#default-buttons" className="text-decoration-none text-secondary py-1">Default Buttons</a>
               <a href="#rounded-pagination" className="text-decoration-none text-secondary py-1">Rounded Pagination</a>
               <a href="#alignment" className="text-decoration-none text-secondary py-1">Alignment</a>

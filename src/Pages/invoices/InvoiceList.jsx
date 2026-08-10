@@ -48,7 +48,7 @@ function InvoiceList({onNavigate}){
     },
     {
       invoiceId:'#INV8473',
-      billingName:'Sarah M.Brooks',
+      billingName:'Sarah M. Brooks',
       orderDate:'22 May,2023',
       total:'$421',
       paymentMethod:'Visa',
@@ -56,7 +56,7 @@ function InvoiceList({onNavigate}){
     },
     {
       invoiceId:'#INV2150',
-      billingName:'Joe K.Hall',
+      billingName:'Joe K. Hall',
       orderDate:'15 Mar,2023',
       total:'$251',
       paymentMethod:'Paypal',
@@ -132,7 +132,7 @@ const renderStatusBadge =(status) => {
   }else{
     return(
       <span className="badge bg-warning  px-2 py-1" style={{fontSize: '0.7rem',color:'#b45309'}}>
-        pending
+        Pending
       </span>
     );
   }
@@ -202,10 +202,10 @@ return(
   </div>
   <div className="content-card p-3 mb-4">
     <div className="d-flex justify-content-between align-items-center mb-3">
-      <h6 className="fw-bold text-dark mb-0">All Invoices LIst</h6>
+      <h6 className="fw-bold text-dark mb-0">All Invoices List</h6>
       <select className="form-select form-select-sm" style={{width:'auto',fontSize:'0.8rem'}}>
         <option value="this-month">This Month</option>
-        <option value="last-momth">Last Month</option>
+        <option value="last-month">Last Month</option>
         <option value="this-year">This Year</option>
       </select>
     </div>
@@ -272,7 +272,7 @@ return(
               <button
               className="action-btn"
               type="button"
-              title="View Detail"
+              title="View Details"
               onClick={handleViewInvoice}
             >
               <BsEye/>

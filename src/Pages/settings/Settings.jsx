@@ -34,7 +34,7 @@ function Settings({ onNavigate}) {
   const[weightClass,setWeightClass] = useState('Kilogram');
 
 
-  const[categotyProductCount,setCategoryProductCount] = useState('yes');
+  const[categoryProductCount,setCategoryProductCount] = useState('yes');
   const[defaultItemsPerPage,setDefaultItemsPerPage] = useState('000');
 
   const[allowReviews,setAllowReviews] = useState('yes');
@@ -183,7 +183,7 @@ function Settings({ onNavigate}) {
 
             <div className="row g-3 mb-3">
               <div className="col-md-6">
-                 <label htmlFor="ownerPhoneInput" className="form-label text-muted small" style={{fontSize: '0.75rem'}}>Owner Phone number</label>
+                 <label htmlFor="ownerPhoneInput" className="form-label text-muted small" style={{fontSize: '0.75rem'}}>Owner Phone Number</label>
                  <input
                  id="ownerPhoneInput"
                  className="form-control form-control-sm"
@@ -310,7 +310,7 @@ function Settings({ onNavigate}) {
                  value={currency}
                  onChange={(e) => setCurrency(e.target.value)}
                  >
-                  <option value="Us Dollar">Us Dollar</option>
+                  <option value="US Dollar">US Dollar</option>
                  </select>
 
               </div>
@@ -362,7 +362,7 @@ function Settings({ onNavigate}) {
                   type="radio"
                   name="catCountRadio"
                   id="catCountYes"
-                  checked={categotyProductCount === 'yes'}
+                  checked={categoryProductCount === 'yes'}
                   onChange={() => setCategoryProductCount('yes')}
                   />
 
@@ -375,7 +375,7 @@ function Settings({ onNavigate}) {
                   type="radio"
                   name="catCountRadio"
                   id="catCountNo"
-                  checked={categotyProductCount === 'no'}
+                  checked={categoryProductCount === 'no'}
                   onChange={() => setCategoryProductCount('no')}
                   />
 
@@ -389,7 +389,7 @@ function Settings({ onNavigate}) {
                  <input
                  id="defaultItemsInput"
                  type="text"
-                 className="form-controlo form-control-sm"
+                 className="form-control form-control-sm"
                  placeholder="000"
                  style={{fontSize: '0.78rem'}}
                  value={defaultItemsPerPage}
@@ -437,9 +437,9 @@ function Settings({ onNavigate}) {
                   </div>
                 </div>
               </div>
-              <div>
+              
 
-              </div>
+              
               <label className="form-label text-muted small d-block mb-1" style={{fontSize: '0.75rem'}}>Allow Guest Reviews</label>
               <div className="d-flex gap-3" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
@@ -579,7 +579,7 @@ function Settings({ onNavigate}) {
                   onChange={() => setCustomersOnline('yes')}
                   />
 
-                  <label className="form-check-label text-dark" htmlFor="cOlineYes">Yes</label>
+                  <label className="form-check-label text-dark" htmlFor="cOnlineYes">Yes</label>
                   </div>
 
                   <div className="form-check">
@@ -592,14 +592,14 @@ function Settings({ onNavigate}) {
                   onChange={() => setCustomersOnline('no')}
                   />
 
-                  <label className="form-check-label text-dark" htmlFor="cOlineNo">No</label>
+                  <label className="form-check-label text-dark" htmlFor="cOnlineNo">No</label>
                   </div>
                 </div>
               </div>
 
-            <div className="col-md-2 col-sm-4">
+              <div className="col-md-2 col-sm-4">
                 <label className="form-label text-muted small d-block mb-1" style={{fontSize: '0.75rem'}}>Customers Activity</label>
-              <div className="d-flex gap-2" style={{fontSize: '0.78rem'}}>
+               <div className="d-flex gap-2" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
                   <input
                   className="form-check-input"
@@ -624,19 +624,19 @@ function Settings({ onNavigate}) {
                   />
 
                   <label className="form-check-label text-dark" htmlFor="cActNo">No</label>
-                  </div>
+                </div>
                 </div>
               </div>
 
-              <div className="col-md-2 col-sm-4">
+             <div className="col-md-2 col-sm-4">
                 <label className="form-label text-muted small d-block mb-1" style={{fontSize: '0.75rem'}}>Customers Searches</label>
-              <div className="d-flex gap-2" style={{fontSize: '0.78rem'}}>
+               <div className="d-flex gap-2" style={{fontSize: '0.78rem'}}>
                 <div className="form-check">
                   <input
                   className="form-check-input"
                   type="radio"
                   name="cSearch"
-                  id="cSerachYes"
+                  id="cSearchYes"
                   checked={customerSearches=== 'yes'}
                   onChange={() => setCustomerSearches('yes')}
                   />
@@ -655,8 +655,8 @@ function Settings({ onNavigate}) {
                   />
 
                   <label className="form-check-label text-dark" htmlFor="cSearchNo">No</label>
-                  </div>
                 </div>
+              </div>
             </div>
 
             <div className="col-md-2 col-sm-4">
@@ -717,35 +717,35 @@ function Settings({ onNavigate}) {
                   />
 
                   <label className="form-check-label text-dark" htmlFor="loginPriceNo">No</label>
-                  </div>
                 </div>
-            </div>
-            </div>
-
-            <div className="row">
-  <div className="col-md-6">
-    <label
-      htmlFor="maxAttemptsInput"
-      className="form-label text-muted small"
-      style={{ fontSize: "0.75rem" }}
-    >
-      Max Login Attempts
-    </label>
-
-    <input
-      id="maxAttemptsInput"
-      type="text"
-      className="form-control form-control-sm"
-      style={{ fontSize: "0.78rem" }}
-      value={maxLoginAttempts}
-      onChange={(e) => setMaxLoginAttempts(e.target.value)}
-    />
-  </div>
-</div>
               </div>
             </div>
+          </div>
 
-            <div className="d-flex justify-content-end gap-2 mb-4">
+          <div className="row">
+            <div className="col-md-6">
+              <label
+             htmlFor="maxAttemptsInput"
+             className="form-label text-muted small"
+             style={{ fontSize: "0.75rem" }}
+              >
+               Max Login Attempts
+               </label>
+
+              <input
+              id="maxAttemptsInput"
+              type="text"
+               className="form-control form-control-sm"
+               style={{ fontSize: "0.78rem" }}
+               value={maxLoginAttempts}
+               onChange={(e) => setMaxLoginAttempts(e.target.value)}
+              />
+            </div>
+         </div>
+        </div>
+      </div>
+
+           <div className="d-flex justify-content-end gap-2 mb-4">
               <button
               className="btn btn-danger btn-sm px-4 py-1"
               type="button"
@@ -761,7 +761,7 @@ function Settings({ onNavigate}) {
               style={{fontSize: '0.8rem', backgroundColor: '#10b981'}}
               
               >
-                Save Change
+                Save Changes
               </button>
             </div>
           </form>

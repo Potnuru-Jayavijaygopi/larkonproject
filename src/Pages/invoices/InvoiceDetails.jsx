@@ -1,5 +1,7 @@
 import Sidebar from '../../Components/Sidebar';
-import checkBadge from "../../assets/image.png";
+import tick from "../../assets/tick.png";
+
+
 
 
 import {
@@ -41,10 +43,25 @@ function InvoiceDetails({onNavigate}) {
                 </div>
                 <div className="col-sm-6 text-start ps-3">
                   <div className="text-muted small" style={{fontSize:'0.78rem',lineHeight:'1.6'}}>
-                    <div><strong className="text-dark d-inline-block"style={{width: "87px"}}>Invoice :</strong><span className="text-nowrap">#INV-0758267/90</span></div>
-                    <div><strong className="text-dark d-inline-block" style={{width: "90px"}}>Issue Date :</strong><span>23 April 2024</span></div>
-                    <div><strong className="text-dark d-inline-block" style={{width: "90px"}}>Due date :</strong><span>26 April 2024</span></div>
-                    <div><strong className="text-dark d-inline-block" style={{width: "90px"}}>Amount :</strong><span>$737.00</span></div>
+                    <div>
+                      <strong className="text-dark me-3">Invoice :</strong>
+                      <span>#INV-0758267/90</span>
+                   </div>
+
+                   <div>
+                     <strong className="text-dark me-3">Issue Date :</strong>
+                     <span>23 April 2024</span>
+                   </div>
+
+                   <div>
+                     <strong className="text-dark me-3">Due Date :</strong>
+                     <span>26 April 2024</span>
+                  </div>
+
+                        <div>
+                           <strong className="text-dark me-3">Amount :</strong>
+                            <span>$737.00</span>
+                         </div>
                     <div className="mt-1">
                       <strong className="text-dark me-3">Status :</strong>{''}
                       <span className="badge bg-success px-2 py-1" style={{fontSize: '0.68rem', backgroundColor: '#10b981'}}>
@@ -53,19 +70,34 @@ function InvoiceDetails({onNavigate}) {
                     </div>
                   </div>
                 </div>
+                <div
+                 className="position-absolute top-100 start-50 translate-middle d-flex align-items-center justify-content-center"
+                  style={{
+                       width: "55px",
+                       height: "55px",
+                       borderRadius: "50%",
+                      backgroundColor: "#e5e5e5",
+                      zIndex: 10,
+                        }}
+                         >
+                       <img
+                        src={tick}
+                        alt="Paid"
+                        style={{
+                        width: "50px",
+                       height: "50px",
+                       objectFit: "contain",
+                       }}
+                     />
+                  </div>
               </div>
-              <div
-              className="position-absolute top-100 start-50 translate-middle "
-              style={{zIndex: 10}}
-              >
-                <img src={checkBadge} alt="Paid"style={{ width: "55px",height: "55px",objectFit: "contain",display: "block",}}/>
-              </div>
+              
             </div>
             <div className="p-4 pt-5">
               <div className="row g-4 mb-4">
                <div  className="col-sm-6">
               <h6 className="fw-bold text-dark mb-2" style={{ fontSize: '0.825rem'}}>Issue From :</h6>
-              <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '0.875rem'}}>Larok Admin.INC </h6>
+              <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '0.875rem'}}>Larokn Admin.INC </h6>
               <p className="text-muted small mb-0" style={{fontSize:'0.75rem',lineHeight:'1.5'}}>
                 2437 Romano Street Cambridge, MA 02141<br/>
                 Phone : +(31) 781-417-2004<br/>
@@ -167,7 +199,7 @@ function InvoiceDetails({onNavigate}) {
                           <BsImage style={{fontSize: '14px'}}/>
                         </div>
                         <div>
-                          <div className="fw-bold text-dark" style={{fontSize: '0.8rem'}}>Kid's Yellow  T-shirt</div>
+                          <div className="fw-bold text-dark" style={{fontSize: '0.8rem'}}>Kid's Yellow T-shirt</div>
                           <div className="text-muted small" style={{fontSize: '0.7rem'}}>Size : S</div>
 
                         </div>
@@ -208,11 +240,11 @@ function InvoiceDetails({onNavigate}) {
             </div>
 
             <div className="p-3 mb-4 rounded-3 d-flex align-items-start gap-2"
-            style={{backgroundColor: '#fce7f3', color: '#be185d', fontSize: '0.75rem', lineHeight: '1.5'}}
+            style={{backgroundColor: '#fce7f3', color: '#ff5e5e', fontSize: '0.75rem', lineHeight: '1.5'}}
             >
               <BsExclamationCircleFill className="mt-1 flex-shrink-0 "style={{fontSize: '14px'}}/>
               <span>
-                All accounts are to be paid within 7 days from receipt of invoice. To be paid by cheque or credit card or direct payment online. If account is not paid within 7 days the credit details supplied as confirmation of work undertaken will be charged the agreed quoted  fee noted above.
+                All accounts are to be paid within 7 days from receipt of invoice. To be paid by cheque or credit card or direct payment online. If account is not paid within 7 days the credit details supplied as confirmation of work undertaken will be charged the agreed quoted fee noted above.
               </span>
 
             </div>

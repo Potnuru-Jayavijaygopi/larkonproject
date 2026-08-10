@@ -5,14 +5,15 @@ function Tabs(){
   const[justifiedTab, setJustifiedTab]=useState('profile');
   const[pillTab, setPillTab]=useState('profile');
   const[justifiedPillTab, setJustifiedPillTab]=useState('profile');
-  const[vertLeftTab, setVertLeftTab]=useState('profile');
-  const[vertRightTab, setVertRightTab]=useState('profile');
+  const[vertLeftTab, setVertLeftTab]=useState('home');
+  const[vertRightTab, setVertRightTab]=useState('home');
 
   const sampleContent = {
     home: 'Raw denim you probably haven\'t heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor,williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth.',
     profile:'Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores.',
-    mesages:'Food truck fixie locavore, accusamus mcdswisney marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan tuesday. Keytar synth nesciu nt meggings elit cred craft beer.',
-    settings:'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.'
+    messages:'Food truck fixie locavore, accusamus mcdswisney marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan tuesday. Keytar synth nesciu nt meggings elit cred craft beer.',
+    settings:'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
+    vertical:'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.',
   };
 
   return(
@@ -38,9 +39,9 @@ function Tabs(){
 
               <li className="nav-item">
                 <button 
-               className={`nav-link border-0 border-bottom border-2 fw-bold ${navTab === "profile" ? "active" : "text-secondary"}`}
-               style={{color: navTab === "profile" ? "#ff5e29" : "transparent",borderBottomColor: navTab === "profile" ? "#ff5e29" : "transparent",borderBottomWidth: "2px"}}
-              onClick={() => setNavTab("profile")}
+                 className={`nav-link border-0 fw-bold ${navTab === "profile" ? "active" : "text-secondary"}`}
+                 style={{color: navTab === "profile" ? "#ff5e29" : undefined,boxShadow: navTab === "profile" ? "inset 0 -2px 0 #ff5e29" : "none"}}
+                  onClick={() => setNavTab("profile")}
                 >
                   Profile
                 </button>
@@ -81,8 +82,8 @@ function Tabs(){
 
               <li className="nav-item">
                 <button 
-                className={`nav-link border-0 border-bottom border-2 w-100 ${justifiedTab === 'profile' ? 'active fw-bold text-dark border-primary' : 'text-secondary'}`}
-                  style={{ color: justifiedTab === 'profile' ?'#ff5e29' : undefined, borderBottomColor: justifiedTab === 'profile' ? '#ff5e29' : 'transparent' }}
+                  className={`nav-link border-0 w-100 ${justifiedTab === 'profile' ? 'active fw-bold' : 'text-secondary'}`}
+                  style={{color: justifiedTab === 'profile' ? '#ff5e29' : undefined,boxShadow: justifiedTab === 'profile' ? 'inset 0 -2px 0 #ff5e29' : 'none'}}
                   onClick={() => setJustifiedTab('profile')}
                 >
                   Profile
@@ -108,7 +109,7 @@ function Tabs(){
             <div className="card border-0 shadow-sm rounded-3 p-3 bg-white mb-4" id="nav-pills">
             <h6 className="fw-bold text-dark mb-1">Nav Pills</h6>
             <p className="text-muted small mb-3" style={{fontSize: '0.78rem'}}>
-              Use the <code>.nav-pills</code>  class to genrate a pill interface.
+              Use the <code>.nav-pills</code> class to generate a pill interface.
               </p>
 
             <ul className="nav nav-pills gap-2 mb-3" style={{fontSize: '0.85rem'}}>
@@ -116,7 +117,7 @@ function Tabs(){
                 <button 
                 className={`nav-link rounded-3 px-3 py-1 ${pillTab === 'home' ? 'active fw-bold text-dark border-primary' : 'text-secondary'}`}
                   style={{ backgroundColor: pillTab === 'home' ? '#ff5e29' : 'transparent' }}
-                  onclick={() => setPillTab('home')}
+                  onClick={() => setPillTab('home')}
                 >
                   Home
                 </button>
@@ -126,7 +127,7 @@ function Tabs(){
                 <button 
                 className={`nav-link rounded-3 px-3 py-1 ${pillTab === 'profile' ? 'active fw-bold text-dark border-primary' : 'text-secondary'}`}
                   style={{ backgroundColor: pillTab === 'profile' ? '#ff5e29' : 'transparent' }}
-                  onclick={() => setPillTab('profile')}
+                  onClick={() => setPillTab('profile')}
                 >
                   Profile
                 </button>
@@ -136,7 +137,7 @@ function Tabs(){
                 <button 
                 className={`nav-link rounded-3 px-3 py-1 ${pillTab === 'messages' ? 'active fw-bold text-dark border-primary' : 'text-secondary'}`}
                   style={{ backgroundColor: pillTab === 'messages' ? '#ff5e29' : 'transparent' }}
-                  onclick={() => setPillTab('messages')}
+                  onClick={() => setPillTab('messages')}
                 >
                   Messages
                 </button>
@@ -155,12 +156,12 @@ function Tabs(){
             
               </p>
 
-            <ul className="nav nav-pills nav-justified gap-2 mb-3" style={{fontSize: '0.85rem'}}>
+            <ul className="nav nav-pills  gap-2 mb-3" style={{fontSize: '0.85rem'}}>
               <li className="nav-item">
                 <button 
                 className={`nav-link rounded-3 w-100 py-1 ${justifiedPillTab === 'home' ? 'text-white' : 'text-secondary'}`}
                   style={{ backgroundColor:justifiedPillTab === 'home' ? '#ff5e29' : 'transparent' }}
-                  onclick={() => setJustifiedPillTab('home')}
+                  onClick={() => setJustifiedPillTab('home')}
                 >
                   Home
                 </button>
@@ -168,9 +169,9 @@ function Tabs(){
 
               <li className="nav-item">
                 <button 
-                className={`nav-link rounded-3 w-100 py-1 ${justifiedPillTab === 'profile' ? 'active fw-bold text-dark border-primary' : 'text-secondary'}`}
+                className={`nav-link rounded-3 w-100 py-1 ${justifiedPillTab === 'profile' ? 'active fw-bold text-white' : 'text-secondary'}`}
                   style={{ backgroundColor: justifiedPillTab === 'profile' ? '#ff5e29' : 'transparent' }}
-                  onclick={() => setJustifiedPillTab('profile')}
+                  onClick={() => setJustifiedPillTab('profile')}
                 >
                   Profile
                 </button>
@@ -178,9 +179,9 @@ function Tabs(){
 
               <li className="nav-item">
                 <button 
-                className={`nav-link rounded-3 px-3 py-1 ${pillTab === 'messages' ? ' text-white ' : 'text-secondary'}`}
+                className={`nav-link rounded-3 px-3 py-1 ${justifiedPillTab === 'messages' ? ' text-white ' : 'text-secondary'}`}
                   style={{ backgroundColor: justifiedPillTab === 'messages' ? '#ff5e29' : 'transparent' }}
-                  onclick={() => justifiedPillTab('messages')}
+                  onClick={() => setJustifiedPillTab('messages')}
                 >
                   Messages
                 </button>
@@ -203,7 +204,7 @@ function Tabs(){
                     <button 
                       className={`nav-link rounded-3 px-3 py-1 ${vertLeftTab === 'home' ? ' text-white' : 'text-secondary'}`}
                       style={{ backgroundColor: vertLeftTab === 'home' ? '#ff5e29' : 'transparent' }}
-                       onclick={() => setVertLeftTab('home')}
+                       onClick={() => setVertLeftTab('home')}
                     >
                       Home  
                     </button>
@@ -212,14 +213,14 @@ function Tabs(){
                 <button 
                   className={`nav-link rounded-3 px-3 py-1 ${vertLeftTab === 'profile' ? 'text-white ' : 'text-secondary'}`}
                   style={{ backgroundColor:vertLeftTab === 'profile' ? '#ff5e29' : 'transparent' }}
-                  onclick={() => setVertLeftTab('profile')}
+                  onClick={() => setVertLeftTab('profile')}
                 >
                   Profile
                 </button>
                 <button 
                   className={`nav-link rounded-3 px-3 py-1 ${vertLeftTab === 'settings' ? 'text-white' : 'text-secondary'}`}
                   style={{ backgroundColor:vertLeftTab === 'settings' ? '#ff5e29' : 'transparent' }}
-                  onclick={() => setVertLeftTab('settings')}
+                  onClick={() => setVertLeftTab('settings')}
                 >
                   Settings
                 </button>
@@ -229,7 +230,7 @@ function Tabs(){
 
             <div className="col-md-8">
               <div className="text-muted small" style={{fontSize: '0.78rem', lineHeight: '1.6'}}>
-                {sampleContent[vertLeftTab]}
+                {sampleContent.vertical}
               </div>
             </div>
           </div>
@@ -244,7 +245,7 @@ function Tabs(){
             <div className="row g-4">
               <div className="col-md-8">
               <div className="text-muted small" style={{fontSize: '0.78rem', lineHeight: '1.6'}}>
-                {sampleContent[vertRightTab]}
+                {sampleContent.vertical}
               </div>
             </div>
 
@@ -253,7 +254,7 @@ function Tabs(){
                     <button 
                       className={`nav-link rounded-3 px-3 py-1 ${vertRightTab === 'home' ? ' text-white' : 'text-secondary'}`}
                       style={{ backgroundColor: vertRightTab === 'home' ? '#ff5e29' : 'transparent' }}
-                       onclick={() => setVertRightTab('home')}
+                       onClick={() => setVertRightTab('home')}
                     >
                       Home  
                     </button>
@@ -262,14 +263,14 @@ function Tabs(){
                 <button 
                   className={`nav-link rounded-3 px-3 py-1 ${vertRightTab === 'profile' ? 'text-white ' : 'text-secondary'}`}
                   style={{ backgroundColor:vertRightTab === 'profile' ? '#ff5e29' : 'transparent' }}
-                  onclick={() => setVertRightTab('profile')}
+                  onClick={() => setVertRightTab('profile')}
                 >
                   Profile
                 </button>
                 <button 
                   className={`nav-link rounded-3 px-3 py-1 ${vertRightTab === 'settings' ? 'text-white' : 'text-secondary'}`}
                   style={{ backgroundColor:vertRightTab === 'settings' ? '#ff5e29' : 'transparent' }}
-                  onclick={() => setVertRightTab('settings')}
+                  onClick={() => setVertRightTab('settings')}
                 >
                   Settings
                 </button>
@@ -280,11 +281,10 @@ function Tabs(){
       </div>
 
       <div className="col-xl-4 col-lg-4">
-        <div className="card border-0 shadow=sm rounded-3 p-3 bg-white sticky-top" style={{top:'80px', zIndex: 10}}>
+        <div className="card border-0 shadow-sm rounded-3 p-3 bg-white sticky-top" style={{top:'80px', zIndex: 10}}>
           <div className="d-flex flex-column gap-2" style={{fontSize: '0.8rem'}}>
             <a href="#nav-tabs" className="text-decoration-none text-secondary py-1">Nav Tabs</a>
             <a href="#tabs-justified" className="text-decoration-none text-secondary py-1">Tabs Justified</a>
-            <a href="#nav-pills" className="text-decoration-none text-secondary py-1">Nav Pills</a>
             <a href="#nav-pills" className="text-decoration-none text-secondary py-1">Nav Pills</a>
             <a href="#pills-justified" className="text-decoration-none text-secondary py-1">Pills Justified</a>
             <a href="#tabs-vertical-left" className="text-decoration-none text-secondary py-1">Tabs Vertical Left</a>

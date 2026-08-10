@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Sidebar from '../../components/Sidebar';
+import image1 from "../../assets/image1.png";
 
 
 
@@ -70,7 +71,7 @@ function CreateInvoice({onNavigate}) {
         <div className="main-content">
           
           <main className="page-container">
-           <div className="mx-auto" style={{maxWidth: '920px'}}>
+           <div className="mx-auto" style={{maxWidth: '1000px'}}>
             <form onSubmit={handleSubmit}>
               <div className="content-card p-4 mb-4 shadow-sm">
                <div className="row g-3 mb-4">
@@ -84,10 +85,15 @@ function CreateInvoice({onNavigate}) {
     minWidth: "155px",
   }}
 >
-  
-  
-
-  
+  <img
+    src={image1}
+    alt="Larkon"
+    style={{
+      width: "135px",
+      height: "45px",
+      objectFit: "contain",
+    }}
+  />
 </div>
 
                  <div className="mb-2">
@@ -544,7 +550,7 @@ function CreateInvoice({onNavigate}) {
                   >
                     <BsExclamationCircleFill className="mt-1 flex-shrink-0" style={{fontSize: '14px'}}/>
                     <span>
-                      All accounts are to be paid within 7 days from receipt of invoice. To be paid by cheque or credit or direct payment online. If account is not paid within 7 days the credits details supplied as confirmation of work undertaken will be charged the agreed quoted fee noted above.
+                      All accounts are to be paid within 7 days from receipt of the invoice. To be paid by cheque or credit or direct payment online. If account is not paid within 7 days the credit details supplied as confirmation of work undertaken will be charged the agreed quoted fee noted above.
                     </span>
                   </div>
                   </div>

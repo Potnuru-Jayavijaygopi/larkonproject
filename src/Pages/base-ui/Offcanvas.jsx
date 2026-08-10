@@ -13,7 +13,7 @@ function Offcanvas() {
           <div className="card border-0 shadow-sm rounded-3 p-4 bg-white mb-4" id="default-buttons">
             <h6 className="fw-bold text-dark mb-1">Default Buttons</h6>
             <p className="text-muted small mb-3" style={{fontSize: '0.78rem'}}>
-              You can use a link with the href attributes, or a button with the <code>data-bs-target</code> attribute. In both cases, the<code>data-bs-toggle="offcanvas"</code> is required.
+              You can use a link with the href attributes, or a button with the <code>data-bs-target</code> attribute. In both cases, the <code>data-bs-toggle="offcanvas"</code> is required.
             </p>
 
             <div className="d-flex flex-wrap gap-2">
@@ -41,7 +41,7 @@ function Offcanvas() {
           <div className="card border-0 shadow-sm rounded-3 p-4 bg-white mb-4" id="static-backdrop">
             <h6 className="fw-bold text-dark mb-1">Static Backdrop</h6>
             <p className="text-muted small mb-3" style={{fontSize: '0.78rem'}}>
-              Scrolling the <code>&lt;body&gt;</code> element is disabled when an offcanvas and its backdrop are visible. Use the<code>data-bs-scroll</code> attribute to toggle<code>&lt;body&gt;</code> scrolling and <code>data-bs-backdrop</code> to toggle the backdrop.
+              Scrolling the <code>&lt;body&gt;</code> element is disabled when an offcanvas and its backdrop are visible. Use the <code>data-bs-scroll</code> attribute to toggle<code>&lt;body&gt;</code> scrolling and <code>data-bs-backdrop</code> to toggle the backdrop.
             </p>
 
             <div className="d-flex flex-wrap gap-2">
@@ -170,7 +170,7 @@ function Offcanvas() {
           </div>
           <div className="offcanvas-body p-4">
             <p className="text-muted small">
-              Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images,lists, etc.
+              Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
             </p>
             <div className="dropdown mt-3">
               <button
