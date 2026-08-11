@@ -8,6 +8,17 @@ import clockImg from '../assets/solar_clock-circle-bold-duotone.png';
 import calendarImg from '../assets/image.png';
 
 
+// Newly added asset icons for Header Controls
+import moonImg from '../assets/solar_moon-bold-duotone.png';
+import bellImg from '../assets/solar_bell-bing-bold-duotone.png';
+import settingsImg from '../assets/settings1.png';
+import clockImg from '../assets/solar_clock-circle-bold-duotone.png';
+import calendarImg from '../assets/image.png';
+
+/**
+ * Header / Navbar Component
+ * Uses exact newly uploaded PNG icons from src/assets/ (solar_moon-bold-duotone.png, solar_bell-bing-bold-duotone.png, settings1.png, etc.)
+ */
 function Header({ title = 'ACCORDION' }) {
   return (
     <header className="top-header">

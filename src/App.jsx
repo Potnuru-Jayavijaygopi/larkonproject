@@ -22,12 +22,12 @@ import SellerDetails from './Pages/Pages2/sellerdetails';
 import SellerEdit from './Pages/Pages2/selleredit';
 import SellerCreate from './Pages/Pages2/sellercreate';
 
-import InvoiceList from './pages/invoices/InvoiceList';
-import InvoiceDetails from './pages/invoices/InvoiceDetails';
-import CreateInvoice from './pages/invoices/CreateInvoice';
+// import InvoiceList from './pages/invoices/InvoiceList';
+// import InvoiceDetails from './pages/invoices/InvoiceDetails';
+// import CreateInvoice from './pages/invoices/CreateInvoice';
 
 
-import Settings from './pages/settings/Settings';
+// import Settings from './pages/settings/Settings';
 
 
 
@@ -37,6 +37,19 @@ import Offcanvas from './pages/base-ui/Offcanvas';
 import Pagination from './pages/base-ui/Pagination';
 import Placeholders from './pages/base-ui/Placeholders';
 import Tabs from './pages/base-ui/Tabs';
+
+import Buttons from './pages/base-ui/Buttons';
+import Card from './pages/base-ui/Card';
+import Carousel from './pages/base-ui/Carousel';
+import Collapse from './pages/base-ui/Collapse';
+import Dropdown from './pages/base-ui/Dropdown';
+import AttributeList from './pages/attributes/AttributeList';
+import AddAttribute from './pages/attributes/AddAttribute';
+import CreateAttribute from './pages/attributes/CreateAttribute';
+import PurchaseList from './pages/purchases/PurchaseList';
+import OrdersList from './pages/purchases/OrdersList';
+import ReturnOrders from './pages/purchases/ReturnOrders';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -87,6 +100,22 @@ const router = createBrowserRouter([
       { path: 'base-ui/pagination', element: <Pagination /> },
       { path: 'base-ui/placeholders', element: <Placeholders /> },
       { path: 'base-ui/tabs', element: <Tabs /> },
+
+       { path: 'purchases/list', element: <PurchaseList /> },
+      { path: 'purchases/orders', element: <OrdersList /> },
+      { path: 'purchases/returns', element: <ReturnOrders /> },
+
+      
+      { path: 'attributes/list', element: <AttributeList /> },
+      { path: 'attributes/edit', element: <AddAttribute /> },
+      { path: 'attributes/create', element: <CreateAttribute /> },
+
+      { path: 'base-ui/buttons', element: <Buttons /> },
+      { path: 'base-ui/card', element: <Card /> },
+      { path: 'base-ui/cards', element: <Card /> },
+      { path: 'base-ui/carousel', element: <Carousel /> },
+      { path: 'base-ui/collapse', element: <Collapse /> },
+      { path: 'base-ui/dropdown', element: <Dropdown /> },
 
       { path: '*', element: <Dashboard/> },
     ],

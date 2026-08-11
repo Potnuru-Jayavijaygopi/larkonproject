@@ -536,10 +536,10 @@ function Sidebar() {
           Other
         </div>
 
-         <div>
+        <div>
           <a
             href="#coupons"
-            className={`nav-link-custom ${currentPath.startsWith('/coupons') ? 'active' : ''}`}
+            className="nav-link-custom"
             onClick={(e) => toggleParentMenu(e, 'coupons')}
           >
             <div className="nav-link-left">
@@ -548,25 +548,6 @@ function Sidebar() {
             </div>
             {openMenu === 'coupons' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
-
-          {openMenu === 'coupons' && (
-            <div className="submenu">
-              <NavLink
-                to="/coupons/list"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'coupons', '/coupons/list')}
-              >
-                Coupons-List
-              </NavLink>
-              <NavLink
-                to="/coupons/add"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'coupons', '/coupons/add')}
-              >
-                Coupons-Add
-              </NavLink>
-            </div>
-          )}
         </div>
 
         <NavLink

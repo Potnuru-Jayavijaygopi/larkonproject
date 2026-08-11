@@ -1,4 +1,5 @@
 @import "tailwindcss";
+
 :root {
   --sidebar-bg: #1e2530;
   --sidebar-text: #94a3b8;
@@ -17,7 +18,6 @@ body {
   color: #334155;
   overflow-x: hidden;
 }
-
 
 .app-container {
   display: flex;
@@ -40,7 +40,6 @@ body {
   width: 100%;
   box-sizing: border-box;
 }
-
 
 .sidebar {
   width: 240px;
@@ -176,7 +175,6 @@ body {
   text-transform: uppercase;
 }
 
-
 .top-header {
   height: 60px;
   background-color: #F9F7F7;
@@ -261,7 +259,10 @@ body {
   justify-content: center;
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/purchases
 .content-card {
   background-color: #ffffff;
   border-radius: 8px;
@@ -284,7 +285,6 @@ body {
   margin: 0;
 }
 
-
 .filter-header-box {
   background-color: #f1f5f9;
   border-radius: 6px;
@@ -298,7 +298,6 @@ body {
   cursor: pointer;
   margin-bottom: 0.75rem;
 }
-
 
 .btn-add-product {
   background-color: var(--primary-orange);
@@ -429,7 +428,11 @@ body {
   cursor: pointer;
 }
 
+<<<<<<< HEAD
 
+=======
+/* Footer (Transparent background floating seamlessly on main page) */
+>>>>>>> origin/purchases
 .footer-custom {
   width: 1640px;
   padding: 1.5rem 1.5rem 1rem;
