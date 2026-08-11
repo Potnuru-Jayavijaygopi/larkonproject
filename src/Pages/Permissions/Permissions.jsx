@@ -18,7 +18,7 @@ const samplePermissions = [
   { id: 6, name: 'API Controls', assignedTo: ['Manager', 'Analyst'], createdDate: '20 Sep 2023, 01:20 pm', lastUpdate: '10 Oct 2023' },
   { id: 7, name: 'Disputes Management', assignedTo: ['Manager', 'Developer'], createdDate: '10 Feb 2025, 05:00 pm', lastUpdate: 'Yesterday' },
   { id: 8, name: 'Database Management', assignedTo: ['Manager', 'Administrator', 'Developer'], createdDate: '19 Jul 2024, 03:45 pm', lastUpdate: 'Yesterday' },
-  { id: 9, name: 'Repository Management', assignedTo: ['Administrator', 'Developer'], createdDate: '05 Jan 2024, 11:00 am', lastUpdate: '09 Dec 2023' },
+  { id: 9, name: 'Repository Management', assignedTo: ['Administrator', 'Developer'], createdDate: '05 Jan 2024, 11:00 am', lastUpdate: '03 Dec 2023' },
 ];
 
 const getTagColorClass = (role) => {

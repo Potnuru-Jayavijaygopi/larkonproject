@@ -79,7 +79,7 @@ const initialRolesData = [
   {
     id: 8,
     role: 'Support Team Head',
-    workspace: 'Stripe',
+    workspace: 'Strip',
     workspaceLogo: stripeLogo,
     tags: ['QA'],
     users: [1],
