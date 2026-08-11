@@ -304,9 +304,9 @@ function ProductDetails(){
           </div>
 
           <div className="d-flex align-items-center gap-2 mb-1">
-            <div>
+            <div className="d-flex align-items-center gap-1">
               {[...Array(5)].map((_, i) => (
-                <BsStarFill key={i} className="text-warning" style={{ fontSize: '10px' }} />
+                <BsStarFill key={i} className="text-warning" style={{ color: '#ffb703', fontSize: '13px' }} />
               ))}
             </div>
             <span className="fw-bold small text-dark">Excellent Quality</span>
@@ -325,6 +325,7 @@ function ProductDetails(){
             <span className="cursor-pointer">Report</span>
           </div>
         </div>
+
         <div>
           <div className="d-flex align-items-center gap-2 mb-2">
             <div className="bg-light rounded-2 p-2 text-secondary">
@@ -332,17 +333,20 @@ function ProductDetails(){
             </div>
             <span className="fw-bold text-dark small">Jorge Herry</span>
           </div>
+
           <div className="d-flex align-items-center gap-2 mb-1">
-            <div>
-             {[...Array(5)].map((_, i) => (
-               <BsStarFill key={i} className="text-warning" style={{ fontSize: '10px' }} />
-             ))}
+            <div className="d-flex align-items-center gap-1">
+              {[...Array(5)].map((_, i) => (
+                <BsStarFill key={i} className="text-warning" style={{ color: '#ffb703', fontSize: '13px' }} />
+              ))}
             </div>
             <span className="fw-bold small text-dark">Good Quality</span>
           </div>
+
           <div className="text-muted mb-2" style={{ fontSize: '11px' }}>
             Reviewed in U.S.A on 21 December 2023
           </div>
+
           <p className="text-muted small mb-2" style={{ fontSize: '12px', lineHeight: '1.5' }}>
             I liked the tshirt. it's pure cotton &amp; skin friendly, but the size is smaller to compare standard size, best rated
           </p>

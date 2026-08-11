@@ -197,6 +197,44 @@ function CreateProduct({ onNavigate }) {
                 </select>
               </div>
 
+              <div className="col-md-6">
+                <label className="form-label small text-muted d-block">Size :</label>
+                <div className="d-flex gap-1 flex-wrap">
+                  {['XS', 'S', 'M', 'XL', 'XXL', '3XL'].map((sz) => (
+                    <button
+                      key={sz}
+                      type="button"
+                      className={`btn btn-sm ${selectedSize === sz ? 'btn-secondary' : 'btn-outline-secondary'} px-2 py-0`}
+                      onClick={() => setSelectedSize(sz)}
+                    >
+                      {sz}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <label className="form-label small text-muted d-block">Colors :</label>
+                <div className="d-flex gap-2">
+                  {[
+                    { id: 'navy', color: '#1e2530' },
+                    { id: 'amber', color: '#f59e0b' },
+                    { id: 'slate', color: '#cbd5e1' },
+                    { id: 'coral', color: '#ef4444' },
+                    { id: 'emerald', color: '#10b981' },
+                    { id: 'teal', color: '#0d9488' },
+                  ].map((colObj) => (
+                    <button
+                      key={colObj.id}
+                      type="button"
+                      className={`btn rounded-circle p-0 border ${selectedColor === colObj.id ? 'border-dark shadow-sm' : ''}`}
+                      style={{ width: '22px', height: '22px', backgroundColor: colObj.color }}
+                      onClick={() => setSelectedColor(colObj.id)}
+                    ></button>
+                  ))}
+                </div>
+              </div>
+
               <div className="col-12">
                 <label htmlFor="inputDescription" className="form-label small text-muted">Description</label>
                 <textarea
