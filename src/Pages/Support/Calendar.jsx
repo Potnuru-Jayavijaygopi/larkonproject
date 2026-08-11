@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import Plus from "../../assets/plus.png";
 import Dot from "../../assets/dot.png";
 import Dot1 from "../../assets/dot-1.png";
@@ -6,10 +7,44 @@ import Dot3 from "../../assets/dot-3.png";
 import Dot4 from "../../assets/dot-4.png";
 
 function Calendar() {
+    const containerRef = useRef(null);
+    const [scale, setScale] = useState(1);
+
+    useEffect(() => {
+        const updateScale = () => {
+            if (!containerRef.current) return;
+            const availableWidth = containerRef.current.clientWidth;
+            const newScale = Math.min(1, availableWidth / 1534);
+            setScale(newScale);
+        };
+        updateScale();
+        const observer = new ResizeObserver(updateScale);
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
+        }
+        window.addEventListener("resize", updateScale);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener("resize", updateScale);
+        };
+    }, []);
+
     return (
         <div className="w-full h-[2010px] px-[20px]">
-            <div className="w-[1534px] h-[770px] bg-[#FFFFFF] !rounded-[12px] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] p-[35px]">
-                <div>
+            <div
+                ref={containerRef}
+                className="w-full min-w-0"
+                style={{
+                    height: `${770 * scale}px`,
+                }}
+            >
+                <div
+                    className="w-[1534px] h-[770px] bg-[#FFFFFF] !rounded-[12px] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] p-[35px]"
+                    style={{
+                        transform: `scale(${scale})`,
+                        transformOrigin: "top left",
+                    }}
+                >
                     <div className="flex items-center gap-[14px]">
                         <button className="w-[370px] h-[39px] bg-[#FF6C2F] !rounded-[8px] flex items-center justify-center gap-[10px]">
                             <img src={Plus} alt="plus" className="w-[12px] h-[12px]" />
