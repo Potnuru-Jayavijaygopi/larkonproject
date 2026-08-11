@@ -430,6 +430,10 @@ body {
   box-sizing: border-box;
   background-color: transparent;
   color: #94a3b8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   margin-top: auto;
 }
 
@@ -437,10 +441,6 @@ body {
   color: var(--primary-orange);
   text-decoration: none;
   font-weight: 600;
-}
-
-.hover-orange:hover {
-  color: var(--primary-orange, #ff5e29) !important;
 }
 .form-check-input[type="radio"] {
   accent-color: #ff5e29 !important;
