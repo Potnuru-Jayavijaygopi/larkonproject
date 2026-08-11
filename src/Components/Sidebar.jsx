@@ -65,7 +65,7 @@ function Sidebar() {
 
   const handleSubItemClick = (e, menuKey, routePath) => {
     if (e) e.preventDefault();
-    setOpenMenu(menuKey);
+    setOpenMenu(menuKey); 
     navigate(routePath);
   };
 
@@ -459,7 +459,7 @@ function Sidebar() {
           </div>
         </NavLink>
 
-        <div>
+         <div>
           <a
             href="#customers"
             className="nav-link-custom"
@@ -471,6 +471,18 @@ function Sidebar() {
             </div>
             {openMenu === 'customers' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
+          { openMenu === 'customers' && (
+            <div className="submenu">
+              <NavLink
+                to="/customers/details"
+                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
+                onClick={(e) => handleSubItemClick(e, 'customers', '/customers/details')}
+              >
+                Customer Details
+              </NavLink>
+              
+            </div>
+          )}
         </div>
 
         <div>
@@ -485,6 +497,39 @@ function Sidebar() {
             </div>
             {openMenu === 'sellers' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
+
+          {openMenu === 'sellers' && (
+            <div className="submenu">
+              <NavLink
+                to="/sellers/list"
+                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
+                onClick={(e) => handleSubItemClick(e, 'sellers', '/sellers/list')}
+              >
+                Seller List
+              </NavLink>
+              <NavLink
+                to="/sellers/details"
+                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
+                onClick={(e) => handleSubItemClick(e, 'sellers', '/sellers/details')}
+              >
+                Seller Details
+              </NavLink>
+              <NavLink
+                to="/sellers/edit"
+                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
+                onClick={(e) => handleSubItemClick(e, 'sellers', '/sellers/edit')}
+              >
+                Seller Edit
+              </NavLink>
+              <NavLink
+                to="/sellers/create"
+                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
+                onClick={(e) => handleSubItemClick(e, 'sellers', '/sellers/create')}
+              >
+                Seller Create
+              </NavLink>
+            </div>
+          )}
         </div>
 
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
