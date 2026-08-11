@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const RoleCreate = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     rolesName: '',
     workspace: '',
@@ -37,8 +39,7 @@ const RoleCreate = () => {
     e.preventDefault();
     console.log('Created New Role:', { ...formData, tags });
     alert('New Role created successfully!');
-    setFormData({ rolesName: '', workspace: '', userName: '', status: 'Active' });
-    setTags([]);
+    navigate('/roles/list');
   };
 
   return (
@@ -63,7 +64,6 @@ const RoleCreate = () => {
           font-size: 0.95rem !important;
           color: #1e293b !important;
           line-height: 100% !important;
-          border-bottom: 1px solid var(--border-color, #e2e8f0);
         }
 
         .form-label-custom {
@@ -159,20 +159,46 @@ const RoleCreate = () => {
           font-size: 0.825rem;
           font-weight: 600;
           transition: background-color 0.2s ease;
+          cursor: pointer;
         }
 
         .btn-create-custom:hover {
           background-color: var(--primary-orange-hover, #e04d1c);
           color: #ffffff;
         }
+
+        .btn-cancel-custom {
+          background-color: #f1f5f9;
+          color: #64748b;
+          border: 1px solid var(--border-color, #e2e8f0);
+          border-radius: 6px;
+          padding: 8px 20px;
+          font-size: 0.825rem;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        .btn-cancel-custom:hover {
+          background-color: #e2e8f0;
+          color: #334155;
+        }
       `}</style>
 
       <div className="container-fluid p-0">
         <form onSubmit={handleSubmit}>
           <div className="figma-card-container shadow-sm p-3 p-md-4">
-            <h6 className="card-header-title pb-3 mb-4">
-              Roles Information
-            </h6>
+            <div className="d-flex align-items-center justify-content-between pb-3 mb-4 border-bottom" style={{ borderColor: 'var(--border-color, #e2e8f0)' }}>
+              <h6 className="card-header-title mb-0">
+                Roles Information
+              </h6>
+              <button 
+                type="button" 
+                className="btn-cancel-custom"
+                onClick={() => navigate('/roles/list')}
+              >
+                ← Back to Roles List
+              </button>
+            </div>
 
             <div className="row g-3 g-md-4 mb-3">
               <div className="col-md-6">
@@ -180,7 +206,7 @@ const RoleCreate = () => {
                 <input
                   type="text"
                   name="rolesName"
-                  className="form-control form-control-custom w-100 cursor-pointer"
+                  className="form-control form-control-custom w-100"
                   value={formData.rolesName}
                   onChange={handleInputChange}
                   placeholder="Role name"
@@ -192,7 +218,7 @@ const RoleCreate = () => {
                 <label className="form-label-custom">Add Workspace</label>
                 <select
                   name="workspace"
-                  className="form-select form-select-custom w-100 cursor-pointer"
+                  className="form-select form-select-custom w-100"
                   value={formData.workspace}
                   onChange={handleInputChange}
                 >
@@ -237,7 +263,7 @@ const RoleCreate = () => {
                 <input
                   type="text"
                   name="userName"
-                  className="form-control form-control-custom w-100 cursor-pointer"
+                  className="form-control form-control-custom w-100"
                   value={formData.userName}
                   onChange={handleInputChange}
                   placeholder="Enter name"
@@ -280,9 +306,16 @@ const RoleCreate = () => {
               </div>
             </div>
 
-            <div className="pt-3 border-top mt-3" style={{ borderColor: 'var(--border-color)' }}>
+            <div className="pt-3 border-top mt-3 d-flex align-items-center gap-2" style={{ borderColor: 'var(--border-color, #e2e8f0)' }}>
               <button type="submit" className="btn btn-create-custom">
                 Create Roles
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-cancel-custom"
+                onClick={() => navigate('/roles/list')}
+              >
+                Cancel
               </button>
             </div>
           </div>

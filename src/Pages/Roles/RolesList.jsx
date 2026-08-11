@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import fbLogo from '../../assets/b779f6b631701009f303806c4a7d19870ca946fa.png';
 import slackLogo from '../../assets/23c8790872253515ff74ef29b6ab6c3a54a368fc.png';
@@ -88,6 +89,7 @@ const initialRolesData = [
 ];
 
 const RolesList = () => {
+  const navigate = useNavigate();
   const [roles, setRoles] = useState(initialRolesData);
 
   const handleToggleStatus = (id) => {
@@ -96,6 +98,10 @@ const RolesList = () => {
         item.id === id ? { ...item, status: !item.status } : item
       )
     );
+  };
+
+  const handleDelete = (id) => {
+    setRoles((prev) => prev.filter((item) => item.id !== id));
   };
 
   return (
@@ -218,6 +224,7 @@ const RolesList = () => {
           justify-content: center;
           padding: 0;
           transition: opacity 0.2s ease;
+          cursor: pointer;
         }
 
         .action-btn-custom:hover {
@@ -269,6 +276,28 @@ const RolesList = () => {
 
       <div className="container-fluid p-0">
         <div className="figma-card-container shadow-sm p-3 p-md-4 d-flex flex-column justify-content-between">
+          <div className="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom" style={{ borderColor: 'var(--border-color, #e2e8f0)' }}>
+            <h5 className="mb-0 fw-bold" style={{ fontSize: '1rem', color: '#1e293b' }}>
+              All Roles List
+            </h5>
+            <button
+              className="btn btn-sm d-inline-flex align-items-center gap-1"
+              style={{
+                backgroundColor: 'var(--primary-orange, #ff5e29)',
+                color: '#ffffff',
+                fontWeight: 600,
+                fontSize: '0.825rem',
+                borderRadius: '6px',
+                padding: '6px 14px',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+              onClick={() => navigate('/roles/create')}
+            >
+              + Create Role
+            </button>
+          </div>
+
           <div className="table-container-responsive">
             <table className="table roles-table align-middle mb-0">
               <thead>
@@ -284,7 +313,15 @@ const RolesList = () => {
               <tbody>
                 {roles.map((item) => (
                   <tr key={item.id}>
-                    <td>{item.role}</td>
+                    <td>
+                      <span 
+                        className="fw-semibold cursor-pointer"
+                        style={{ cursor: 'pointer', color: '#1e293b' }}
+                        onClick={() => navigate('/roles/edit')}
+                      >
+                        {item.role}
+                      </span>
+                    </td>
 
                     <td>
                       {item.workspace ? (
@@ -297,7 +334,12 @@ const RolesList = () => {
                           <span>{item.workspace}</span>
                         </div>
                       ) : (
-                        <button className="add-link-btn">+ Add Workspace</button>
+                        <button 
+                          className="add-link-btn"
+                          onClick={() => navigate('/roles/create')}
+                        >
+                          + Add Workspace
+                        </button>
                       )}
                     </td>
 
@@ -325,7 +367,12 @@ const RolesList = () => {
                           ))}
                         </div>
                       ) : (
-                        <button className="add-link-btn">+ Add User</button>
+                        <button 
+                          className="add-link-btn"
+                          onClick={() => navigate('/roles/create')}
+                        >
+                          + Add User
+                        </button>
                       )}
                     </td>
 
@@ -342,13 +389,25 @@ const RolesList = () => {
 
                     <td>
                       <div className="d-flex align-items-center justify-content-end gap-1">
-                        <button className="action-btn-custom btn-view-bg" title="View">
+                        <button 
+                          className="action-btn-custom btn-view-bg" 
+                          title="View"
+                          onClick={() => navigate('/roles/edit')}
+                        >
                           <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
                         </button>
-                        <button className="action-btn-custom btn-edit-bg" title="Edit">
+                        <button 
+                          className="action-btn-custom btn-edit-bg" 
+                          title="Edit"
+                          onClick={() => navigate('/roles/edit')}
+                        >
                           <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
                         </button>
-                        <button className="action-btn-custom btn-delete-bg" title="Delete">
+                        <button 
+                          className="action-btn-custom btn-delete-bg" 
+                          title="Delete"
+                          onClick={() => handleDelete(item.id)}
+                        >
                           <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
                         </button>
                       </div>
@@ -359,7 +418,7 @@ const RolesList = () => {
             </table>
           </div>
 
-          <div className="d-flex align-items-center justify-content-between pt-3 border-top mt-3" style={{ borderColor: 'var(--border-color)' }}>
+          <div className="d-flex align-items-center justify-content-between pt-3 border-top mt-3" style={{ borderColor: 'var(--border-color, #e2e8f0)' }}>
             <small className="text-muted" style={{ fontSize: '12px' }}>
               Showing <strong className="text-dark">10</strong> of <strong className="text-dark">59</strong> Results
             </small>

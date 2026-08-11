@@ -437,7 +437,7 @@ function Sidebar() {
         <div>
           <a
             href="#roles"
-            className="nav-link-custom"
+            className={`nav-link-custom ${currentPath.startsWith('/roles') ? 'active' : ''}`}
             onClick={(e) => toggleParentMenu(e, 'roles')}
           >
             <div className="nav-link-left">
@@ -446,18 +446,66 @@ function Sidebar() {
             </div>
             {openMenu === 'roles' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
+
+          {openMenu === 'roles' && (
+            <div className="submenu">
+              <NavLink
+                to="/roles/list"
+                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
+                onClick={(e) => handleSubItemClick(e, 'roles', '/roles/list')}
+              >
+                Roles List
+              </NavLink>
+              <NavLink
+                to="/roles/edit"
+                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
+                onClick={(e) => handleSubItemClick(e, 'roles', '/roles/edit')}
+              >
+                Role Edit
+              </NavLink>
+              <NavLink
+                to="/roles/create"
+                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
+                onClick={(e) => handleSubItemClick(e, 'roles', '/roles/create')}
+              >
+                Role Create
+              </NavLink>
+            </div>
+          )}
         </div>
 
-        <NavLink
-          to="/permissions"
-          className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
-          onClick={(e) => handleStandaloneClick(e, '/permissions')}
-        >
-          <div className="nav-link-left">
-            <img src={permissionsIcon} alt="Permissions" className="sidebar-icon-img" />
-            <span>Permissions</span>
-          </div>
-        </NavLink>
+        <div>
+          <a
+            href="#permissions"
+            className={`nav-link-custom ${currentPath.startsWith('/permissions') ? 'active' : ''}`}
+            onClick={(e) => toggleParentMenu(e, 'permissions')}
+          >
+            <div className="nav-link-left">
+              <img src={permissionsIcon} alt="Permissions" className="sidebar-icon-img" />
+              <span>Permissions</span>
+            </div>
+            {openMenu === 'permissions' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
+          </a>
+
+          {openMenu === 'permissions' && (
+            <div className="submenu">
+              <NavLink
+                to="/permissions"
+                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
+                onClick={(e) => handleSubItemClick(e, 'permissions', '/permissions')}
+              >
+                Permissions
+              </NavLink>
+              <NavLink
+                to="/permissions2"
+                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
+                onClick={(e) => handleSubItemClick(e, 'permissions', '/permissions2')}
+              >
+                Permissions 2
+              </NavLink>
+            </div>
+          )}
+        </div>
 
         <div>
           <a
