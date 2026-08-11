@@ -426,21 +426,21 @@ body {
 
 
 .footer-custom {
-  width: 1640px;
-  padding: 1.5rem 1.5rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
   background-color: transparent;
   color: #94a3b8;
-  font-size: 0.78rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-top: none;
+  margin-top: auto;
 }
 
 .footer-custom a {
   color: var(--primary-orange);
   text-decoration: none;
   font-weight: 600;
+}
+
+.hover-orange:hover {
+  color: var(--primary-orange, #ff5e29) !important;
 }
 .form-check-input[type="radio"] {
   accent-color: #ff5e29 !important;
