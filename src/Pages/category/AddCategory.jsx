@@ -121,16 +121,16 @@ function AddCategory({ onNavigate }) {
             </h6>
 
             <div
-              className="border border-2 border-dashed rounded-3 p-4 text-center"
-              style={{ bordercolor: "#cbd5e1", backgroundolor: "#fafafa" }}
+              className="border border-2 border-dashed rounded-3 p-4 text-center d-flex flex-column align-items-center justify-content-center"
+              style={{ borderColor: "#cbd5e1", backgroundColor: "#fafafa" }}
             >
               <BsCloudUpload
                 className="display-6 mb-2"
-                style={{ color: "#ea580c" }}
+                style={{ color: "#ff6026" }}
               />
-              <h6 className="fw-bold  mb-1" style={{ fontSize: "0.85rem" }}>
+              <h6 className="fw-bold text-dark mb-1" style={{ fontSize: "0.85rem" }}>
                 Drop your images here, or{" "}
-                <span className="cursor-pointer" style={{ color: "#ea580c" }}>
+                <span className="cursor-pointer" style={{ color: "#ff6026" }}>
                   click to browse
                 </span>
               </h6>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { BsImage, BsCloudArrowUp, BsX } from 'react-icons/bs';
+import { BsImage, BsCloudUpload, BsX } from 'react-icons/bs';
 
 function AddProduct({ onNavigate }){
   const navigate = useNavigate();
@@ -105,12 +105,17 @@ function AddProduct({ onNavigate }){
         <div className='col-lg-8'>
           <div className='content-card p-3 mb-4'>
             <h6 className='fw-bold mb-3'>Add Product Photo</h6>
-            <div className='border border-2 border-dashed rounded-3 p-5 text-center bg-light'>
-              <BsCloudArrowUp className='text-danger fs-1'/>
-              <h6 className='fw-bold text-dark mb-1 mt-2'>
-                Drop your images here, or <span className="text-danger cursor-pointer">click to browse</span>
+            <div
+              className='border border-2 border-dashed rounded-3 p-4 text-center d-flex flex-column align-items-center justify-content-center'
+              style={{ borderColor: '#cbd5e1', backgroundColor: '#fafafa' }}
+            >
+              <BsCloudUpload className='display-6 mb-2' style={{ color: '#ff6026' }} />
+              <h6 className='fw-bold text-dark mb-1' style={{ fontSize: '0.85rem' }}>
+                Drop your images here, or <span style={{ color: '#ff6026', cursor: 'pointer' }}>click to browse</span>
               </h6>
-              <span className="text-muted small">1600 x 1200 (4:3) recommended. PNG, JPG and GIF files are allowed</span>
+              <p className="text-muted small mb-0" style={{ fontSize: '0.725rem' }}>
+                1600 x 1200 (4:3) recommended. PNG, JPG and GIF files are allowed
+              </p>
             </div>
           </div>
 

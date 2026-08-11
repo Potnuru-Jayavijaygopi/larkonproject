@@ -15,7 +15,7 @@ import ordersIcon from '../../assets/ordersicon.png';
 import usersIcon from '../../assets/usersicon.png';
 
 import revenueChartImg from '../../assets/Chart (2).png';
-import accountingBg from '../../assets/Frame (1).png';
+import accountingBg from '../../assets/Frames.png';
 
 export default function SellerDetails() {
   const products = [

@@ -6,7 +6,7 @@ import imagePlaceholderIcon from '../assets/Frame (7).png';
 import eyeIcon from '../assets/eye(2).png';
 import penIcon from '../assets/pen(2).png';
 import trashIcon from '../assets/trash (2).png';
-import checkDoubleIcon from '../assets/tick.png';
+import checkDoubleIcon from '../assets/button.png';
 import cancelIcon from '../assets/tick (2).png';
 
 const initialProducts = [

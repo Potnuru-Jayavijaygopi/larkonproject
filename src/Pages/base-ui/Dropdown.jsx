@@ -152,13 +152,13 @@ function Dropdown() {
             <div className="d-flex flex-wrap gap-4">
               <div className="card shadow-sm border-0 rounded-3 py-2" style={{ width: '180px', fontSize: '0.825rem' }}>
                 <a className="dropdown-item py-1 px-3 text-secondary" href="#item1">Regular link</a>
-                <a className="dropdown-item py-1 px-3 text-white fw-medium"  href="#item2">Active link</a>
+                <a className="dropdown-item py-1 px-3 text-secondary fw-medium"  href="#item2">Active link</a>
                 <a className="dropdown-item py-1 px-3 text-secondary" href="#item3">Another link</a>
               </div>
 
               <div className="card shadow-sm border-0 rounded-3 py-2" style={{ width: '180px', fontSize: '0.825rem' }}>
                 <a className="dropdown-item py-1 px-3 text-secondary" href="#item1">Regular link</a>
-                <a className="dropdown-item py-1 px-3 text-white fw-medium"  href="#item2">Active link</a>
+                <a className="dropdown-item py-1 px-3 text-secondary fw-medium"  href="#item2">Active link</a>
                 <a className="dropdown-item py-1 px-3 text-secondary" href="#item3">Another link</a>
               </div>
             </div>
