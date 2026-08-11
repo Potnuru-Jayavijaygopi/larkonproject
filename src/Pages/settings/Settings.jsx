@@ -65,7 +65,7 @@ function Settings({ onNavigate}) {
    };
 
    return(
-    <div className="container-fluid " style={{marginRight: "200px"}}>
+    <div className="app-container ">
       <Sidebar activePage="settings" onNavigate={onNavigate}/>
       <div className="main-content">
         <main className="page-container">
@@ -359,6 +359,7 @@ function Settings({ onNavigate}) {
                 <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="catCountRadio"
                   id="catCountYes"
@@ -372,6 +373,7 @@ function Settings({ onNavigate}) {
                   <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="catCountRadio"
                   id="catCountNo"
@@ -413,6 +415,7 @@ function Settings({ onNavigate}) {
                 <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="revRadio"
                   id="revYes"
@@ -426,6 +429,7 @@ function Settings({ onNavigate}) {
                   <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="revRadio"
                   id="revNo"
@@ -445,6 +449,7 @@ function Settings({ onNavigate}) {
                 <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="guestRevRadio"
                   id="guestRevYes"
@@ -458,6 +463,7 @@ function Settings({ onNavigate}) {
                   <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="guestRevRadio"
                   id="guestRevNo"
@@ -519,6 +525,7 @@ function Settings({ onNavigate}) {
                 <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="taxRadio"
                   id="taxYes"
@@ -531,6 +538,7 @@ function Settings({ onNavigate}) {
                   <div className="form-check">
                   <input
                   className="form-check-input" 
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="taxRadio"
                   id="taxNo"
@@ -572,6 +580,7 @@ function Settings({ onNavigate}) {
                 <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="cOnline"
                   id="cOnlineYes"
@@ -585,6 +594,7 @@ function Settings({ onNavigate}) {
                   <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="cOnline"
                   id="cOnlineNo"
@@ -603,6 +613,7 @@ function Settings({ onNavigate}) {
                 <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="cAct"
                   id="cActYes"
@@ -616,6 +627,7 @@ function Settings({ onNavigate}) {
                   <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="cAct"
                   id="cActNo"
@@ -634,6 +646,7 @@ function Settings({ onNavigate}) {
                 <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="cSearch"
                   id="cSearchYes"
@@ -647,6 +660,7 @@ function Settings({ onNavigate}) {
                   <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="cSearch"
                   id="cSearchNo"
@@ -665,6 +679,7 @@ function Settings({ onNavigate}) {
                 <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="guestChk"
                   id="guestChkYes"
@@ -678,6 +693,7 @@ function Settings({ onNavigate}) {
                   <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="guestChk"
                   id="guestChkNo"
@@ -696,6 +712,7 @@ function Settings({ onNavigate}) {
                 <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="loginPrice"
                   id="loginPriceYes"
@@ -709,6 +726,7 @@ function Settings({ onNavigate}) {
                   <div className="form-check">
                   <input
                   className="form-check-input"
+                  style={{ accentColor: '#f97316' }}
                   type="radio"
                   name="loginPrice"
                   id="loginPriceNo"
