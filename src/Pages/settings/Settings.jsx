@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Sidebar from "../../components/Sidebar";
 import {
   LuSettings,
   LuStore,
@@ -65,11 +64,8 @@ function Settings({ onNavigate}) {
    };
 
    return(
-    <div className="app-container ">
-      <Sidebar activePage="settings" onNavigate={onNavigate}/>
-      <div className="main-content">
-        <main className="page-container">
-          <form onSubmit={handleSave}>
+    <div className="w-100">
+      <form onSubmit={handleSave}>
             <div className="content-card p-4 mb-4 shadow-sm">
               <div className="d-flex align-items-center gap-2 mb-3">
                 <LuSettings className="text-warning fs-5" style={{color: '#f97316'}}/>
@@ -774,19 +770,16 @@ function Settings({ onNavigate}) {
               </button>
 
               <button
-              className="btn btn-success btn-sm px-4 py-1"
-              type="submit"
-              style={{fontSize: '0.8rem', backgroundColor: '#10b981'}}
-              
+                className="btn btn-success btn-sm px-4 py-1"
+                type="submit"
+                style={{fontSize: '0.8rem', backgroundColor: '#10b981'}}
               >
                 Save Changes
               </button>
             </div>
-          </form>
-        </main>
+        </form>
       </div>
-    </div>
-   );
+    );
   }
   export default Settings;
 

@@ -43,7 +43,7 @@ const RoleCreate = () => {
   };
 
   return (
-    <div className="role-create-wrapper page-container w-100">
+    <div className="role-create-wrapper w-100">
       <style>{`
         .role-create-wrapper {
           font-family: 'Public Sans', sans-serif !important;

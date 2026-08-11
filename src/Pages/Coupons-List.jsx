@@ -173,7 +173,7 @@ export default function CouponsList() {
   };
 
   return (
-    <div className="coupons-list-wrapper w-full p-3 p-md-4">
+    <div className="coupons-list-wrapper w-100">
       <style>{`
         .coupon-promo-card {
           border-radius: 12px;

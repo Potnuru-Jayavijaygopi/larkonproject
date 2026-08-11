@@ -95,7 +95,7 @@ function HelpCenter() {
   );
 
   return (
-    <div className="helpcenter-page-wrapper w-full p-3 p-md-4">
+    <div className="helpcenter-page-wrapper w-100">
       <style>{`
         .help-hero-banner {
           background: linear-gradient(135deg, #475569 0%, #334155 100%);

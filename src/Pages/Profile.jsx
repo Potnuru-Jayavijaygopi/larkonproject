@@ -25,7 +25,7 @@ import qrCodeImg from '../assets/image 25.png';
 
 const Profile = () => {
   return (
-    <div className="profile-page-wrapper page-container w-100">
+    <div className="profile-page-wrapper w-100">
       <style>{`
         .profile-page-wrapper {
           font-family: 'Public Sans', sans-serif !important;

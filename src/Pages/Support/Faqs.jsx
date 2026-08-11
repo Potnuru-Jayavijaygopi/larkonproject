@@ -88,7 +88,7 @@ function Faqs() {
   };
 
   return (
-    <div className="faqs-page-wrapper w-full p-3 p-md-4">
+    <div className="faqs-page-wrapper w-100">
       <style>{`
         .faq-hero-banner {
           background: linear-gradient(135deg, #475569 0%, #334155 100%);

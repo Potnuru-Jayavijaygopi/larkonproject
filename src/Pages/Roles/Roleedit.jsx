@@ -43,7 +43,7 @@ const Roleedit = () => {
   };
 
   return (
-    <div className="role-edit-wrapper page-container w-100">
+    <div className="role-edit-wrapper w-100">
       <style>{`
         .role-edit-wrapper {
           font-family: 'Public Sans', sans-serif !important;

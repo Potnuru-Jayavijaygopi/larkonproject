@@ -10,7 +10,7 @@ function Calendar() {
   const [activeView, setActiveView] = useState("Month");
 
   return (
-    <div className="calendar-page-wrapper w-full p-3 p-md-4">
+    <div className="calendar-page-wrapper w-100">
       <style>{`
         .calendar-card {
           background-color: #ffffff;

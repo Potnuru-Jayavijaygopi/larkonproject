@@ -176,17 +176,16 @@ body {
 }
 
 .top-header {
-  height: 60px;
-  background-color: #F9F7F7;
+  height: 65px;
+  background-color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-left:50px;
-  padding-left:50px;
-  padding-top: 30px;
+  padding: 0 1.5rem;
   position: sticky;
   top: 0;
   z-index: 999;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
 }
 
 .header-title {

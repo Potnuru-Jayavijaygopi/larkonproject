@@ -105,7 +105,7 @@ const RolesList = () => {
   };
 
   return (
-    <div className="roles-list-wrapper page-container w-100">
+    <div className="roles-list-wrapper w-100">
       <style>{`
         html, body, .roles-list-wrapper {
           -ms-overflow-style: none !important;

@@ -52,7 +52,7 @@ const Permissions = () => {
   };
 
   return (
-    <div className="permissions-wrapper page-container w-100">
+    <div className="permissions-wrapper w-100">
       <style>{`
         html, body, .permissions-wrapper {
           -ms-overflow-style: none !important;

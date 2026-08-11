@@ -161,7 +161,7 @@ function Todo() {
   );
 
   return (
-    <div className="todo-page-wrapper w-full p-3 p-md-4">
+    <div className="todo-page-wrapper w-100">
       <style>{`
         .todo-card {
           background-color: #ffffff;

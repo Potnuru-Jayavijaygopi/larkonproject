@@ -30,7 +30,7 @@ function PrivacyPolicy() {
   );
 
   return (
-    <div className="privacy-page-wrapper w-full p-3 p-md-4">
+    <div className="privacy-page-wrapper w-100">
       <style>{`
         .privacy-hero-banner {
           background: linear-gradient(135deg, #475569 0%, #334155 100%);
