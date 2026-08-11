@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import shoppingBagIcon from '../assets/bag-smile.png';
 import groupPatternIcon from '../assets/Group.png';
@@ -145,16 +145,22 @@ const initialProducts = [
 ];
 
 export default function CouponsList() {
-  const [products, setProducts] = useState(initialProducts);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [filterMonth, setFilterMonth] = useState('This Month');
+
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.href =
+      'https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }, []);
 
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(products.map((item) => item.id));
+      setSelectedItems(initialProducts.map((item) => item.id));
     }
     setSelectAll(!selectAll);
   };
@@ -167,153 +173,94 @@ export default function CouponsList() {
     }
   };
 
-  const handleDelete = (id) => {
-    setProducts((prev) => prev.filter((item) => item.id !== id));
-    setSelectedItems((prev) => prev.filter((itemId) => itemId !== id));
-  };
-
   return (
-    <div className="coupons-list-wrapper w-100">
+    <div 
+      className="page-container container-fluid px-4 py-3" 
+      style={{ 
+        fontFamily: "'Public Sans', sans-serif",
+        maxWidth: '1440px',
+        margin: '0 auto',
+        zoom: '0.92' // Scales layout smoothly to fit 100% desktop screens nicely
+      }}
+    >
       <style>{`
-        .coupon-promo-card {
-          border-radius: 12px;
-          border: 1px solid rgba(0, 0, 0, 0.05);
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        ::-webkit-scrollbar {
+          display: none !important;
         }
-
-        .coupon-promo-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-        }
-
-        .coupons-table-card {
-          background-color: #ffffff;
-          border: 1px solid var(--border-color, #e2e8f0);
-          border-radius: 12px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-          width: 100%;
-          box-sizing: border-box;
-        }
-
-        .coupons-table th {
-          font-size: 0.8rem !important;
-          font-weight: 700 !important;
-          color: #64748b !important;
-          background-color: #f8fafc;
-          border-bottom: 1px solid #eaedf1;
-          padding: 0.75rem 1rem;
-          white-space: nowrap;
-        }
-
-        .coupons-table td {
-          font-size: 0.85rem;
-          color: #5d7186;
-          vertical-align: middle;
-          padding: 0.85rem 1rem;
-          border-bottom: 1px solid #eaedf1;
-          white-space: nowrap;
-        }
-
-        .coupons-table tbody tr:hover {
-          background-color: #f8fafc;
-        }
-
-        .coupon-action-btn {
-          width: 36px;
-          height: 32px;
-          border-radius: 6px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          border: none;
-          cursor: pointer;
-          transition: opacity 0.15s ease;
-        }
-
-        .coupon-action-btn:hover {
-          opacity: 0.8;
+        * {
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
         }
       `}</style>
 
-      {/* Top 3 Promo Cards */}
-      <div className="row g-3 g-md-4 mb-4">
-        {/* Card 1 */}
-        <div className="col-12 col-md-6 col-xl-4">
+      
+      <div className="row g-3 mb-4">
+        <div className="col-lg-4 col-md-4">
           <div
-            className="coupon-promo-card p-4 d-flex flex-column justify-content-between h-100"
-            style={{ backgroundColor: '#FFEDE5' }}
+            className="p-3 d-flex flex-column justify-content-between h-100 rounded-4 content-card shadow-sm"
+            style={{ backgroundColor: '#FFEDE5', minHeight: '140px' }}
           >
             <div>
-              <h5 className="fw-bold mb-1" style={{ color: '#1e293b', fontSize: '1.1rem' }}>
+              <h5 className="fw-bold mb-1" style={{ color: '#1e293b' }}>
                 4 Coupons
               </h5>
               <p className="text-secondary small mb-3">
                 Small nice summer coupons pack
               </p>
-            </div>
-
-            <div>
-              <div className="d-flex align-items-center justify-content-between mb-2">
-                <h2 className="fw-bold mb-0" style={{ color: '#ff5e29', fontSize: '1.6rem' }}>
+              
+              <div className="d-flex align-items-center justify-content-between mb-1">
+                <h2 className="fw-bold mb-0" style={{ color: '#ff5e29' }}>
                   $140.00
                 </h2>
                 <button
-                  type="button"
-                  className="btn text-white fw-medium px-3 py-1.5 border-0 rounded-3"
-                  style={{ backgroundColor: '#FF6C2F', fontSize: '0.85rem' }}
+                  className="btn text-white fw-medium px-3 py-2 border-0 rounded-3 btn-add-product"
+                  style={{ fontSize: '0.875rem', backgroundColor: '#ff5e29' }}
                 >
                   Buy Now
                 </button>
               </div>
+
               <span className="text-secondary small">Duration : 1 Year</span>
             </div>
           </div>
         </div>
 
-        {/* Card 2 */}
-        <div className="col-12 col-md-6 col-xl-4">
+        <div className="col-lg-4 col-md-4">
           <div
-            className="coupon-promo-card p-4 d-flex flex-column justify-content-between h-100"
-            style={{ backgroundColor: '#E2F7F3' }}
+            className="p-3 d-flex flex-column justify-content-between h-100 rounded-4 content-card shadow-sm"
+            style={{ backgroundColor: '#E2F7F3', minHeight: '140px' }}
           >
             <div>
-              <h5 className="fw-bold mb-1" style={{ color: '#1e293b', fontSize: '1.1rem' }}>
+              <h5 className="fw-bold mb-1" style={{ color: '#1e293b' }}>
                 8 Coupons
               </h5>
               <p className="text-secondary small mb-3">
                 Medium nice summer coupons pack
               </p>
-            </div>
-
-            <div>
-              <div className="d-flex align-items-center justify-content-between mb-2">
-                <h2 className="fw-bold mb-0" style={{ color: '#2EC4B6', fontSize: '1.6rem' }}>
+              
+              <div className="d-flex align-items-center justify-content-between mb-1">
+                <h2 className="fw-bold mb-0" style={{ color: '#2EC4B6' }}>
                   $235.00
                 </h2>
                 <button
-                  type="button"
-                  className="btn text-white fw-medium px-3 py-1.5 border-0 rounded-3"
-                  style={{ backgroundColor: '#2EC4B6', fontSize: '0.85rem' }}
+                  className="btn text-white fw-medium px-3 py-2 border-0 rounded-3"
+                  style={{ backgroundColor: '#2EC4B6', fontSize: '0.875rem' }}
                 >
                   Buy Now
                 </button>
               </div>
+
               <span className="text-secondary small">Duration : 1 Year</span>
             </div>
           </div>
         </div>
 
-        {/* Card 3 */}
-        <div className="col-12 col-md-12 col-xl-4">
+        <div className="col-lg-4 col-md-4">
           <div
-            className="coupon-promo-card p-4 d-flex flex-column justify-content-between h-100 position-relative overflow-hidden"
-            style={{ backgroundColor: '#FFEDE5' }}
+            className="p-3 d-flex flex-column justify-content-between h-100 position-relative overflow-hidden rounded-4 content-card shadow-sm"
+            style={{ backgroundColor: '#FFEDE5', minHeight: '140px' }}
           >
-            <div
-              className="position-relative d-flex flex-column h-100 justify-content-between"
-              style={{ zIndex: 1, maxWidth: '75%' }}
-            >
+            <div className="position-relative d-flex flex-column h-100 justify-content-between" style={{ zIndex: 1, maxWidth: '75%' }}>
               <div>
                 <div className="d-flex align-items-center gap-2 mb-2">
                   <div
@@ -330,7 +277,7 @@ export default function CouponsList() {
                       style={{ width: '18px', height: '18px', objectFit: 'contain' }}
                     />
                   </div>
-                  <h6 className="fw-bold mb-0" style={{ color: '#1e293b', fontSize: '0.95rem' }}>
+                  <h6 className="fw-bold mb-0 text-truncate" style={{ color: '#1e293b' }}>
                     30% Special discounts
                   </h6>
                 </div>
@@ -341,9 +288,8 @@ export default function CouponsList() {
 
               <div>
                 <button
-                  type="button"
-                  className="btn text-white fw-medium px-3 py-1.5 border-0 rounded-3"
-                  style={{ backgroundColor: '#FF6C2F', fontSize: '0.85rem' }}
+                  className="btn text-white fw-medium px-3 py-2 border-0 rounded-3 btn-add-product"
+                  style={{ fontSize: '0.85rem', backgroundColor: '#ff5e29' }}
                 >
                   View Plan
                 </button>
@@ -355,31 +301,28 @@ export default function CouponsList() {
               alt="Decorative Pattern"
               style={{
                 position: 'absolute',
-                right: '-10px',
+                right: 0,
                 top: 0,
                 bottom: 0,
                 height: '100%',
                 objectFit: 'contain',
                 pointerEvents: 'none',
                 zIndex: 0,
-                opacity: 0.85,
               }}
             />
           </div>
         </div>
       </div>
 
-      {/* Main Coupons List Table Card */}
-      <div className="coupons-table-card">
-        <div className="d-flex flex-wrap align-items-center justify-content-between p-3 p-lg-4 border-bottom gap-3" style={{ borderColor: '#eaedf1' }}>
-          <h5 className="fw-bold mb-0" style={{ color: '#313B5E', fontSize: '1.1rem' }}>
+     
+      <div className="content-card bg-white rounded-4 shadow-sm p-3">
+        <div className="card-header-custom bg-transparent d-flex align-items-center justify-content-between pb-3">
+          <h2 className="card-title-custom fs-5 fw-bold mb-0 text-dark">
             All Product List
-          </h5>
+          </h2>
           <select
-            className="form-select form-select-sm border-light-subtle"
-            style={{ width: '140px', fontSize: '0.85rem' }}
-            value={filterMonth}
-            onChange={(e) => setFilterMonth(e.target.value)}
+            className="form-select form-select-sm border-light-subtle shadow-none"
+            style={{ width: '130px', fontSize: '0.85rem' }}
           >
             <option>This Month</option>
             <option>Last Month</option>
@@ -388,13 +331,13 @@ export default function CouponsList() {
         </div>
 
         <div className="table-responsive">
-          <table className="table coupons-table align-middle mb-0">
+          <table className="table table-custom align-middle text-nowrap mb-0">
             <thead>
-              <tr>
+              <tr className="text-secondary" style={{ fontSize: '0.85rem' }}>
                 <th style={{ width: '40px' }} className="ps-3">
                   <input
                     type="checkbox"
-                    className="form-check-input cursor-pointer"
+                    className="form-check-input cursor-pointer shadow-none"
                     checked={selectAll}
                     onChange={handleSelectAll}
                   />
@@ -406,69 +349,61 @@ export default function CouponsList() {
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Status</th>
-                <th className="text-center" style={{ width: '130px' }}>Action</th>
+                <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => {
+              {initialProducts.map((product) => {
                 const isSelected = selectedItems.includes(product.id);
                 return (
                   <tr key={product.id}>
                     <td className="ps-3">
                       <input
                         type="checkbox"
-                        className="form-check-input cursor-pointer"
+                        className="form-check-input cursor-pointer shadow-none"
                         checked={isSelected}
                         onChange={() => handleSelectItem(product.id)}
                       />
                     </td>
                     <td>
-                      <div className="d-flex align-items-center gap-3">
-                        <div
-                          style={{
-                            backgroundColor: '#F1F5F9',
-                            borderRadius: '10px',
-                            width: '44px',
-                            height: '44px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
-                          }}
-                        >
-                          <img
-                            src={imagePlaceholderIcon}
-                            alt="Product"
-                            style={{
-                              width: '20px',
-                              height: '20px',
-                              objectFit: 'contain',
-                              opacity: 0.6,
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <div className="fw-semibold text-dark" style={{ fontSize: '0.88rem' }}>
-                            {product.name}
-                          </div>
-                          <div className="text-secondary small">
-                            {product.category}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="fw-medium text-dark">{product.price}</td>
-                    <td className="text-secondary">{product.discount}</td>
-                    <td>
-                      <span
-                        className="px-2 py-1 rounded fw-semibold text-uppercase"
-                        style={{
-                          backgroundColor: '#f1f5f9',
-                          color: '#475569',
-                          fontSize: '0.78rem',
-                          letterSpacing: '0.5px',
+                     <div className="d-flex align-items-center gap-2">
+                      <div 
+                        className="product-img-box flex-shrink-0" 
+                        style={{ 
+                          backgroundColor: '#D9D9D9', 
+                          borderRadius: '12px', 
+                          width: '48px', 
+                          height: '48px', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center' 
                         }}
                       >
+                        <img
+                          src={imagePlaceholderIcon}
+                          alt="Product"
+                          style={{
+                            width: '20px',
+                            height: '20px',
+                            objectFit: 'contain',
+                            opacity: 0.6,
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <div className="product-name fw-semibold text-dark" style={{ fontSize: '0.9rem' }}>
+                          {product.name}
+                        </div>
+                        <div className="product-sizes text-secondary small">
+                          {product.category}
+                        </div>
+                      </div>
+                    </div> 
+                    </td>
+                    <td className="text-secondary fw-medium">{product.price}</td>
+                    <td className="text-secondary fw-medium">{product.discount}</td>
+                    <td>
+                      <span className="text-uppercase text-secondary fw-semibold" style={{ fontSize: '0.85rem' }}>
                         {product.code}
                       </span>
                     </td>
@@ -477,34 +412,34 @@ export default function CouponsList() {
 
                     <td>
                       {product.status === 'Active' ? (
-                        <span
-                          className="d-inline-flex align-items-center gap-1 rounded-2 px-2 py-0.5 fw-semibold"
-                          style={{
-                            backgroundColor: '#22C55E',
-                            color: '#FFFFFF',
-                            fontSize: '0.75rem',
-                          }}
-                        >
-                          <img
-                            src={checkDoubleIcon}
-                            alt="Active"
-                            style={{ width: '12px', height: '12px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
-                          />
-                          Active
+                      <span
+                        className="d-inline-flex align-items-center gap-1 rounded-2 px-2 py-1 fw-semibold"
+                        style={{
+                          backgroundColor: '#22C55E',
+                          color: '#FFFFFF',
+                          fontSize: '0.78rem',
+                        }}
+                      >
+                        <img
+                          src={checkDoubleIcon}
+                          alt="Active"
+                          style={{ width: '14px', height: '14px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+                        />
+                        Active
                         </span>
                       ) : (
                         <span
-                          className="d-inline-flex align-items-center gap-1 rounded-2 px-2 py-0.5 fw-semibold"
+                          className="d-inline-flex align-items-center gap-1 rounded-2 px-2 py-1 fw-semibold"
                           style={{
                             backgroundColor: '#F8D7DA',
                             color: '#842029',
-                            fontSize: '0.75rem',
+                            fontSize: '0.78rem',
                           }}
                         >
                           <img
                             src={cancelIcon}
                             alt="Expired"
-                            style={{ width: '12px', height: '12px', objectFit: 'contain' }}
+                            style={{ width: '14px', height: '14px', objectFit: 'contain' }}
                           />
                           Expired
                         </span>
@@ -513,45 +448,67 @@ export default function CouponsList() {
 
                     <td>
                       <div className="d-flex align-items-center justify-content-center gap-1">
-                        <button
-                          type="button"
-                          className="coupon-action-btn"
-                          title="View"
-                          style={{ backgroundColor: '#EEF2F7' }}
-                        >
-                          <img
-                            src={eyeIcon}
-                            alt="View"
-                            style={{ width: '15px', height: '15px', objectFit: 'contain' }}
-                          />
-                        </button>
+                        <button 
+                            className="action-btn" 
+                            title="View"
+                            style={{
+                              backgroundColor: '#EEF2F7',
+                              borderRadius: '8px',
+                              width: '36px',
+                              height: '30px',
+                              border: 'none',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <img
+                              src={eyeIcon}
+                              alt="View"
+                              style={{ width: '14px', height: '14px', objectFit: 'contain' }}
+                            />
+                          </button>
 
-                        <button
-                          type="button"
-                          className="coupon-action-btn"
-                          title="Edit"
-                          style={{ backgroundColor: 'rgba(255, 108, 47, 0.1)' }}
-                        >
-                          <img
-                            src={penIcon}
-                            alt="Edit"
-                            style={{ width: '15px', height: '15px', objectFit: 'contain' }}
-                          />
-                        </button>
-
-                        <button
-                          type="button"
-                          className="coupon-action-btn"
-                          title="Delete"
-                          style={{ backgroundColor: 'rgba(239, 95, 95, 0.1)' }}
-                          onClick={() => handleDelete(product.id)}
-                        >
-                          <img
-                            src={trashIcon}
-                            alt="Delete"
-                            style={{ width: '15px', height: '15px', objectFit: 'contain' }}
-                          />
-                        </button>
+                         <button 
+                            className="action-btn" 
+                            title="Edit"
+                            style={{
+                              backgroundColor: 'rgba(255, 108, 47, 0.1)',
+                              borderRadius: '8px',
+                              width: '36px',
+                              height: '30px',
+                              border: 'none',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <img
+                              src={penIcon}
+                              alt="Edit"
+                              style={{ width: '14px', height: '14px', objectFit: 'contain' }}
+                            />
+                          </button>
+                          <button 
+                            className="action-btn" 
+                            title="Delete"
+                            style={{
+                              backgroundColor: 'rgba(239, 95, 95, 0.1)',
+                              borderRadius: '8px',
+                              width: '36px',
+                              height: '30px',
+                              border: 'none',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <img
+                              src={trashIcon}
+                              alt="Delete"
+                              style={{ width: '14px', height: '14px', objectFit: 'contain' }}
+                            />
+                          </button>
                       </div>
                     </td>
                   </tr>
@@ -560,36 +517,28 @@ export default function CouponsList() {
             </tbody>
           </table>
         </div>
-
-        {/* Footer Pagination */}
         <div
-          className="d-flex flex-wrap align-items-center justify-content-between p-3 border-top"
-          style={{ borderColor: '#eaedf1' }}
+          className="card-footer bg-transparent py-3 border-0 d-flex align-items-center justify-content-end gap-1"
+          style={{ borderTop: '1px solid var(--border-color)' }}
         >
-          <p className="mb-0 text-muted small">
-            Showing <strong className="text-dark">{products.length}</strong> items
-          </p>
-
-          <div className="d-flex align-items-center gap-1">
-            <button className="btn btn-sm btn-light border px-2 py-1 text-secondary small">
-              Previous
-            </button>
-            <button
-              className="btn btn-sm text-white px-2.5 py-1 fw-bold rounded"
-              style={{ backgroundColor: '#FF6C2F', fontSize: '0.8rem' }}
-            >
-              1
-            </button>
-            <button className="btn btn-sm btn-light border px-2.5 py-1 text-secondary small">
-              2
-            </button>
-            <button className="btn btn-sm btn-light border px-2.5 py-1 text-secondary small">
-              3
-            </button>
-            <button className="btn btn-sm btn-light border px-2 py-1 text-secondary small">
-              Next
-            </button>
-          </div>
+          <button className="btn btn-outline-secondary btn-sm px-3" style={{ fontSize: '0.85rem' }}>
+            Previous
+          </button>
+          <button
+            className="btn btn-sm text-white px-3 py-1 fw-bold btn-add-product"
+            style={{ backgroundColor: '#ff5e29', fontSize: '0.85rem' }}
+          >
+            1
+          </button>
+          <button className="btn btn-outline-secondary btn-sm px-3" style={{ fontSize: '0.85rem' }}>
+            2
+          </button>
+          <button className="btn btn-outline-secondary btn-sm px-3" style={{ fontSize: '0.85rem' }}>
+            3
+          </button>
+          <button className="btn btn-outline-secondary btn-sm px-3" style={{ fontSize: '0.85rem' }}>
+            Next
+          </button>
         </div>
       </div>
     </div>
