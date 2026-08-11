@@ -303,18 +303,17 @@ function ProductDetails(){
             <span className="fw-bold text-dark small">Henny K. Mark</span>
           </div>
 
-          <div className="mb-2">
-            <span className="fw-bold small text-dark d-block mb-1">Excellent Quality</span>
-            <div className="d-flex align-items-center gap-2">
-              <div className="d-flex align-items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <BsStarFill key={i} className="text-warning" style={{ color: '#ffb703', fontSize: '12px' }} />
-                ))}
-              </div>
-              <span className="text-muted" style={{ fontSize: '11px' }}>
-                Reviewed in Canada on 16 November 2023
-              </span>
+          <div className="d-flex align-items-center gap-2 mb-1">
+            <div className="d-flex align-items-center gap-1">
+              {[...Array(5)].map((_, i) => (
+                <BsStarFill key={i} className="text-warning" style={{ color: '#ffb703', fontSize: '13px' }} />
+              ))}
             </div>
+            <span className="fw-bold small text-dark">Excellent Quality</span>
+          </div>
+
+          <div className="text-muted mb-2" style={{ fontSize: '11px' }}>
+            Reviewed in Canada on 16 November 2023
           </div>
 
           <p className="text-muted small mb-2" style={{ fontSize: '12px', lineHeight: '1.5' }}>
@@ -335,18 +334,17 @@ function ProductDetails(){
             <span className="fw-bold text-dark small">Jorge Herry</span>
           </div>
 
-          <div className="mb-2">
-            <span className="fw-bold small text-dark d-block mb-1">Good Quality</span>
-            <div className="d-flex align-items-center gap-2">
-              <div className="d-flex align-items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <BsStarFill key={i} className="text-warning" style={{ color: '#ffb703', fontSize: '12px' }} />
-                ))}
-              </div>
-              <span className="text-muted" style={{ fontSize: '11px' }}>
-                Reviewed in U.S.A on 21 December 2023
-              </span>
+          <div className="d-flex align-items-center gap-2 mb-1">
+            <div className="d-flex align-items-center gap-1">
+              {[...Array(5)].map((_, i) => (
+                <BsStarFill key={i} className="text-warning" style={{ color: '#ffb703', fontSize: '13px' }} />
+              ))}
             </div>
+            <span className="fw-bold small text-dark">Good Quality</span>
+          </div>
+
+          <div className="text-muted mb-2" style={{ fontSize: '11px' }}>
+            Reviewed in U.S.A on 21 December 2023
           </div>
 
           <p className="text-muted small mb-2" style={{ fontSize: '12px', lineHeight: '1.5' }}>
