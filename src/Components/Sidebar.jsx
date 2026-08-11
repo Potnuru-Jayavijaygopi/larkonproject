@@ -6,7 +6,6 @@ import {
   BsChevronDoubleRight,
 } from 'react-icons/bs';
 
-// Custom Sidebar Image Icons imported from src/assets/
 import dashboardIcon from '../assets/dashboard.png';
 import productIcon from '../assets/product.png';
 import categoryIcon from '../assets/category.png';
@@ -52,22 +51,12 @@ import disableItemIcon from '../assets/disable item.png';
 
 import logoImg from '../assets/logo.png';
 
-/**
- * Sidebar Component with image icons from src/assets:
- * - GENERAL (Dashboard, Products, Category, Inventory, Orders, Purchases, Attributes, Invoices, Settings)
- * - USERS (Profile, Roles, Permissions, Customers, Sellers)
- * - OTHER (Coupons, Reviews)
- * - OTHER APPS (Chat, Email, Calendar, Todo)
- * - SUPPORT (Help Center, FAQS, Privacy Policy)
- * - CUSTOM (Pages, Authentication, Widgets [+9 badge])
- * - COMPONENTS (Base UI [22 items], Advanced UI, Charts, Forms, Tables, Icons, Maps, Badge Menu, Menu Item, Disable Item)
- */
+
 function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location ? location.pathname : '/';
 
-  // Single open accordion menu state
   const [openMenu, setOpenMenu] = useState('baseUi');
 
   const toggleParentMenu = (e, menuKey) => {
@@ -77,19 +66,18 @@ function Sidebar() {
 
   const handleSubItemClick = (e, menuKey, routePath) => {
     if (e) e.preventDefault();
-    setOpenMenu(menuKey); // Keeps parent dropdown open
+    setOpenMenu(menuKey); 
     navigate(routePath);
   };
 
   const handleStandaloneClick = (e, routePath) => {
     if (e) e.preventDefault();
-    setOpenMenu(null); // Closes all dropdowns
+    setOpenMenu(null); 
     navigate(routePath);
   };
 
   return (
     <aside className="sidebar">
-      {/* Brand Header */}
       <div className="sidebar-brand d-flex align-items-center justify-content-between px-3 py-3">
         <div
           className="logo-text cursor-pointer d-flex align-items-center"
@@ -104,14 +92,11 @@ function Sidebar() {
         <BsChevronDoubleRight className="text-secondary cursor-pointer small opacity-75" />
       </div>
 
-      {/* Sidebar Menu */}
       <div className="sidebar-menu px-2 pb-4">
-        {/* GENERAL CATEGORY */}
         <div className="menu-category text-uppercase small text-secondary px-3 mt-3 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           General
         </div>
 
-        {/* Dashboard */}
         <NavLink
           to="/"
           className={({ isActive }) =>
@@ -125,7 +110,6 @@ function Sidebar() {
           </div>
         </NavLink>
 
-        {/* Products Dropdown */}
         <div>
           <a
             href="#products"
@@ -180,7 +164,6 @@ function Sidebar() {
           )}
         </div>
 
-        {/* Category Dropdown */}
         <div>
           <a
             href="#category"
@@ -221,7 +204,6 @@ function Sidebar() {
           )}
         </div>
 
-        {/* Inventory Dropdown */}
         <div>
           <a
             href="#inventory"
@@ -255,7 +237,6 @@ function Sidebar() {
           )}
         </div>
 
-        {/* Orders Dropdown */}
         <div>
           <a
             href="#orders"
@@ -303,7 +284,6 @@ function Sidebar() {
           )}
         </div>
 
-        {/* Purchases Dropdown */}
         <div>
           <a
             href="#purchases"
@@ -344,7 +324,6 @@ function Sidebar() {
           )}
         </div>
 
-        {/* Attributes Dropdown */}
         <div>
           <a
             href="#attributes"
@@ -385,7 +364,6 @@ function Sidebar() {
           )}
         </div>
 
-        {/* Invoices Dropdown */}
         <div>
           <a
             href="#invoices"
@@ -426,7 +404,7 @@ function Sidebar() {
           )}
         </div>
 
-        {/* Settings */}
+        
         <NavLink
           to="/settings"
           className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
@@ -439,12 +417,12 @@ function Sidebar() {
         </NavLink>
 
 
-        {/* USERS CATEGORY */}
+        
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Users
         </div>
 
-        {/* Profile */}
+       
         <NavLink
           to="/profile"
           className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
@@ -456,7 +434,7 @@ function Sidebar() {
           </div>
         </NavLink>
 
-        {/* Roles */}
+        
         <div>
           <a
             href="#roles"
@@ -471,7 +449,7 @@ function Sidebar() {
           </a>
         </div>
 
-        {/* Permissions */}
+      
         <NavLink
           to="/permissions"
           className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
@@ -483,7 +461,7 @@ function Sidebar() {
           </div>
         </NavLink>
 
-        {/* Customers */}
+        
         <div>
           <a
             href="#customers"
@@ -498,7 +476,7 @@ function Sidebar() {
           </a>
         </div>
 
-        {/* Sellers */}
+        
         <div>
           <a
             href="#sellers"
@@ -514,12 +492,12 @@ function Sidebar() {
         </div>
 
 
-        {/* OTHER CATEGORY */}
+      
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Other
         </div>
 
-        {/* Coupons */}
+        
         <div>
           <a
             href="#coupons"
@@ -534,7 +512,7 @@ function Sidebar() {
           </a>
         </div>
 
-        {/* Reviews */}
+        
         <NavLink
           to="/reviews"
           className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
@@ -547,7 +525,7 @@ function Sidebar() {
         </NavLink>
 
 
-        {/* OTHER APPS CATEGORY */}
+        
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Other Apps
         </div>
@@ -597,7 +575,7 @@ function Sidebar() {
         </NavLink>
 
 
-        {/* SUPPORT CATEGORY */}
+       
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Support
         </div>
@@ -636,12 +614,12 @@ function Sidebar() {
         </NavLink>
 
 
-        {/* CUSTOM CATEGORY */}
+        
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Custom
         </div>
 
-        {/* Pages Dropdown */}
+        
         <div>
           <a
             href="#pages"
@@ -696,7 +674,7 @@ function Sidebar() {
           )}
         </div>
 
-        {/* Authentication Dropdown */}
+        
         <div>
           <a
             href="#authentication"
@@ -744,7 +722,7 @@ function Sidebar() {
           )}
         </div>
 
-        {/* Widgets Standalone with +9 Badge */}
+       
         <NavLink
           to="/widgets"
           className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
@@ -758,12 +736,11 @@ function Sidebar() {
         </NavLink>
 
 
-        {/* COMPONENTS CATEGORY */}
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Components
         </div>
 
-        {/* Base UI Dropdown with all 22 items */}
+       
         <div>
           <a
             href="#base-ui"
@@ -816,7 +793,7 @@ function Sidebar() {
           )}
         </div>
 
-        {/* Advanced UI Dropdown */}
+       
         <div>
           <a
             href="#advanced-ui"
@@ -831,7 +808,7 @@ function Sidebar() {
           </a>
         </div>
 
-        {/* Charts Dropdown */}
+        
         <div>
           <a
             href="#charts"
@@ -846,7 +823,7 @@ function Sidebar() {
           </a>
         </div>
 
-        {/* Forms Dropdown */}
+        
         <div>
           <a
             href="#forms"
@@ -861,7 +838,7 @@ function Sidebar() {
           </a>
         </div>
 
-        {/* Tables Dropdown */}
+        
         <div>
           <a
             href="#tables"
@@ -876,7 +853,7 @@ function Sidebar() {
           </a>
         </div>
 
-        {/* Icons Dropdown */}
+       
         <div>
           <a
             href="#icons"
@@ -891,7 +868,7 @@ function Sidebar() {
           </a>
         </div>
 
-        {/* Maps Dropdown */}
+        
         <div>
           <a
             href="#maps"
@@ -906,7 +883,7 @@ function Sidebar() {
           </a>
         </div>
 
-        {/* Badge Menu */}
+        
         <a
           href="#badge-menu"
           className="nav-link-custom"
@@ -921,7 +898,7 @@ function Sidebar() {
           <span className="badge bg-danger rounded-circle p-1" style={{ fontSize: '0.65rem', minWidth: '18px' }}>1</span>
         </a>
 
-        {/* Menu Item */}
+        
         <div>
           <a
             href="#menu-item"
@@ -936,7 +913,7 @@ function Sidebar() {
           </a>
         </div>
 
-        {/* Disable Item */}
+        
         <div className="nav-link-custom opacity-50 cursor-not-allowed">
           <div className="nav-link-left">
             <img src={disableItemIcon} alt="Disable Item" className="sidebar-icon-img" />
