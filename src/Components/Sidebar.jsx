@@ -65,7 +65,7 @@ function Sidebar() {
 
   const handleSubItemClick = (e, menuKey, routePath) => {
     if (e) e.preventDefault();
-    setOpenMenu(menuKey); 
+    setOpenMenu(menuKey);
     navigate(routePath);
   };
 
@@ -491,18 +491,67 @@ function Sidebar() {
           Other
         </div>
 
+
         <div>
           <a
             href="#coupons"
-            className="nav-link-custom"
+            className={`nav-link-custom ${currentPath.startsWith('/coupons') ? 'active' : ''}`}
             onClick={(e) => toggleParentMenu(e, 'coupons')}
           >
             <div className="nav-link-left">
-              <img src={couponsIcon} alt="Coupons" className="sidebar-icon-img" />
+              <img
+                src={couponsIcon}
+                alt="Coupons"
+                className="sidebar-icon-img"
+              />
               <span>Coupons</span>
             </div>
-            {openMenu === 'coupons' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
+
+            {openMenu === 'coupons'
+              ? <BsChevronDown className="small" />
+              : <BsChevronRight className="small" />
+            }
           </a>
+
+
+          {openMenu === 'coupons' && (
+            <div className="submenu">
+
+              <NavLink
+                to="/coupons/list"
+                className={({ isActive }) =>
+                  `submenu-item ${isActive ? 'active' : ''}`
+                }
+                onClick={(e) =>
+                  handleSubItemClick(
+                    e,
+                    'coupons',
+                    '/coupons/list'
+                  )
+                }
+              >
+                Coupons-List
+              </NavLink>
+
+
+              <NavLink
+                to="/coupons/add"
+                className={({ isActive }) =>
+                  `submenu-item ${isActive ? 'active' : ''}`
+                }
+                onClick={(e) =>
+                  handleSubItemClick(
+                    e,
+                    'coupons',
+                    '/coupons/add'
+                  )
+                }
+              >
+                Coupons-Add
+              </NavLink>
+
+            </div>
+          )}
         </div>
 
         <NavLink
