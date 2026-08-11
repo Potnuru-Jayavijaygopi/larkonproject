@@ -27,6 +27,13 @@ import CreateInvoice from './Pages/invoices/CreateInvoice';
 
 import Settings from './Pages/settings/Settings';
 
+import Profile from './Pages/Profile';
+import RolesList from './Pages/Roles/RolesList';
+import RoleEdit from './Pages/Roles/Roleedit';
+import RoleCreate from './Pages/Roles/RoleCreate';
+import Permissions from './Pages/Permissions/Permissions';
+import Permissions2 from './Pages/Permissions/Permissions2';
+
 import Accordion from './Pages/base-ui/Accordion';
 import Alerts from './Pages/base-ui/Alerts';
 import Avatar from './Pages/base-ui/Avatar';
@@ -111,6 +118,16 @@ const router = createBrowserRouter([
       { path: 'orders/details', element: <OrderDetails /> },
       { path: 'orders/cart', element: <OrderCart /> },
       { path: 'orders/checkout', element: <OrderCheckout /> },
+
+      // Users routes
+      { path: 'profile', element: <Profile /> },
+      { path: 'pages/profile', element: <Profile /> },
+      { path: 'roles', element: <RolesList /> },
+      { path: 'roles/list', element: <RolesList /> },
+      { path: 'roles/edit', element: <RoleEdit /> },
+      { path: 'roles/create', element: <RoleCreate /> },
+      { path: 'permissions', element: <Permissions /> },
+      { path: 'permissions2', element: <Permissions2 /> },
 
       // Widgets
       { path: 'widgets', element: <Widgets /> },
