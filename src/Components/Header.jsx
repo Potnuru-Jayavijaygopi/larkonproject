@@ -7,18 +7,12 @@ import settingsImg from '../assets/settings1.png';
 import clockImg from '../assets/solar_clock-circle-bold-duotone.png';
 import calendarImg from '../assets/image.png';
 
-
 function Header({ title = 'ACCORDION' }) {
   return (
     <header className="top-header">
-
-      <h5 className="header-title mb-0">
-        {title}
-      </h5>
-
+      <h5 className="header-title mb-0">{title}</h5>
 
       <div className="d-flex align-items-center gap-3">
-
         <button
           className="header-icon-btn border-0 bg-transparent p-1 d-flex align-items-center justify-content-center"
           type="button"
@@ -35,7 +29,6 @@ function Header({ title = 'ACCORDION' }) {
           />
         </button>
 
-
         <button
           className="header-icon-btn border-0 bg-transparent p-1 d-flex align-items-center justify-content-center position-relative"
           type="button"
@@ -50,12 +43,8 @@ function Header({ title = 'ACCORDION' }) {
               objectFit: 'contain'
             }}
           />
-
-          <span className="notification-dot">
-            3
-          </span>
+          <span className="notification-dot">3</span>
         </button>
-
 
         <button
           className="header-icon-btn border-0 bg-transparent p-1 d-flex align-items-center justify-content-center"
@@ -73,7 +62,6 @@ function Header({ title = 'ACCORDION' }) {
           />
         </button>
 
-
         <button
           className="header-icon-btn border-0 bg-transparent p-1 d-flex align-items-center justify-content-center"
           type="button"
@@ -89,7 +77,6 @@ function Header({ title = 'ACCORDION' }) {
             }}
           />
         </button>
-
 
         <button
           className="header-icon-btn border-0 bg-transparent p-1 d-flex align-items-center justify-content-center"
@@ -107,24 +94,17 @@ function Header({ title = 'ACCORDION' }) {
           />
         </button>
 
-
         <div className="header-search position-relative">
-
           <BsSearch className="position-absolute start-0 ms-3 top-50 translate-middle-y text-muted" />
-
           <input
             type="text"
             className="form-control form-control-sm ps-5"
             placeholder="Search..."
           />
-
         </div>
-
       </div>
-
     </header>
   );
 }
-
 
 export default Header;

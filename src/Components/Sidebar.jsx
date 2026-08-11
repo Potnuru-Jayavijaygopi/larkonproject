@@ -471,7 +471,7 @@ function Sidebar() {
             </div>
             {openMenu === 'customers' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
-          { openMenu === 'customers' && (
+          {openMenu === 'customers' && (
             <div className="submenu">
               <NavLink
                 to="/customers/details"
@@ -480,7 +480,6 @@ function Sidebar() {
               >
                 Customer Details
               </NavLink>
-              
             </div>
           )}
         </div>
@@ -536,7 +535,7 @@ function Sidebar() {
           Other
         </div>
 
-         <div>
+        <div>
           <a
             href="#coupons"
             className={`nav-link-custom ${currentPath.startsWith('/coupons') ? 'active' : ''}`}
