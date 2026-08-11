@@ -22,12 +22,12 @@ import SellerDetails from './Pages/Pages2/sellerdetails';
 import SellerEdit from './Pages/Pages2/selleredit';
 import SellerCreate from './Pages/Pages2/sellercreate';
 
-// import InvoiceList from './pages/invoices/InvoiceList';
-// import InvoiceDetails from './pages/invoices/InvoiceDetails';
-// import CreateInvoice from './pages/invoices/CreateInvoice';
+import InvoiceList from './pages/invoices/InvoiceList';
+import InvoiceDetails from './pages/invoices/InvoiceDetails';
+import CreateInvoice from './pages/invoices/CreateInvoice';
 
 
-// import Settings from './pages/settings/Settings';
+import Settings from './pages/settings/Settings';
 
 
 
