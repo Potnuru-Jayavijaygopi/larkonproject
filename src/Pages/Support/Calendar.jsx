@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Plus from "../../assets/plus.png";
 import Dot from "../../assets/dot.png";
 import Dot1 from "../../assets/dot-1.png";
@@ -7,457 +7,307 @@ import Dot3 from "../../assets/dot-3.png";
 import Dot4 from "../../assets/dot-4.png";
 
 function Calendar() {
-  const [activeView, setActiveView] = useState("Month");
+    const containerRef = useRef(null);
+    const [scale, setScale] = useState(1);
 
-  return (
-    <div className="calendar-page-wrapper w-100">
-      <style>{`
-        .calendar-card {
-          background-color: #ffffff;
-          border: 1px solid var(--border-color, #e2e8f0);
-          border-radius: 12px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-          width: 100%;
-          box-sizing: border-box;
+    useEffect(() => {
+        const updateScale = () => {
+            if (!containerRef.current) return;
+            const availableWidth = containerRef.current.clientWidth;
+            const newScale = Math.min(1, availableWidth / 1534);
+            setScale(newScale);
+        };
+        updateScale();
+        const observer = new ResizeObserver(updateScale);
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
         }
+        window.addEventListener("resize", updateScale);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener("resize", updateScale);
+        };
+    }, []);
 
-        .calendar-grid-cell {
-          min-height: 95px;
-          border-right: 1px solid #eaedf1;
-          border-bottom: 1px solid #eaedf1;
-          position: relative;
-          padding: 6px;
-          background-color: #ffffff;
-          transition: background-color 0.15s ease;
-        }
-
-        .calendar-grid-cell:hover {
-          background-color: #f8fafc;
-        }
-
-        .calendar-grid-cell:nth-child(7n) {
-          border-right: none;
-        }
-
-        .event-pill {
-          font-size: 11.5px;
-          font-weight: 600;
-          border-radius: 4px;
-          padding: 4px 6px;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          color: #ffffff;
-          margin-top: 3px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          cursor: pointer;
-        }
-
-        .sidebar-event-item {
-          padding: 10px 12px;
-          border-radius: 6px;
-          font-size: 12.5px;
-          font-weight: 500;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          cursor: pointer;
-          transition: transform 0.15s ease, opacity 0.15s ease;
-        }
-
-        .sidebar-event-item:hover {
-          transform: translateX(3px);
-          opacity: 0.9;
-        }
-      `}</style>
-
-      <div className="calendar-card p-3 p-lg-4">
-        {/* Top Controls Bar */}
-        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-          <div className="d-flex flex-wrap align-items-center gap-2">
-            <button
-              type="button"
-              className="btn d-inline-flex align-items-center gap-2 px-3 py-2 text-white border-0"
-              style={{
-                backgroundColor: "#FF6C2F",
-                borderRadius: "8px",
-                fontSize: "0.85rem",
-                fontWeight: 500,
-              }}
-            >
-              <img src={Plus} alt="plus" style={{ width: "12px", height: "12px" }} />
-              <span>Add New Schedule</span>
-            </button>
-
+    return (
+        <div className="w-full h-[2010px] px-[20px]">
             <div
-              className="btn-group"
-              role="group"
-              style={{ backgroundColor: "#FF6C2F", borderRadius: "8px", overflow: "hidden" }}
-            >
-              <button
-                type="button"
-                className="btn btn-sm text-white border-0 px-2 py-1"
-                style={{ fontSize: "0.78rem" }}
-              >
-                Prev
-              </button>
-              <button
-                type="button"
-                className="btn btn-sm text-white border-0 px-2 py-1"
-                style={{ fontSize: "0.78rem" }}
-              >
-                Next
-              </button>
-            </div>
-
-            <button
-              type="button"
-              className="btn btn-sm text-white border-0 px-3 py-1"
-              style={{
-                backgroundColor: "rgba(255, 108, 47, 0.75)",
-                borderRadius: "8px",
-                fontSize: "0.78rem",
-              }}
-            >
-              Today
-            </button>
-          </div>
-
-          <h5
-            className="mb-0 fw-bold text-center"
-            style={{ fontSize: "1.1rem", color: "#313B5E" }}
-          >
-            August 2024
-          </h5>
-
-          <div
-            className="btn-group"
-            role="group"
-            style={{
-              backgroundColor: "#FF6C2F",
-              borderRadius: "8px",
-              padding: "2px",
-            }}
-          >
-            {["Month", "Week", "Day", "List"].map((view) => (
-              <button
-                key={view}
-                type="button"
-                className={`btn btn-sm border-0 text-white px-3 py-1 ${
-                  activeView === view ? "fw-bold" : ""
-                }`}
+                ref={containerRef}
+                className="w-full min-w-0"
                 style={{
-                  backgroundColor: activeView === view ? "#D95A23" : "transparent",
-                  borderRadius: "6px",
-                  fontSize: "0.78rem",
+                    height: `${770 * scale}px`,
                 }}
-                onClick={() => setActiveView(view)}
-              >
-                {view}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Main Content: Sidebar + Calendar Grid */}
-        <div className="row g-4">
-          {/* Left Events Panel */}
-          <div className="col-12 col-lg-4 col-xl-3">
-            <p
-              className="mb-3 text-secondary"
-              style={{ fontSize: "0.85rem", lineHeight: "1.4" }}
             >
-              Drag and drop your event or click in the calendar
-            </p>
-
-            <div className="d-flex flex-column gap-2">
-              <div
-                className="sidebar-event-item"
-                style={{ backgroundColor: "rgba(255, 108, 47, 0.15)", color: "#FF6C2F" }}
-              >
-                <img src={Dot} alt="dot" style={{ width: "12px", height: "12px" }} />
-                <span>Team Building Retreat Meeting</span>
-              </div>
-
-              <div
-                className="sidebar-event-item"
-                style={{ backgroundColor: "rgba(78, 202, 194, 0.15)", color: "#4ECAC2" }}
-              >
-                <img src={Dot1} alt="dot1" style={{ width: "12px", height: "12px" }} />
-                <span>Product Launch Strategy Meeting</span>
-              </div>
-
-              <div
-                className="sidebar-event-item"
-                style={{ backgroundColor: "rgba(34, 197, 94, 0.15)", color: "#22C55E" }}
-              >
-                <img src={Dot2} alt="dot2" style={{ width: "12px", height: "12px" }} />
-                <span>Monthly Sales Review</span>
-              </div>
-
-              <div
-                className="sidebar-event-item"
-                style={{ backgroundColor: "rgba(239, 95, 95, 0.15)", color: "#EF5F5F" }}
-              >
-                <img src={Dot3} alt="dot3" style={{ width: "12px", height: "12px" }} />
-                <span>Team Lunch Celebration</span>
-              </div>
-
-              <div
-                className="sidebar-event-item"
-                style={{ backgroundColor: "rgba(249, 185, 49, 0.15)", color: "#F9B931" }}
-              >
-                <img src={Dot4} alt="dot4" style={{ width: "12px", height: "12px" }} />
-                <span>Marketing Campaign Kickoff</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Calendar Grid */}
-          <div className="col-12 col-lg-8 col-xl-9">
-            <div
-              className="border rounded bg-white overflow-hidden"
-              style={{ borderColor: "#eaedf1" }}
-            >
-              {/* Day of Week Header */}
-              <div
-                className="d-grid text-center py-2 border-bottom fw-semibold text-secondary"
-                style={{
-                  gridTemplateColumns: "repeat(7, 1fr)",
-                  fontSize: "0.8rem",
-                  backgroundColor: "#f8fafc",
-                  borderColor: "#eaedf1",
-                }}
-              >
-                <div>Sun</div>
-                <div>Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
-              </div>
-
-              {/* Grid Body */}
-              <div
-                className="d-grid"
-                style={{ gridTemplateColumns: "repeat(7, 1fr)" }}
-              >
-                {/* Row 1 */}
-                <div className="calendar-grid-cell">
-                  <span className="text-muted opacity-50 small float-end">28</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-muted opacity-50 small float-end">29</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-muted opacity-50 small float-end">30</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-muted opacity-50 small float-end">31</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">1</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">2</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">3</span>
-                </div>
-
-                {/* Row 2 */}
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">4</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">5</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">6</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">7</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">8</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">9</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">10</span>
-                </div>
-
-                {/* Row 3 */}
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">11</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">12</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">13</span>
-                </div>
                 <div
-                  className="calendar-grid-cell"
-                  style={{ backgroundColor: "rgba(255, 220, 40, 0.08)" }}
+                    className="w-[1534px] h-[770px] bg-[#FFFFFF] !rounded-[12px] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] p-[35px]"
+                    style={{
+                        transform: `scale(${scale})`,
+                        transformOrigin: "top left",
+                    }}
                 >
-                  <span className="text-secondary small float-end">14</span>
-                  <div className="mt-4">
-                    <div
-                      className="event-pill"
-                      style={{ backgroundColor: "#FF6C2F" }}
-                      title="4:52p Interview - Backend Engineer"
-                    >
-                      <div className="rounded-circle bg-white" style={{ width: "6px", height: "6px", flexShrink: 0 }}></div>
-                      <span className="text-truncate">4:52p Backend Eng.</span>
+                    <div className="flex items-center gap-[14px]">
+                        <button className="w-[370px] h-[39px] bg-[#FF6C2F] !rounded-[8px] flex items-center justify-center gap-[10px]">
+                            <img src={Plus} alt="plus" className="w-[12px] h-[12px]" />
+                            <span className="text-white text-[14px] font-normal leading-[100%]">
+                                Add New Schedule
+                            </span>
+                        </button>
+                        <div className="w-[102px] h-[32px] bg-[#FF6C2F] !rounded-[8px] flex items-center justify-center py-[3px]">
+                            <button className="w-1/2 h-full text-[#FFFFFF] text-[12.6px] font-[400]">Prev</button>
+                            <button className="w-1/2 h-full text-[#FFFFFF] text-[12.6px] font-[400]">Next</button>
+                        </div>
+                        <button className="w-[60px] h-[32px] bg-[#FF6C2F]/65 !rounded-[8px] text-[#FFFFFF] text-[12.6px] font-[400] py-[3px]">Today</button>
+                        <span className="w-[100px] ml-[160px] text-[12.6px] font-semibold leading-[100%] tracking-[0%] text-[#313B5E]">
+                            August 2024
+                        </span>
+                        <div className="ml-[500px] w-[213px] h-[32px] bg-[#FF6C2F] !rounded-[8px] flex items-center !rounded-l-[8px]">
+                            <button className="w-[54px] h-full bg-[#D95A23] text-white text-[12px] font-normal">Month</button>
+                            <button className="w-[53px] h-full bg-transparent text-white text-[12px] font-normal">Week</button>
+                            <button className="w-[50px] h-full bg-transparent text-white text-[12px] font-normal">Day</button>
+                            <button className="w-[56px] h-full bg-transparent text-white text-[12px] font-normal">List</button>
+                        </div>
                     </div>
-                    <div
-                      className="event-pill"
-                      style={{ backgroundColor: "#F9B931" }}
-                      title="8:28p Meeting with CT Team"
-                    >
-                      <div className="rounded-circle bg-white" style={{ width: "6px", height: "6px", flexShrink: 0 }}></div>
-                      <span className="text-truncate">8:28p CT Meeting</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">15</span>
-                  <div className="mt-4">
-                    <div
-                      className="event-pill"
-                      style={{ backgroundColor: "#5D7186" }}
-                      title="9:41a Interview - Frontend Engineer"
-                    >
-                      <span className="fw-bold">9:41a</span>
-                      <span className="text-truncate">Frontend Eng.</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">16</span>
-                  <div className="mt-4">
-                    <div
-                      className="event-pill"
-                      style={{ backgroundColor: "#22C55E" }}
-                      title="3:32p Phone Screen"
-                    >
-                      <div className="rounded-circle bg-white" style={{ width: "6px", height: "6px", flexShrink: 0 }}></div>
-                      <span className="text-truncate">3:32p Phone Screen</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">17</span>
-                </div>
 
-                {/* Row 4 */}
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">18</span>
-                  <div className="mt-4">
-                    <div
-                      className="event-pill"
-                      style={{ backgroundColor: "#4ECAC2" }}
-                      title="6:25a Meeting with Mr. Reback"
-                    >
-                      <div className="rounded-circle bg-white" style={{ width: "6px", height: "6px", flexShrink: 0 }}></div>
-                      <span className="text-truncate">6:25a Mr. Reback</span>
-                    </div>
-                    <div
-                      className="event-pill"
-                      style={{ backgroundColor: "#FF6C2F" }}
-                      title="12:32p Buy Design Assets"
-                    >
-                      <div className="rounded-circle bg-white" style={{ width: "6px", height: "6px", flexShrink: 0 }}></div>
-                      <span className="text-truncate">12:32p Assets</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">19</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">20</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">21</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">22</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">23</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">24</span>
-                </div>
+                    <div className="flex gap-[32px] mt-[16px]">
+                        <div className="w-[354px]">
+                            <p className="w-[315px] h-[16px] text-[14px] font-normal leading-[100%] tracking-[0px] text-[#5D7186] !mt-[23px]">
+                                Drag and drop your event or click in the calendar
+                            </p>
+                            <div className="!mt-[15px] w-[354px] h-[37px] bg-[#FF6C2F]/25 rounded-[4px] flex items-center px-[10px] gap-[12px]">
+                                <img src={Dot} alt="dot" className="w-[14px] h-[14px]" />
+                                <span className="text-[12px] font-normal leading-[100%] text-[#FF6C2F]">
+                                    Team Building Retreat Meeting
+                                </span>
+                            </div>
+                            <div className="!mt-[15px] w-[354px] h-[37px] bg-[#4ECAC2]/25 rounded-[4px] flex items-center px-[10px] gap-[12px]">
+                                <img src={Dot1} alt="dot1" className="w-[14px] h-[14px]" />
+                                <span className="text-[12px] font-normal leading-[100%] text-[#4ECAC2]">
+                                    Product Launch Strategy Meeting
+                                </span>
+                            </div>
+                            <div className="!mt-[15px] w-[354px] h-[37px] bg-[#22C55E]/25 rounded-[4px] flex items-center px-[10px] gap-[12px]">
+                                <img src={Dot2} alt="dot2" className="w-[14px] h-[14px]" />
+                                <span className="text-[12px] font-normal leading-[100%] text-[#22C55E]">
+                                    Monthly Sales Review
+                                </span>
+                            </div>
+                            <div className="!mt-[15px] w-[354px] h-[37px] bg-[#EF5F5F]/25 rounded-[4px] flex items-center px-[10px] gap-[12px]">
+                                <img src={Dot3} alt="dot3" className="w-[14px] h-[14px]" />
+                                <span className="text-[12px] font-normal leading-[100%] text-[#EF5F5F]">
+                                    Team Lunch Celebration
+                                </span>
+                            </div>
+                            <div className="!mt-[15px] w-[354px] h-[37px] bg-[#F9B931]/25 rounded-[4px] flex items-center px-[10px] gap-[12px]">
+                                <img src={Dot4} alt="dot4" className="w-[14px] h-[14px]" />
+                                <span className="text-[12px] font-normal leading-[100%] text-[#F9B931]">
+                                    Marketing Campaign Kickoff
+                                </span>
+                            </div>
+                        </div>
 
-                {/* Row 5 */}
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">25</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">26</span>
-                  <div className="mt-4">
-                    <div
-                      className="event-pill"
-                      style={{ backgroundColor: "#EF5F5F" }}
-                      title="8:52a Setup Github Repository"
-                    >
-                      <span className="fw-bold">8:52a</span>
-                      <span className="text-truncate">Github Repo</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">27</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">28</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">29</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">30</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-secondary small float-end">31</span>
-                </div>
+                        <div className="w-[1108px] h-[655px] border border-[#EAEDF1] rounded-[4px] bg-white overflow-hidden">
+                            <div className="grid grid-cols-7 h-[22px] mt-[8px]">
+                                <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Sun</div>
+                                <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Mon</div>
+                                <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Tue</div>
+                                <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Wed</div>
+                                <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Thu</div>
+                                <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Fri</div>
+                                <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Sat</div>
+                            </div>
+                            <div className="border-t border-[#EAEDF1] mt-[8px]"></div>
+                            <div className="grid grid-cols-7 h-[82px] border-b border-[#EAEDF1]">
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#D7DCE2]">28</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#D7DCE2]">29</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#D7DCE2]">30</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#D7DCE2]">31</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">1</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">2</span>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">3</span>
+                                </div>
+                            </div>
 
-                {/* Row 6 */}
-                <div className="calendar-grid-cell">
-                  <span className="text-muted opacity-50 small float-end">1</span>
+                            <div className="grid grid-cols-7 h-[82px] border-b border-[#EAEDF1]">
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">4</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">5</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">6</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">7</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">8</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">9</span>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">10</span>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-7 h-[150px] border-b border-[#EAEDF1]">
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">11</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">12</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">13</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1] bg-[#FFDC28]/15">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">14</span>
+                                    <div className="absolute left-0 top-[26px] w-[153px] h-[30px] bg-[#FF6C2F] rounded-[2px] flex items-center px-[8px] mb-[30px]">
+                                        <div className="w-[8px] h-[8px] rounded-full bg-white shrink-0"></div>
+                                        <span className="ml-[6px] text-[13px] font-bold text-white whitespace-nowrap overflow-hidden">
+                                            4:52p Interview - Backend Engineer
+                                        </span>
+                                    </div>
+                                    <div className="absolute left-0 top-[58px] w-[153px] h-[30px] bg-[#F9B931] rounded-[2px] flex items-center px-[8px]">
+                                        <div className="w-[8px] h-[8px] rounded-full bg-white shrink-0"></div>
+                                        <span className="ml-[6px] text-[13px] font-bold text-white whitespace-nowrap overflow-hidden">
+                                            8:28p Meeting with CT Team
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">15</span>
+                                    <div className="absolute left-0 top-[26px] w-[300px] h-[30px] bg-[#5D7186] rounded-[2px] flex items-center px-[8px] z-10 gap-[20px]">
+                                        <span className="text-white text-[13px] font-bold shrink-0">9:41a</span>
+                                        <span className="ml-[10px] text-[13px] text-white whitespace-nowrap overflow-hidden">
+                                            Interview - Frontend Engineer
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">16</span>
+                                    <div className="absolute left-0 top-[58px] w-[153px] h-[30px] bg-[#22C55E] rounded-[2px] flex items-center px-[8px]">
+                                        <div className="w-[8px] h-[8px] rounded-full bg-white shrink-0"></div>
+                                        <span className=" ml-[6px] text-[13px] font-bold text-white whitespace-nowrap overflow-hidden">
+                                            3:32p Phone Screen
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">17</span>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-7 h-[120px] border-b border-[#EAEDF1]">
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">18</span>
+                                    <div className="absolute left-0 top-[26px] w-[153px] h-[30px] bg-[#4ECAC2] rounded-[2px] flex items-center px-[8px] mb-[10px]">
+                                        <div className="w-[8px] h-[8px] rounded-full bg-white shrink-0"></div>
+                                        <span className="ml-[6px] text-[11px] font-bold text-white whitespace-nowrap overflow-hidden">
+                                            6:25a Meeting with Mr. Reback
+                                        </span>
+                                    </div>
+                                    <div className="absolute left-0 top-[54px] w-[153px] h-[30px] bg-[#FF6C2F] rounded-[2px] flex items-center px-[8px]">
+                                        <div className="w-[8px] h-[8px] rounded-full bg-white shrink-0"></div>
+                                        <span className="ml-[6px] text-[11px] font-bold text-white whitespace-nowrap overflow-hidden">
+                                            12:32p Buy Design Assets
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">19</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">20</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">21</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">22</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">23</span>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">24</span>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-7 h-[95px] border-b border-[#EAEDF1]">
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">25</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]"> 26 </span>
+                                    <div className="absolute left-0 top-[30px] w-[309px] h-[31px] bg-[#EF5F5F] rounded-[2px] flex items-center px-[8px] z-10 gap-[40px]">
+                                        <span className="text-white text-[11px] font-bold shrink-0">8:52a</span>
+                                        <span className="ml-[10px] text-[11px] text-white whitespace-nowrap overflow-hidden text-ellipsis">
+                                            Setup Github Repository
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">27</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">28</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">29</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">30</span>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#5D7186]">31</span>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-7 h-[82px]">
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#D7DCE2]">1</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#D7DCE2]">2</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#D7DCE2]">3</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#D7DCE2]">4</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#D7DCE2]">5</span>
+                                </div>
+                                <div className="relative border-r border-[#EAEDF1]">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#D7DCE2]">6</span>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute top-[8px] right-[8px] text-[10px] text-[#D7DCE2]">7</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-muted opacity-50 small float-end">2</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-muted opacity-50 small float-end">3</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-muted opacity-50 small float-end">4</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-muted opacity-50 small float-end">5</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-muted opacity-50 small float-end">6</span>
-                </div>
-                <div className="calendar-grid-cell">
-                  <span className="text-muted opacity-50 small float-end">7</span>
-                </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  );
+    );
+
 }
 
 export default Calendar;
