@@ -52,6 +52,20 @@ import ProductDetails from './Pages/product/ProductDetails';
 import AddProduct from './Pages/product/AddProduct';
 import CreateProduct from './Pages/product/CreateProduct';
 
+import CategoryList from './Pages/category/CategoryList';
+import AddCategory from './Pages/category/AddCategory';
+import CreateCategory from './Pages/category/CreateCategory';
+
+import InventoryList from './Pages/inventory/InventoryList';
+import ReceivedOrders from './Pages/inventory/ReceivedOrders';
+
+import Widgets from './Pages/widgets/Widgets';
+
+import SignIn from './Pages/authentication/SignIn';
+import SignUp from './Pages/authentication/SignUp';
+import ResetPassword from './Pages/authentication/ResetPassword';
+import LockScreen from './Pages/authentication/LockScreen';
+
 import ComingSoon from './Pages/pages1/ComingSoon';
 import Maintenance from './Pages/pages1/Maintenance';
 import Error404 from './Pages/pages1/Error404';
@@ -72,6 +86,25 @@ const router = createBrowserRouter([
       { path: 'products/details', element: <ProductDetails /> },
       { path: 'products/add', element: <AddProduct /> },
       { path: 'products/create', element: <CreateProduct /> },
+
+      // Category routes
+      { path: 'category/list', element: <CategoryList /> },
+      { path: 'category/edit', element: <AddCategory /> },
+      { path: 'category/create', element: <CreateCategory /> },
+
+      // Inventory routes
+      { path: 'inventory/warehouse', element: <InventoryList /> },
+      { path: 'inventory/received', element: <ReceivedOrders /> },
+
+      // Widgets
+      { path: 'widgets', element: <Widgets /> },
+
+      // Authentication routes
+      { path: 'authentication', element: <SignIn /> },
+      { path: 'authentication/signin', element: <SignIn /> },
+      { path: 'authentication/signup', element: <SignUp /> },
+      { path: 'authentication/reset-password', element: <ResetPassword /> },
+      { path: 'authentication/lock-screen', element: <LockScreen /> },
 
       // Support routes
       { path: 'calendar', element: <Calendar /> },
