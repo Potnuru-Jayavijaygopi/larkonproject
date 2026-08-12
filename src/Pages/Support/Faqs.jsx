@@ -12,9 +12,9 @@ function Faqs() {
     useEffect(() => {
         const updateScale = () => {
             if (!containerRef.current) return;
-         const availableWidth = containerRef.current.clientWidth;
+            const availableWidth = containerRef.current.clientWidth;
 
-const newScale = Math.min(1, availableWidth / 1604);
+            const newScale = Math.min(1, availableWidth / 1604);
             setScale(newScale);
         };
 
@@ -55,12 +55,10 @@ const newScale = Math.min(1, availableWidth / 1604);
                 >
 
 
-                    <div className="flex items-center gap-[14px]">
-                        <h1 className="!text-[24px] font-[Hanken Grotesk] font-[600] leading-[100%] tracking-[0%] !text-[#FFFFFF]">Frequently Asked Questions</h1>
-                        <p className="!text-[14px] font-[Play] font-[400] leading-[100%] tracking-[0%] !text-[#FFFFFF]/50">
-                            We're here to help with any questions you have about plans, pricing, and supported features.
-                        </p>
-                        <div className="w-[856px] h-[37px] bg-[#FFFFFF] rounded-[800px] flex items-center px-[16px] gap-[10px] mt-[10px]">
+                    <div className="w-[1534px] h-[158px] rounded-[12px] bg-[#D9D9D9] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center">
+                        <h1 className="!text-[24px] font-[Hanken Grotesk] font-[600] leading-[100%] tracking-[0%] !text-[#FFFFFF]">Frequently Added Questions</h1>
+                        <h1 className="!text-[14px] font-[Play] font-[400] leading-[100%] tracking-[0%] !text-[#FFFFFF]/50">We are here to help with any questions you have about plans procing and support features</h1>
+                        <div className="w-[850px] h-[37px] bg-[#FFFFFF] rounded-[800px] flex items-center px-[16px] gap-[10px] mt-[10px]">
                             <img src={TodoSearch} className="w-[16px] h-[16px]" />
                             <input
                                 type="text"
