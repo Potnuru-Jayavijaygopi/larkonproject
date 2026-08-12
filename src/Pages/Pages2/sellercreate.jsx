@@ -6,7 +6,7 @@ import locationIcon from '../../assets/location.png';
 import mailIcon from '../../assets/mail.png';         
 import phoneIcon from '../../assets/phone.png';       
 
-export default function SellerDetails() {
+export default function SellerCreate() {
   const [revenueRange, setRevenueRange] = useState(50);
 
   return (

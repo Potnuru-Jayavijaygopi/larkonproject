@@ -17,7 +17,7 @@ import usersIcon from '../../assets/usersicon.png';
 import revenueChartImg from '../../assets/Chart (2).png';
 import accountingBg from '../../assets/Frames.png';
 
-export default function SellerDetails() {
+export default function SellerDetails() { 
   const products = [
     { id: 'ID46765', name: 'Black T-shirt', variants: '4', category: 'Fashion', date: '08/05/2023', status: 'Published', statusBg: '#DCFCE7', statusColor: '#16A34A' },
     { id: 'ID36192', name: 'Olive Green Leather Bag', variants: '2', category: 'Hand Bag', date: '10/05/2023', status: 'Pending', statusBg: '#E2E8F0', statusColor: '#334155' },
