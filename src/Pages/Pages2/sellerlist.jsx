@@ -14,7 +14,7 @@ import mailIcon from '../../assets/mail.png';
 import phoneIcon from '../../assets/phone.png';
 import arrowUpIcon from '../../assets/arrow.png';
 import heartIcon from '../../assets/like.png';
-import progressBarImg from '../../assets/progress bar.png';
+import progressBarImg from '../../assets/Progress bar.png';
 
 const SELLERS = [
   {

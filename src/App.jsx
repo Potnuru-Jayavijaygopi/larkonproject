@@ -16,10 +16,10 @@ import Chat from './Pages/Chat';
 import Email from './Pages/Email';
 import DetailsPage from './Pages/Customerdetails/detailspage';
 
-import SellerList from './Pages/Pages2/SellerList';
-import SellerDetails from './Pages/Pages2/SellerDetails';
-import SellerEdit from './Pages/Pages2/SellerEdit';
-import SellerCreate from './Pages/Pages2/SellerCreate';
+import SellerList from './Pages/Pages2/sellerlist';
+import SellerDetails from './Pages/Pages2/sellerdetails';
+import SellerEdit from './Pages/Pages2/selleredit';
+import SellerCreate from './Pages/Pages2/sellercreate';
 
 import InvoiceList from './Pages/invoices/InvoiceList';
 import InvoiceDetails from './Pages/invoices/InvoiceDetails';

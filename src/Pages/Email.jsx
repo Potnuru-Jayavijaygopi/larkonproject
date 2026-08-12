@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import inboxIcon from '../assets/inbox (1).png';
 import inboxActiveIcon from '../assets/inbox (2).png';
 import starIcon from '../assets/star (2).png';
-import starActiveIcon from '../assets/star.png';
+import starActiveIcon from '../assets/Star.png';
 import draftIcon from '../assets/file.png';
 import sendIcon from '../assets/send (1).png';
 import trashSidebarIcon from '../assets/trush.png';
