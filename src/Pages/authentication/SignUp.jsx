@@ -117,8 +117,8 @@ function SignUp() {
 
               <button
                 type="submit"
-                className="btn text-white w-100 py-2 rounded-3 border-0 fw-medium mb-3 shadow-sm"
-                style={{ backgroundColor: "#ff5e29", fontSize: "0.85rem" }}
+                className="btn  w-100 py-2 rounded-3 border-0 fw-medium mb-3 shadow-sm"
+                style={{ backgroundColor: "#ffede7", fontSize: "0.85rem" ,color:'#ff5e29' }}
               >
                 Sign Up
               </button>

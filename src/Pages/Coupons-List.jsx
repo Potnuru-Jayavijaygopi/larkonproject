@@ -236,9 +236,8 @@ export default function CouponsList() {
         }
       `}</style>
 
-      {/* Top 3 Promo Cards */}
+
       <div className="row g-3 g-md-4 mb-4">
-        {/* Card 1 */}
         <div className="col-12 col-md-6 col-xl-4">
           <div
             className="coupon-promo-card p-4 d-flex flex-column justify-content-between h-100"
@@ -271,7 +270,7 @@ export default function CouponsList() {
           </div>
         </div>
 
-        {/* Card 2 */}
+
         <div className="col-12 col-md-6 col-xl-4">
           <div
             className="coupon-promo-card p-4 d-flex flex-column justify-content-between h-100"
@@ -304,7 +303,7 @@ export default function CouponsList() {
           </div>
         </div>
 
-        {/* Card 3 */}
+
         <div className="col-12 col-md-12 col-xl-4">
           <div
             className="coupon-promo-card p-4 d-flex flex-column justify-content-between h-100 position-relative overflow-hidden"
@@ -369,7 +368,6 @@ export default function CouponsList() {
         </div>
       </div>
 
-      {/* Main Coupons List Table Card */}
       <div className="coupons-table-card">
         <div className="d-flex flex-wrap align-items-center justify-content-between p-3 p-lg-4 border-bottom gap-3" style={{ borderColor: '#eaedf1' }}>
           <h5 className="fw-bold mb-0" style={{ color: '#313B5E', fontSize: '1.1rem' }}>
@@ -561,7 +559,7 @@ export default function CouponsList() {
           </table>
         </div>
 
-        {/* Footer Pagination */}
+
         <div
           className="d-flex flex-wrap align-items-center justify-content-between p-3 border-top"
           style={{ borderColor: '#eaedf1' }}

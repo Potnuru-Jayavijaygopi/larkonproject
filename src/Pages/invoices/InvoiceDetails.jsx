@@ -64,10 +64,9 @@ function InvoiceDetails({onNavigate}) {
                 <div
                  className="position-absolute top-100 start-50 translate-middle d-flex align-items-center justify-content-center"
                   style={{
-                       width: "55px",
-                       height: "55px",
+                       width: "100px",
+                       height: "100px",
                        borderRadius: "50%",
-                      backgroundColor: "#e5e5e5",
                       zIndex: 10,
                         }}
                          >

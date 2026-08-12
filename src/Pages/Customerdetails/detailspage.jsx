@@ -1,5 +1,5 @@
 import React from 'react';
-
+import bgBanner from '../../assets/bg.png';
 import imageIcon from '../../assets/image.png'; 
 import settingsIcon from '../../assets/settings1.png';
 import invoiceIcon from '../../assets/invoices.png';
@@ -17,8 +17,17 @@ export default function DetailsPage() {
           <div className="card border-0 shadow-sm rounded-3 bg-white h-100 overflow-hidden d-flex flex-column justify-content-between">
             <div 
               className="position-relative" 
-              style={{ height: '120px', background: 'linear-gradient(135deg, #ff5e36, #ffa248)' }}
+              style={{ height: '160px' }}
             >
+              <img 
+                  src={bgBanner} 
+                  alt="Banner Background" 
+                  className="w-100 h-100 object-fit-cover"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.parentElement.style.background = 'linear-gradient(135deg, #ff7e5f 0%, #feb47b 50%, #ff5e29 100%)';
+                  }}
+                />
               <div 
                 className="position-absolute shadow-sm overflow-hidden d-flex align-items-center justify-content-center"
                 style={{ 
