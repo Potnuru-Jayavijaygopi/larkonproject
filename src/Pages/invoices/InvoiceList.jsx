@@ -340,4 +340,3 @@ return(
         );
       }
       export default InvoiceList;
-

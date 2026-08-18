@@ -1,9 +1,4 @@
-import Sidebar from '../../Components/Sidebar';
 import tick from "../../assets/tick.png";
-
-
-
-
 import {
   BsBoxFill,
   BsExclamationCircleFill,
@@ -15,17 +10,13 @@ function InvoiceDetails({onNavigate}) {
     window.print();
   };
   return (
-    <div className="app-container " style={{marginTop:'-40px',marginRight:'100px'}}>
-    <Sidebar activePage="invoice-details" onNavigate={onNavigate}/>
-      <div className="main-content">
-        
-        <main className="page-container">
-        <div className="mx-auto" style={{maxWidth:'920px',transform: 'translateX(-60px)'}}>
-          <div className="content-card p-0 mb-4 overflow-hidden shadow-sm">
-            <div
+    <div className="w-100">
+      <div className="mx-auto" style={{maxWidth:'1000px'}}>
+        <div className="content-card p-0 mb-4 overflow-hidden shadow-sm">
+          <div
             className="p-4 position-relative"
             style={{backgroundColor:'#e6f4f1',borderBottom:'1px solid #d1e7e2'}}
-            >
+          >
               <div className="row align-items-center">
                 <div className="col-sm-6 mb-3 mb-sm-0">
                   <div className="d-flex align-items-center gap-2 fw-bold text-dark fs-5 mb-2">
@@ -73,10 +64,9 @@ function InvoiceDetails({onNavigate}) {
                 <div
                  className="position-absolute top-100 start-50 translate-middle d-flex align-items-center justify-content-center"
                   style={{
-                       width: "55px",
-                       height: "55px",
+                       width: "100px",
+                       height: "100px",
                        borderRadius: "50%",
-                      backgroundColor: "#e5e5e5",
                       zIndex: 10,
                         }}
                          >
@@ -274,12 +264,9 @@ function InvoiceDetails({onNavigate}) {
               </button>
             </div>
           </div>
-       </div>
+        </div>
+      </div>
     </div>
-    </main>
-            
-    </div>
-  </div>
   );
 }
 export default InvoiceDetails;

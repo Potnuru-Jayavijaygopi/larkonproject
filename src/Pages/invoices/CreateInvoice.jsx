@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Sidebar from '../../components/Sidebar';
 import image1 from "../../assets/image1.png";
 
 
@@ -66,13 +65,9 @@ function CreateInvoice({onNavigate}) {
 
 
     return (
-      <div className="app-container">
-        <Sidebar activePage="create-invoice" onNavigate={onNavigate}/>
-        <div className="main-content">
-          
-          <main className="page-container">
-           <div className="mx-auto" style={{maxWidth: '1000px'}}>
-            <form onSubmit={handleSubmit}>
+      <div className="w-100">
+        <div className="mx-auto" style={{maxWidth: '1000px'}}>
+          <form onSubmit={handleSubmit}>
               <div className="content-card p-4 mb-4 shadow-sm">
                <div className="row g-3 mb-4">
                 <div className="col-sm-6">
@@ -553,17 +548,10 @@ function CreateInvoice({onNavigate}) {
                       All accounts are to be paid within 7 days from receipt of the invoice. To be paid by cheque or credit or direct payment online. If account is not paid within 7 days the credit details supplied as confirmation of work undertaken will be charged the agreed quoted fee noted above.
                     </span>
                   </div>
-                  </div>
-            </form>
+                </div>
+              </form>
             </div> 
-          </main>
-
-          
-        </div>
-      </div>
+          </div>
     );
-
-
 }
 export default CreateInvoice;
-
