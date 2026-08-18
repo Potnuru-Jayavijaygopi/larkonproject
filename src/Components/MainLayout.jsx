@@ -3,6 +3,8 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Footer from './Footer';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function MainLayout() {
   return (
@@ -22,6 +24,8 @@ function MainLayout() {
 
         <Footer />
       </div>
+       <ToastContainer
+      />
     </div>
   );
 }
