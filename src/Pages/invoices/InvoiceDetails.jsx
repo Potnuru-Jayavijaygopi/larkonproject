@@ -5,7 +5,7 @@ import {
   BsImage
 } from 'react-icons/bs';
 
-function InvoiceDetails({onNavigate}) {
+function InvoiceDetails() {
   const handlePrint = () => {
     window.print();
   };
