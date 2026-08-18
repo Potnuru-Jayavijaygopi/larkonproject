@@ -2,14 +2,46 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsImage } from "react-icons/bs";
 import logo1Img from "../../assets/logo 1.png";
+import { authAPI } from "../../services/api";
 
 function LockScreen() {
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSignIn = (e) => {
+  // Retrieve user name from storage if available
+  let userName = "Admin";
+  let userEmail = "admin@larkon.com";
+  try {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const u = JSON.parse(userStr);
+      userName = u.name || u.full_name || u.username || "Admin";
+      userEmail = u.email || "admin@larkon.com";
+    }
+  } catch (e) {
+    console.warn("Could not parse user from storage:", e);
+  }
+
+  const handleSignIn = async (e) => {
     e.preventDefault();
-    navigate("/dashboard");
+    if (!password.trim()) {
+      setError("Please enter your password.");
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      await authAPI.login(userEmail, password);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Lockscreen unlock failed:", err);
+      setError("Incorrect password. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleBackToHome = () => {
@@ -39,11 +71,15 @@ function LockScreen() {
               />
             </div>
             <h4 className="fw-bold mb-1" style={{ color: "#1e293b" }}>
-              hi !Gaston
+              Hi, {userName}!
             </h4>
             <p className="text-muted mb-4" style={{ fontSize: "0.825rem" }}>
-              Enter your password to access the admin.
+              Enter your password to access the admin panel.
             </p>
+
+            {error && (
+              <div className="alert alert-danger py-2 small mb-3">{error}</div>
+            )}
 
             <form onSubmit={handleSignIn}>
               <div className="mb-4">
@@ -58,11 +94,12 @@ function LockScreen() {
                 />
               </div>
               <button
-                type="submt"
+                type="submit"
+                disabled={submitting}
                 className="btn text-white w-100 py-2 rounded-3 border-0 fw-medium mb-4 shadow-sm"
                 style={{ backgroundColor: "#ff5e29", fontSize: "0.85rem" }}
               >
-                Sign In
+                {submitting ? "Unlocking..." : "Unlock Screen"}
               </button>
             </form>
 
@@ -73,15 +110,15 @@ function LockScreen() {
               >
                 Not you? return{" "}
                 <a
-                  href="#signup"
+                  href="#signin"
                   className="fw-bold text-decoration-none"
                   style={{ color: "#1e293b" }}
                   onClick={(e) => {
                     e.preventDefault();
-                    navigate("/authentication/signup");
+                    navigate("/authentication/signin");
                   }}
                 >
-                  Sign Up
+                  Sign In
                 </a>
               </span>
             </div>
@@ -106,4 +143,5 @@ function LockScreen() {
     </div>
   );
 }
+
 export default LockScreen;

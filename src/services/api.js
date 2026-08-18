@@ -1,5 +1,5 @@
 /**
- * Centralized API Service for Larkon Frontend - Category Branch
+ * Centralized API Service for Larkon Frontend
  * Connects to Backend Larkon REST APIs (Express + PostgreSQL)
  */
 
@@ -188,6 +188,47 @@ export const productAPI = {
   },
 };
 
+// Inventory Endpoints
+export const inventoryAPI = {
+  getWarehouses: async () => {
+    const res = await request('/warehouses', { method: 'GET' });
+    return res.data || res;
+  },
+
+  getWarehouseById: async (id) => {
+    const res = await request(`/warehouses/${id}`, { method: 'GET' });
+    return res.data || res;
+  },
+
+  getReceivedOrders: async () => {
+    const res = await request('/inventory-received', { method: 'GET' });
+    return res.data || res;
+  },
+
+  getReceivedOrderById: async (id) => {
+    const res = await request(`/inventory-received/${id}`, { method: 'GET' });
+    return res.data || res;
+  },
+
+  getInventory: async () => {
+    const res = await request('/inventory', { method: 'GET' });
+    return res.data || res;
+  },
+
+  getLowStock: async () => {
+    const res = await request('/inventory/low-stock', { method: 'GET' });
+    return res.data || res;
+  },
+
+  adjustStock: async (productId, adjustment) => {
+    const res = await request(`/inventory/${productId}/adjust`, {
+      method: 'PATCH',
+      body: JSON.stringify(adjustment),
+    });
+    return res.data || res;
+  },
+};
+
 // Auth Endpoints
 export const authAPI = {
   login: async (email, password) => {
@@ -196,9 +237,56 @@ export const authAPI = {
       requiresAuth: false,
       body: JSON.stringify({ email, password }),
     });
-    if (res.data?.accessToken || res.accessToken) {
-      setAuthData(res.data?.accessToken || res.accessToken, res.data?.user || res.user);
+    const token = res.data?.accessToken || res.accessToken || res.token;
+    if (token) {
+      setAuthData(token, res.data?.user || res.user);
     }
+    return res;
+  },
+
+  register: async (userData) => {
+    const res = await request('/auth/register', {
+      method: 'POST',
+      requiresAuth: false,
+      body: JSON.stringify(userData),
+    });
+    const token = res.data?.accessToken || res.accessToken || res.token;
+    if (token) {
+      setAuthData(token, res.data?.user || res.user);
+    }
+    return res;
+  },
+
+  logout: async () => {
+    try {
+      await request('/auth/logout', { method: 'POST' });
+    } catch (e) {
+      console.warn('Logout API warning:', e);
+    } finally {
+      clearAuthData();
+    }
+  },
+
+  getMe: async () => {
+    const res = await request('/auth/me', { method: 'GET' });
+    return res.data || res;
+  },
+
+  forgotPassword: async (email) => {
+    const res = await request('/password-resets/forgot-password', {
+      method: 'POST',
+      requiresAuth: false,
+      body: JSON.stringify({ email }),
+    });
+    return res;
+  },
+
+  resetPassword: async (token, password) => {
+    const res = await request('/password-resets/reset-password', {
+      method: 'POST',
+      requiresAuth: false,
+      body: JSON.stringify({ token, password }),
+    });
     return res;
   },
 };

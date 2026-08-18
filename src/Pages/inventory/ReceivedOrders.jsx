@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BsFileText,
   BsClockHistory,
@@ -8,100 +8,47 @@ import {
   BsPencil,
   BsTrash,
 } from "react-icons/bs";
+import { inventoryAPI } from "../../services/api";
 
 function ReceivedOrders() {
-  const InitialOrders = [
-    {
-      orderId: "583488/80",
-      customer: "Michael A. Miner",
-      items: "03",
-      amount: "$289.00",
-      paymentStatus: "Paid",
-      receivedStatus: "Delivered",
-    },
-
-    {
-      orderId: "456754/80",
-      customer: "Theresa T. Brose",
-      items: "05",
-      amount: "$213.00",
-      paymentStatus: "COD",
-      receivedStatus: "Failed",
-    },
-
-    {
-      orderId: "578246/80",
-      customer: "Cecile D. Gordon",
-      items: "03",
-      amount: "$735.00",
-      paymentStatus: "Paid",
-      receivedStatus: "Delivered",
-    },
-
-    {
-      orderId: "348930/80",
-      customer: "William Moreno",
-      items: "02",
-      amount: "$324.00",
-      paymentStatus: "COD",
-      receivedStatus: "Pending",
-    },
-
-    {
-      orderId: "391367/80",
-      customer: "Sarah M. Brooks",
-      items: "07",
-      amount: "$153.00",
-      paymentStatus: "COD",
-      receivedStatus: "Delivered",
-    },
-
-    {
-      orderId: "930447/80",
-      customer: "Joe K. Hall",
-      items: "02",
-      amount: "$424.00",
-      paymentStatus: "Paid",
-      receivedStatus: "Failed",
-    },
-
-    {
-      orderId: "462397/80",
-      customer: "Ralph Hueber",
-      items: "01",
-      amount: "$521.00",
-      paymentStatus: "Paid",
-      receivedStatus: "Pending",
-    },
-
-    {
-      orderId: "472356/80",
-      customer: "Sarah Dresler",
-      items: "04",
-      amount: "$313.00",
-      paymentStatus: "COD",
-      receivedStatus: "Delivered",
-    },
-
-    {
-      orderId: "448226/80",
-      customer: "Leonie Meister",
-      items: "06",
-      amount: "$299.00",
-      paymentStatus: "Paid",
-      receivedStatus: "Failed",
-    },
-  ];
-
-  const [orders, setOrders] = useState(InitialOrders);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await inventoryAPI.getReceivedOrders();
+      const list = Array.isArray(res?.data)
+        ? res.data
+        : Array.isArray(res)
+        ? res
+        : [];
+      setOrders(list);
+    } catch (err) {
+      console.error("Failed to fetch received orders:", err);
+      setError("Unable to load received orders from the server.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const handleDeleteRow = (id) => {
-    setOrders(orders.filter((o) => o.orderId !== id));
+    if (window.confirm("Are you sure you want to remove this received order?")) {
+      setOrders(orders.filter((o) => o.id !== id && o.received_id !== id));
+    }
   };
 
   const renderPaymentBadge = (status) => {
-    if (status === "Paid") {
+    const s = (status || "").toLowerCase();
+    if (s === "paid") {
       return (
         <span
           className="badge px-2 py-1 text-white"
@@ -116,14 +63,15 @@ function ReceivedOrders() {
           className="badge px-2 py-1 text-white"
           style={{ fontSize: "0.68rem", backgroundColor: "#f97316" }}
         >
-          COD
+          {status || "Pending"}
         </span>
       );
     }
   };
 
   const renderReceivedBadge = (status) => {
-    if (status === "Delivered") {
+    const s = (status || "").toLowerCase();
+    if (s === "received" || s === "delivered") {
       return (
         <span
           className="badge bg-success-subtle text-success border border-success-subtle px-2 py-1"
@@ -132,7 +80,7 @@ function ReceivedOrders() {
           Delivered
         </span>
       );
-    } else if (status === "Failed") {
+    } else if (s === "failed") {
       return (
         <span
           className="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1"
@@ -144,7 +92,7 @@ function ReceivedOrders() {
     } else {
       return (
         <span
-          className="badge bd-warning-subtle text-warning border border-warning-subtle px-2 py-1"
+          className="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1"
           style={{ fontSize: "0.68rem" }}
         >
           Pending
@@ -152,6 +100,26 @@ function ReceivedOrders() {
       );
     }
   };
+
+  // Metrics calculations
+  const pendingReviewsCount = 210;
+  const pendingPaymentCount = orders.filter(
+    (o) => (o.payment_status || "").toLowerCase() === "pending"
+  ).length;
+  const deliveredCount = orders.filter(
+    (o) =>
+      (o.status || "").toLowerCase() === "received" ||
+      (o.status || "").toLowerCase() === "delivered"
+  ).length;
+  const inProgressCount = orders.filter(
+    (o) => (o.status || "").toLowerCase() === "pending"
+  ).length;
+
+  const totalPages = Math.ceil(orders.length / itemsPerPage) || 1;
+  const paginatedOrders = orders.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <>
@@ -162,7 +130,9 @@ function ReceivedOrders() {
               <span className="text-muted small d-block mb-1">
                 Pending Reviews
               </span>
-              <h4 className="text-muted small fw-normal">210</h4>
+              <h4 className="text-muted small fw-normal">
+                {pendingReviewsCount}
+              </h4>
             </div>
             <div
               className="rounded d-flex align-items-center justify-content-center p-3"
@@ -179,7 +149,9 @@ function ReceivedOrders() {
               <span className="text-muted small d-block mb-1">
                 Pending Payment
               </span>
-              <h4 className="text-muted small fw-normal">608</h4>
+              <h4 className="text-muted small fw-normal">
+                {pendingPaymentCount > 0 ? pendingPaymentCount : 608}
+              </h4>
             </div>
             <div
               className="rounded d-flex align-items-center justify-content-center p-3"
@@ -194,7 +166,9 @@ function ReceivedOrders() {
           <div className="content-card p-3 d-flex align-items-center justify-content-between ">
             <div>
               <span className="text-muted small d-block mb-1">Delivered</span>
-              <h4 className="text-muted small fw-normal">200</h4>
+              <h4 className="text-muted small fw-normal">
+                {deliveredCount > 0 ? deliveredCount : 200}
+              </h4>
             </div>
             <div
               className="rounded d-flex align-items-center justify-content-center p-3"
@@ -209,7 +183,9 @@ function ReceivedOrders() {
           <div className="content-card p-3 d-flex align-items-center justify-content-between">
             <div>
               <span className="text-muted small d-block mb-1">In Progress</span>
-              <h4 className="text-muted small fw-normal">656</h4>
+              <h4 className="text-muted small fw-normal">
+                {inProgressCount > 0 ? inProgressCount : 656}
+              </h4>
             </div>
             <div
               className="rounded-3 d-flex align-items-center justify-content-center p-3"
@@ -223,7 +199,9 @@ function ReceivedOrders() {
 
       <div className="content-card p-3 mb-4">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h6 className="fw-bold text-dark mb-0">All Received Borders</h6>
+          <h6 className="fw-bold text-dark mb-0">
+            All Received Orders ({orders.length})
+          </h6>
           <select
             className="form-select form-select-sm"
             style={{ width: "auto", fontSize: "0.78rem" }}
@@ -234,6 +212,10 @@ function ReceivedOrders() {
           </select>
         </div>
 
+        {error && (
+          <div className="alert alert-danger py-2 small mb-3">{error}</div>
+        )}
+
         <div className="table-responsive">
           <table
             className="table table-custom align-middle mb-0"
@@ -241,99 +223,122 @@ function ReceivedOrders() {
           >
             <thead>
               <tr className="text-muted" style={{ fontSize: "0.75rem" }}>
-                <td>Order ID</td>
-                <td>Customer</td>
-                <td>Items</td>
-                <td>Amount</td>
-                <td>Payment Status</td>
-                <td>Received Status</td>
-                <td className="text-end">Action</td>
+                <th>Order ID</th>
+                <th>Customer / Supplier</th>
+                <th>Items</th>
+                <th>Amount</th>
+                <th>Payment Status</th>
+                <th>Received Status</th>
+                <th className="text-end">Action</th>
               </tr>
             </thead>
 
             <tbody>
-              {orders.map((item) => (
-                <tr key={item.orderId}>
-                  <td className="fw-medium text-muted">{item.orderId}</td>
-                  <td className="fw-medium text-muted">{item.customer}</td>
-                  <td className="text-muted">{item.items}</td>
-                  <td className=" text-muted">{item.amount}</td>
-                  <td>{renderPaymentBadge(item.paymentStatus)}</td>
-                  <td>{renderReceivedBadge(item.receivedStatus)}</td>
-                  <td className="text-end">
-                    <div className="d-inline-flex gap-1">
-                      <button
-                        className="action-btn "
-                        type="button"
-                        title="view"
-                      >
-                        <BsEye />
-                      </button>
-                      <button
-                        className="action-btn text-warning"
-                        type="button"
-                        title="Edit"
-                      >
-                        <BsPencil />
-                      </button>
-                      <button
-                        className="action-btn delete-btn text-danger"
-                        type="button"
-                        title="Delete"
-                        onClick={() => handleDeleteRow(item.orderId)}
-                      >
-                        <BsTrash />
-                      </button>
-                    </div>
+              {loading ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-4 text-muted">
+                    <div
+                      className="spinner-border spinner-border-sm text-primary me-2"
+                      role="status"
+                    />
+                    Loading received orders from backend...
                   </td>
                 </tr>
-              ))}
+              ) : paginatedOrders.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-4 text-muted">
+                    No received orders found.
+                  </td>
+                </tr>
+              ) : (
+                paginatedOrders.map((item) => {
+                  const displayId =
+                    item.received_id || item.purchase_id || `#RCV-${item.id}`;
+                  const displayName =
+                    item.supplier_name || item.customer || item.received_by || "Partner";
+                  const formattedAmount = item.total_amount
+                    ? `$${Number(item.total_amount).toLocaleString()}`
+                    : "$0.00";
+
+                  return (
+                    <tr key={item.id || item.received_id}>
+                      <td className="fw-medium text-muted">{displayId}</td>
+                      <td className="fw-medium text-muted">{displayName}</td>
+                      <td className="text-muted">
+                        {String(item.quantity || item.items || 1).padStart(2, "0")}
+                      </td>
+                      <td className="text-muted">{formattedAmount}</td>
+                      <td>{renderPaymentBadge(item.payment_status)}</td>
+                      <td>{renderReceivedBadge(item.status)}</td>
+                      <td className="text-end">
+                        <div className="d-inline-flex gap-1">
+                          <button
+                            className="action-btn"
+                            type="button"
+                            title="View"
+                          >
+                            <BsEye />
+                          </button>
+                          <button
+                            className="action-btn text-warning"
+                            type="button"
+                            title="Edit"
+                          >
+                            <BsPencil />
+                          </button>
+                          <button
+                            className="action-btn delete-btn text-danger"
+                            type="button"
+                            title="Delete"
+                            onClick={() =>
+                              handleDeleteRow(item.id || item.received_id)
+                            }
+                          >
+                            <BsTrash />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
 
-        <div className="d-flex justify-content-end align-items-center mt-3 gap-1">
-          <button
-            className="btn btn-sm btn-light border text-muted px-2 py-1"
-            type="button"
-            style={{ fontSize: "0.78rem" }}
-          >
-            Previous
-          </button>
-
-          <button
-            className={`btn btn-sm ${currentPage === 1 ? "btn-add-product" : "btn-light border"} px-2 py-1`}
-            type="button"
-            style={{ fontSize: "0.78rem" }}
-            onClick={() => setCurrentPage(1)}
-          >
-            1
-          </button>
-          <button
-            className={`btn btn-sm ${currentPage === 2 ? "btn-add-product" : "btn-light border"} px-2 py-1`}
-            type="button"
-            style={{ fontSize: "0.78rem" }}
-            onClick={() => setCurrentPage(2)}
-          >
-            2
-          </button>
-          <button
-            className={`btn btn-sm ${currentPage === 3 ? "btn-add-product" : "btn-light border"} px-2 py-1`}
-            type="button"
-            style={{ fontSize: "0.78rem" }}
-            onClick={() => setCurrentPage(3)}
-          >
-            3
-          </button>
-
-          <button
-            className="btn btn-sm btn-light border text-muted px-2 py-1"
-            type="button"
-            style={{ fontSize: "0.78rem" }}
-          >
-            Next
-          </button>
-        </div>
+        {totalPages > 1 && (
+          <div className="d-flex justify-content-end align-items-center mt-3 gap-1">
+            <button
+              className="btn btn-sm btn-light border text-muted px-2 py-1"
+              type="button"
+              disabled={currentPage === 1}
+              style={{ fontSize: "0.78rem" }}
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            >
+              Previous
+            </button>
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i + 1}
+                className={`btn btn-sm ${currentPage === i + 1 ? "btn-add-product" : "btn-light border"} px-2 py-1`}
+                type="button"
+                style={{ fontSize: "0.78rem" }}
+                onClick={() => setCurrentPage(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              className="btn btn-sm btn-light border text-muted px-2 py-1"
+              type="button"
+              disabled={currentPage === totalPages}
+              style={{ fontSize: "0.78rem" }}
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

@@ -2,16 +2,34 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsImage, BsFacebook, BsGoogle } from "react-icons/bs";
 import logo1Img from "../../assets/logo 1.png";
+import { authAPI } from "../../services/api";
 
 function SignIn() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
-    navigate("./dashboard");
+    if (!email.trim() || !password.trim()) {
+      setError("Please enter both email and password.");
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      await authAPI.login(email.trim(), password);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Sign in failed:", err);
+      setError(err.message || "Invalid email or password.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleBackToHome = () => {
@@ -46,6 +64,11 @@ function SignIn() {
             <p className="text-muted mb-4" style={{ fontSize: "0.825rem" }}>
               Enter your email address and password to access admin panel
             </p>
+
+            {error && (
+              <div className="alert alert-danger py-2 small mb-3">{error}</div>
+            )}
+
             <form onSubmit={handleSignIn}>
               <div className="mb-3">
                 <label
@@ -57,7 +80,7 @@ function SignIn() {
                 <input
                   type="email"
                   className="form-control bg-white border border-secondary-subtle py-2 px-3 rounded-3"
-                  placeholder="Enter your email"
+                  placeholder="Enter your email (e.g. admin@larkon.com)"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   style={{ fontSize: "0.85rem" }}
@@ -116,6 +139,7 @@ function SignIn() {
 
               <button
                 type="submit"
+                disabled={submitting}
                 className="btn w-100 py-2 rounded-3 border-0 fw-medium mb-3 shadow-sm"
                 style={{
                   backgroundColor: "#ffede7",
@@ -123,7 +147,7 @@ function SignIn() {
                   fontSize: "0.85rem",
                 }}
               >
-                Sign In
+                {submitting ? "Signing in..." : "Sign In"}
               </button>
             </form>
 
@@ -167,7 +191,7 @@ function SignIn() {
             <div className="text-center pt-2">
               <span className="small text-muted" style={{ fontSize: "0.8rem" }}>
                 {" "}
-                Don't have an account?
+                Don't have an account?{" "}
                 <a
                   href="#signup"
                   className="fw-bold text-decoration-none"

@@ -2,15 +2,35 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsImage } from "react-icons/bs";
 import logo1Img from "../../assets/logo 1.png";
+import { authAPI } from "../../services/api";
 
 function ResetPassword() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleResetPassword = (e) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
-    alert("Password reset instructions sent to your email!");
-    navigate("/authentication/signin");
+    if (!email.trim()) {
+      setError("Please enter your email address.");
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      await authAPI.forgotPassword(email.trim());
+      alert("Password reset instructions have been sent to your email!");
+      navigate("/authentication/signin");
+    } catch (err) {
+      console.error("Password reset request failed:", err);
+      // Even on demo failure, alert user gracefully
+      alert("If an account with that email exists, reset instructions have been sent.");
+      navigate("/authentication/signin");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleBackToHome = () => {
@@ -51,7 +71,11 @@ function ResetPassword() {
               instructions to reset your password.
             </p>
 
-            <form onSubmit={{ handleResetPassword }}>
+            {error && (
+              <div className="alert alert-danger py-2 small mb-3">{error}</div>
+            )}
+
+            <form onSubmit={handleResetPassword}>
               <div className="mb-4">
                 <label
                   className="form-label text-muted small mb-1"
@@ -72,10 +96,11 @@ function ResetPassword() {
 
               <button
                 type="submit"
+                disabled={submitting}
                 className="btn text-white w-100 py-2 rounded-3 border-0 fw-medium mb-4 shadow-sm"
                 style={{ backgroundColor: "#ff5e29", fontSize: "0.85rem" }}
               >
-                Reset Password
+                {submitting ? "Sending..." : "Reset Password"}
               </button>
             </form>
 
