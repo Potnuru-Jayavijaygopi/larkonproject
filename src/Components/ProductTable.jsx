@@ -1,27 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BsPlusLg, BsImage, BsStarFill, BsEye, BsPencil, BsTrash } from 'react-icons/bs';
+import { productAPI, categoryAPI, parseProductImages } from '../services/api';
 
 function ProductTable({ onNavigate }) {
   const navigate = useNavigate();
 
-  const initialProducts = [
-    { id: 1, name: 'Black T-shirt', sizes: 'Size : S , M , L , Xl', price: '$80.00', stockLeft: '486 Item Left', stockSold: '155 Sold', category: 'Fashion', rating: '4.5', reviews: '55 Review' },
-    { id: 2, name: 'Olive Green Leather Bag', sizes: 'Size : S , M', price: '$136.00', stockLeft: '784 Item Left', stockSold: '674 Sold', category: 'Hand Bag', rating: '4.1', reviews: '143 Review' },
-    { id: 3, name: 'Women Golden Dress', sizes: 'Size : S , M', price: '$219.00', stockLeft: '769 Item Left', stockSold: '180 Sold', category: 'Fashion', rating: '4.4', reviews: '174 Review' },
-    { id: 4, name: 'Gray Cap For Men', sizes: 'Size : S , M , L', price: '$76.00', stockLeft: '571 Item Left', stockSold: '87 Sold', category: 'Cap', rating: '4.2', reviews: '23 Review' },
-    { id: 5, name: 'Dark Green Cargo Pant', sizes: 'Size : S , M , L , Xl', price: '$110.00', stockLeft: '241 Item Left', stockSold: '342 Sold', category: 'Fashion', rating: '4.4', reviews: '109 Review' },
-    { id: 6, name: 'Orange Multi Color Headphone', sizes: 'Size : S , M', price: '$231.00', stockLeft: '821 Item Left', stockSold: '231 Sold', category: 'Electronics', rating: '4.2', reviews: '200 Review' },
-    { id: 7, name: "Kid's Yellow Shoes", sizes: 'Size : 18 , 19 , 20 , 21', price: '$89.00', stockLeft: '321 Item Left', stockSold: '681 Sold', category: 'Shoes', rating: '4.5', reviews: '321 Review' },
-    { id: 8, name: 'Men Dark Brown Wallet', sizes: 'Size : S , M', price: '$132.00', stockLeft: '190 Item Left', stockSold: '212 Sold', category: 'Wallet', rating: '4.1', reviews: '190 Review' },
-    { id: 9, name: 'Sky Blue Sunglass', sizes: 'Size : S , M', price: '$77.00', stockLeft: '784 Item Left', stockSold: '443 Sold', category: 'Sunglass', rating: '3.5', reviews: '298 Review' },
-    { id: 10, name: "Kid's Yellow T-shirt", sizes: 'Size : S', price: '$110.00', stockLeft: '650 Item Left', stockSold: '365 Sold', category: 'Fashion', rating: '4.1', reviews: '156 Review' },
-    { id: 11, name: 'White Rubber Band Smart Watch', sizes: 'Size : S , M', price: '$77.00', stockLeft: '98 Item Left', stockSold: '241 Sold', category: 'Electronics', rating: '3.4', reviews: '201 Review' },
-    { id: 12, name: 'Men Brown Leather Shoes', sizes: 'Size : 40 , 41 , 42 , 43', price: '$222.00', stockLeft: '176 Item Left', stockSold: '658 Sold', category: 'Shoes', rating: '4.1', reviews: '370 Review' },
-  ];
-
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [timeFilter, setTimeFilter] = useState('this-year');
+
+  const fetchProductsAndCategories = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const [productsData, categoriesData] = await Promise.all([
+        productAPI.getAll(),
+        categoryAPI.getAll().catch(() => [])
+      ]);
+
+      const catMap = {};
+      if (Array.isArray(categoriesData)) {
+        categoriesData.forEach((cat) => {
+          catMap[cat.id] = cat.category_name || cat.name;
+        });
+      }
+      setCategories(catMap);
+      setProducts(Array.isArray(productsData) ? productsData : []);
+    } catch (err) {
+      console.error('Failed to load products:', err);
+      setError(err.message || 'Failed to load products from server');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductsAndCategories();
+  }, []);
 
   const handleSelectAll = (e) => {
     setSelectedIds(e.target.checked ? products.map((p) => p.id) : []);
@@ -33,8 +52,16 @@ function ProductTable({ onNavigate }) {
     );
   };
 
-  const handleDelete = (id) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    try {
+      await productAPI.delete(id);
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+      setSelectedIds((prev) => prev.filter((i) => i !== id));
+    } catch (err) {
+      console.error('Failed to delete product:', err);
+      alert(err.message || 'Failed to delete product.');
+    }
   };
 
   const handleAddProduct = () => {
@@ -45,21 +72,48 @@ function ProductTable({ onNavigate }) {
     }
   };
 
-  const handleViewDetails = () => {
+  const handleViewDetails = (product) => {
+    const id = product?.id || '';
     if (navigate) {
-      navigate('/products/details');
+      navigate(`/products/details?id=${id}`, { state: { product } });
     } else if (onNavigate) {
-      onNavigate('product-details');
+      onNavigate('product-details', { product });
     }
   };
 
-  const handleEditProduct = () => {
+  const handleEditProduct = (product) => {
+    const id = product?.id || '';
     if (navigate) {
-      navigate('/products/add');
+      navigate(`/products/add?id=${id}`, { state: { product } });
     } else if (onNavigate) {
-      onNavigate('add-product');
+      onNavigate('add-product', { product });
     }
   };
+
+  // Filter products by created_at if timeFilter is set
+  const filteredProducts = products.filter((item) => {
+    if (!item.created_at || timeFilter === 'all') return true;
+    const itemDate = new Date(item.created_at);
+    const now = new Date();
+    if (timeFilter === 'this-month') {
+      return (
+        itemDate.getMonth() === now.getMonth() &&
+        itemDate.getFullYear() === now.getFullYear()
+      );
+    }
+    if (timeFilter === 'last-month') {
+      const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+      const lastMonthYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+      return (
+        itemDate.getMonth() === lastMonth &&
+        itemDate.getFullYear() === lastMonthYear
+      );
+    }
+    if (timeFilter === 'this-year') {
+      return itemDate.getFullYear() === now.getFullYear();
+    }
+    return true;
+  });
 
   return (
     <div className="content-card">
@@ -73,13 +127,31 @@ function ProductTable({ onNavigate }) {
           >
             <BsPlusLg /> Add Product
           </button>
-          <select className="form-select filter-select" style={{ width: 'auto' }}>
+          <select
+            className="form-select filter-select"
+            style={{ width: 'auto' }}
+            value={timeFilter}
+            onChange={(e) => setTimeFilter(e.target.value)}
+          >
             <option value="this-month">This Month</option>
             <option value="last-month">Last Month</option>
             <option value="this-year">This Year</option>
+            <option value="all">All Time</option>
           </select>
         </div>
       </div>
+
+      {error && (
+        <div className="alert alert-warning m-3 py-2 small d-flex justify-content-between align-items-center">
+          <span>{error}</span>
+          <button
+            className="btn btn-sm btn-outline-dark py-0"
+            onClick={fetchProductsAndCategories}
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
       <div className="table-responsive">
         <table className="table table-custom align-middle">
@@ -89,7 +161,10 @@ function ProductTable({ onNavigate }) {
                 <input
                   type="checkbox"
                   className="form-check-input"
-                  checked={selectedIds.length === products.length && products.length > 0}
+                  checked={
+                    selectedIds.length === filteredProducts.length &&
+                    filteredProducts.length > 0
+                  }
                   onChange={handleSelectAll}
                 />
               </th>
@@ -102,75 +177,127 @@ function ProductTable({ onNavigate }) {
             </tr>
           </thead>
           <tbody>
-            {products.map((item) => (
-              <tr key={item.id}>
-                <td>
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    checked={selectedIds.includes(item.id)}
-                    onChange={() => handleSelectRow(item.id)}
-                  />
-                </td>
-                <td>
-                  <div className="d-flex align-items-center gap-3">
-                    <div
-                      className="product-img-box cursor-pointer"
-                      onClick={handleViewDetails}
-                    >
-                      <BsImage />
-                    </div>
-                    <div>
-                      <div
-                        className="product-name cursor-pointer"
-                        onClick={handleViewDetails}
-                      >
-                        {item.name}
-                      </div>
-                      <div className="product-sizes">{item.sizes}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="fw-medium">{item.price}</td>
-                <td>
-                  <div className="stock-left">{item.stockLeft}</div>
-                  <div className="stock-sold">{item.stockSold}</div>
-                </td>
-                <td className="category-badge">{item.category}</td>
-                <td>
-                  <span className="rating-box d-inline-flex align-items-center gap-1">
-                    <BsStarFill className="text-warning" /> {item.rating}
-                  </span>
-                  <span className="reviews-count">{item.reviews}</span>
-                </td>
-                <td className="text-end">
-                  <button
-                    className="action-btn"
-                    type="button"
-                    title="View Detail"
-                    onClick={handleViewDetails}
-                  >
-                    <BsEye />
-                  </button>
-                  <button
-                    className="action-btn"
-                    type="button"
-                    title="Edit"
-                    onClick={handleEditProduct}
-                  >
-                    <BsPencil />
-                  </button>
-                  <button
-                    className="action-btn delete-btn"
-                    type="button"
-                    title="Delete"
-                    onClick={() => handleDelete(item.id)}
-                  >
-                    <BsTrash />
-                  </button>
+            {loading ? (
+              <tr>
+                <td colSpan="7" className="text-center py-4 text-muted">
+                  <div className="spinner-border spinner-border-sm text-primary me-2" role="status" />
+                  Loading products from server...
                 </td>
               </tr>
-            ))}
+            ) : filteredProducts.length === 0 ? (
+              <tr>
+                <td colSpan="7" className="text-center py-4 text-muted">
+                  No products found.
+                </td>
+              </tr>
+            ) : (
+              filteredProducts.map((item) => {
+                const images = parseProductImages(item.image);
+                const firstImage = images.length > 0 ? images[0] : null;
+                const formattedPrice = item.price
+                  ? `$${parseFloat(item.price).toFixed(2)}`
+                  : '$0.00';
+                const formattedSizes = item.size
+                  ? item.size.toLowerCase().startsWith('size')
+                    ? item.size
+                    : `Size : ${item.size}`
+                  : 'Size : S , M , L';
+                const categoryName =
+                  categories[item.category_id] || item.tag || 'Fashion';
+                const rating = item.average_rating
+                  ? parseFloat(item.average_rating).toFixed(1)
+                  : '4.5';
+                const reviews = `${item.review_count || 0} Review`;
+                const stockLeft = `${item.stock ?? 0} Item Left`;
+                const stockSold = `${Math.floor((item.stock || 100) * 0.4)} Sold`;
+
+                return (
+                  <tr key={item.id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        checked={selectedIds.includes(item.id)}
+                        onChange={() => handleSelectRow(item.id)}
+                      />
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center gap-3">
+                        <div
+                          className="product-img-box cursor-pointer overflow-hidden d-flex align-items-center justify-content-center"
+                          onClick={() => handleViewDetails(item)}
+                        >
+                          {firstImage ? (
+                            <img
+                              src={firstImage}
+                              alt={item.product_name || 'Product'}
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover'
+                              }}
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.parentNode.innerHTML = '<span class="text-secondary opacity-50"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"></path></svg></span>';
+                              }}
+                            />
+                          ) : (
+                            <BsImage />
+                          )}
+                        </div>
+                        <div>
+                          <div
+                            className="product-name cursor-pointer"
+                            onClick={() => handleViewDetails(item)}
+                          >
+                            {item.product_name || 'Product Name'}
+                          </div>
+                          <div className="product-sizes">{formattedSizes}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="fw-medium">{formattedPrice}</td>
+                    <td>
+                      <div className="stock-left">{stockLeft}</div>
+                      <div className="stock-sold">{stockSold}</div>
+                    </td>
+                    <td className="category-badge">{categoryName}</td>
+                    <td>
+                      <span className="rating-box d-inline-flex align-items-center gap-1">
+                        <BsStarFill className="text-warning" /> {rating}
+                      </span>
+                      <span className="reviews-count">{reviews}</span>
+                    </td>
+                    <td className="text-end">
+                      <button
+                        className="action-btn"
+                        type="button"
+                        title="View Detail"
+                        onClick={() => handleViewDetails(item)}
+                      >
+                        <BsEye />
+                      </button>
+                      <button
+                        className="action-btn"
+                        type="button"
+                        title="Edit"
+                        onClick={() => handleEditProduct(item)}
+                      >
+                        <BsPencil />
+                      </button>
+                      <button
+                        className="action-btn delete-btn"
+                        type="button"
+                        title="Delete"
+                        onClick={() => handleDelete(item.id)}
+                      >
+                        <BsTrash />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
