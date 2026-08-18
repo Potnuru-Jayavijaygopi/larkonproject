@@ -11,7 +11,9 @@ function SignIn() {
   const [rememberMe, setRememberMe] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
-
+  const handleGoogleLogin = () => {
+  window.location.href = 'YOUR_GOOGLE_AUTH_URL';
+};
   const handleSignIn = async (e) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) {
@@ -168,7 +170,7 @@ function SignIn() {
                   color: "#334155",
                   fontSize: "0.825rem",
                 }}
-                onClick={() => navigate("/dashboard")}
+                onClick={handleGoogleLogin}
               >
                 <BsGoogle style={{ color: "#4285f4", fontSize: "0.9rem" }} />
                 <span>Sign in with Google</span>
