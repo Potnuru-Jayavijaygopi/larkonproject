@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsImage, BsCloudUpload } from "react-icons/bs";
+import { categoryAPI } from "../../services/api";
 
 function CreateCategory({ onNavigate }) {
   const navigate = useNavigate();
 
   const [categoryTitle, setCategoryTitle] = useState("");
-  const [createdBy, setCreatedBy] = useState("");
+  const [createdBy, setCreatedBy] = useState("Admin");
   const [stock, setStock] = useState("");
   const [tagId, setTagId] = useState("");
   const [description, setDescription] = useState("");
@@ -14,14 +15,36 @@ function CreateCategory({ onNavigate }) {
   const [metaTitle, setMetaTitle] = useState("");
   const [metaTagKeyword, setMetaTagKeyword] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSaveChange = (e) => {
-    e.preventDefault();
-    alert("New Category Created Successfully!");
-    if (navigate) {
-      navigate("/category/list");
-    } else if (onNavigate) {
-      onNavigate("category");
+  const handleSaveChange = async (e) => {
+    if (e) e.preventDefault();
+    if (!categoryTitle.trim()) {
+      setError("Please enter a category title.");
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      await categoryAPI.create({
+        category_name: categoryTitle.trim(),
+        description: description.trim() || `${categoryTitle.trim()} category collection`,
+        status: "active",
+      });
+
+      alert("New Category Created Successfully!");
+      if (navigate) {
+        navigate("/category/list");
+      } else if (onNavigate) {
+        onNavigate("category");
+      }
+    } catch (err) {
+      console.error("Failed to create category:", err);
+      setError(err.message || "Failed to create category on the server.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -35,6 +58,10 @@ function CreateCategory({ onNavigate }) {
 
   return (
     <form onSubmit={handleSaveChange}>
+      {error && (
+        <div className="alert alert-danger py-2 small mb-3">{error}</div>
+      )}
+
       <div className="row g-4">
         <div className="col-xl-4 col-lg-5">
           <div className="content-card p-3 shadow-sm text-center">
@@ -63,7 +90,7 @@ function CreateCategory({ onNavigate }) {
                 >
                   Created By :
                 </span>
-                <strong className="text-dark">{createdBy || "Seller"}</strong>
+                <strong className="text-dark">{createdBy || "Admin"}</strong>
               </div>
               <div>
                 <span
@@ -72,7 +99,7 @@ function CreateCategory({ onNavigate }) {
                 >
                   Stock :
                 </span>
-                <strong className="text-dark">{stock || "46233"}</strong>
+                <strong className="text-dark">{stock || "0"}</strong>
               </div>
               <div>
                 <span
@@ -89,7 +116,7 @@ function CreateCategory({ onNavigate }) {
               <button
                 className="btn btn-outline-secondary btn-sm "
                 type="submit"
-                onClick={handleSaveChange}
+                disabled={submitting}
                 style={{
                   width: "50%",
                   fontSize: "0.78rem",
@@ -100,7 +127,7 @@ function CreateCategory({ onNavigate }) {
                   padding: "8px 12px",
                 }}
               >
-                Create Category
+                {submitting ? "Saving..." : "Create Category"}
               </button>
 
               <button
@@ -122,6 +149,7 @@ function CreateCategory({ onNavigate }) {
             </div>
           </div>
         </div>
+
         <div className="col-xl-8 col-lg-7">
           <div className="content-card p-4 mb-4 shadow-sm">
             <h6
@@ -156,6 +184,7 @@ function CreateCategory({ onNavigate }) {
               </p>
             </div>
           </div>
+
           <div className="content-card p-4 mb-4 shadow-sm">
             <h6
               className="fw-bold text-dark mb-3"
@@ -175,6 +204,7 @@ function CreateCategory({ onNavigate }) {
                 <input
                   id="catTitleInput"
                   type="text"
+                  required
                   className="form-control form-control-sm"
                   placeholder="Enter Title"
                   style={{ fontSize: "0.78rem" }}
@@ -198,9 +228,8 @@ function CreateCategory({ onNavigate }) {
                   value={createdBy}
                   onChange={(e) => setCreatedBy(e.target.value)}
                 >
-                  <option value="">Select Creator</option>
-                  <option value="Seller">Seller</option>
                   <option value="Admin">Admin</option>
+                  <option value="Seller">Seller</option>
                 </select>
               </div>
             </div>
@@ -335,9 +364,10 @@ function CreateCategory({ onNavigate }) {
             <button
               className="btn btn-light border btn-sm px-4 py-1"
               type="submit"
+              disabled={submitting}
               style={{ fontSize: "0.8rem" }}
             >
-              Save Change
+              {submitting ? "Saving..." : "Save Change"}
             </button>
             <button
               className="btn btn-add-product btn-sm px-4 py-1"

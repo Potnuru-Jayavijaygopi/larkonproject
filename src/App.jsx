@@ -1,22 +1,22 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
-import MainLayout from "./components/MainLayout";
+import MainLayout from "./Components/MainLayout";
 
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./Pages/Dashboard";
 
-import CategoryList from "./pages/category/CategoryList";
-import AddCategory from "./pages/category/AddCategory";
-import CreateCategory from "./pages/category/CreateCategory";
+import CategoryList from "./Pages/category/CategoryList";
+import AddCategory from "./Pages/category/AddCategory";
+import CreateCategory from "./Pages/category/CreateCategory";
 
-import InventoryList from "./pages/inventory/InventoryList";
-import ReceivedOrders from "./pages/inventory/ReceivedOrders";
+import InventoryList from "./Pages/inventory/InventoryList";
+import ReceivedOrders from "./Pages/inventory/ReceivedOrders";
 
-import Widgets from "./pages/widgets/Widgets";
+import Widgets from "./Pages/widgets/Widgets";
 
-import SignIn from "./pages/authentication/SignIn";
-import SignUp from "./pages/authentication/SignUp";
-import ResetPassword from "./pages/authentication/ResetPassword";
-import LockScreen from "./pages/authentication/LockScreen";
+import SignIn from "./Pages/authentication/SignIn";
+import SignUp from "./Pages/authentication/SignUp";
+import ResetPassword from "./Pages/authentication/ResetPassword";
+import LockScreen from "./Pages/authentication/LockScreen";
 
 const router = createBrowserRouter([
   {
@@ -27,8 +27,12 @@ const router = createBrowserRouter([
       { path: "dashboard", element: <Dashboard /> },
 
       { path: "category/list", element: <CategoryList /> },
+      { path: "category-list", element: <CategoryList /> },
       { path: "category/edit", element: <AddCategory /> },
+      { path: "category/edit/:id", element: <AddCategory /> },
+      { path: "category/add/:id", element: <AddCategory /> },
       { path: "category/create", element: <CreateCategory /> },
+      { path: "category/add", element: <CreateCategory /> },
 
       { path: "inventory/warehouse", element: <InventoryList /> },
       { path: "inventory/received", element: <ReceivedOrders /> },
