@@ -12,7 +12,7 @@ function SignIn() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const handleGoogleLogin = () => {
-  window.location.href = 'YOUR_GOOGLE_AUTH_URL';
+  window.location.href = 'https://accounts.google.com/';
 };
   const handleSignIn = async (e) => {
     e.preventDefault();
