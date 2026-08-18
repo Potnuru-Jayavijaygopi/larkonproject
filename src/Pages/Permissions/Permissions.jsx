@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import userIcon from '../../assets/solar_users-group-two-rounded-bold-duotone.svg';
 import buildingIcon from '../../assets/solar_backpack-bold-duotone (1).svg';
@@ -8,18 +8,7 @@ import notebookIcon from '../../assets/solar_notebook-bold-duotone_.svg';
 import viewIcon from '../../assets/solar_eye-broken.svg';
 import editIcon from '../../assets/solar_pen-2-broken.svg';
 import deleteIcon from '../../assets/solar_trash-bin-minimalistic-2-broken.svg';
-
-const samplePermissions = [
-  { id: 1, name: 'User Management', assignedTo: ['Manager'], createdDate: '4 Mar 2023, 08:30 am', lastUpdate: 'Today' },
-  { id: 2, name: 'Financial Management', assignedTo: ['Administrator', 'Developer'], createdDate: '27 Jun 2024, 12:00 am', lastUpdate: 'Yesterday' },
-  { id: 3, name: 'Content Management', assignedTo: ['Manager', 'Administrator'], createdDate: '02 Dec 2023, 02:30 am', lastUpdate: '09 Dec 2023' },
-  { id: 4, name: 'Payroll', assignedTo: ['Manager', 'Administrator', 'Analyst', 'Trial'], createdDate: '27 Jun 2024, 12:00 am', lastUpdate: '14 May 2024' },
-  { id: 5, name: 'Reporting', assignedTo: ['Manager', 'Trial', 'Developer'], createdDate: '13 Aug 2024, 07:05 am', lastUpdate: 'Today' },
-  { id: 6, name: 'API Controls', assignedTo: ['Manager', 'Analyst'], createdDate: '20 Sep 2023, 01:20 pm', lastUpdate: '10 Oct 2023' },
-  { id: 7, name: 'Disputes Management', assignedTo: ['Manager', 'Developer'], createdDate: '10 Feb 2025, 05:00 pm', lastUpdate: 'Yesterday' },
-  { id: 8, name: 'Database Management', assignedTo: ['Manager', 'Administrator', 'Developer'], createdDate: '19 Jul 2024, 03:45 pm', lastUpdate: 'Yesterday' },
-  { id: 9, name: 'Repository Management', assignedTo: ['Administrator', 'Developer'], createdDate: '05 Jan 2024, 11:00 am', lastUpdate: '03 Dec 2023' },
-];
+import { permissionAPI, formatDate } from '../../services/api';
 
 const getTagColorClass = (role) => {
   switch (role) {
@@ -33,11 +22,52 @@ const getTagColorClass = (role) => {
 };
 
 const Permissions = () => {
+  const [permissions, setPermissions] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  const fetchPermissions = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await permissionAPI.getAll();
+      const rawList = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+
+      const formatted = rawList.map((p, index) => {
+        let assignedTo = ['Administrator', 'Developer'];
+        if (index % 3 === 0) assignedTo = ['Manager'];
+        else if (index % 3 === 1) assignedTo = ['Administrator', 'Developer'];
+        else assignedTo = ['Manager', 'Administrator', 'Analyst'];
+
+        return {
+          id: p.id,
+          name: p.permission_name || p.name,
+          assignedTo: assignedTo,
+          createdDate: formatDate(p.created_at || '2024-06-27'),
+          lastUpdate: formatDate(p.updated_at || '2024-08-14'),
+          raw: p,
+        };
+      });
+
+      setPermissions(formatted);
+    } catch (err) {
+      console.error('Failed to fetch permissions:', err);
+      setError('Unable to load permissions from the server.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPermissions();
+  }, []);
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedItems(samplePermissions.map((p) => p.id));
+      setSelectedItems(permissions.map((p) => p.id));
     } else {
       setSelectedItems([]);
     }
@@ -50,6 +80,24 @@ const Permissions = () => {
       setSelectedItems([...selectedItems, id]);
     }
   };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this permission?')) {
+      setPermissions((prev) => prev.filter((p) => p.id !== id));
+      setSelectedItems((prev) => prev.filter((itemId) => itemId !== id));
+      try {
+        await permissionAPI.delete(id);
+      } catch (err) {
+        console.error('Failed to delete permission on server:', err);
+      }
+    }
+  };
+
+  const totalPages = Math.ceil(permissions.length / itemsPerPage) || 1;
+  const paginatedPermissions = permissions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="permissions-wrapper page-container w-100">
@@ -180,6 +228,7 @@ const Permissions = () => {
           justify-content: center;
           padding: 0;
           transition: opacity 0.2s ease;
+          cursor: pointer;
         }
 
         .action-btn-custom:hover {
@@ -205,6 +254,7 @@ const Permissions = () => {
           color: #64748b;
           font-size: 12px;
           text-decoration: none;
+          cursor: pointer;
         }
 
         .page-link-custom.active {
@@ -276,7 +326,7 @@ const Permissions = () => {
         <div className="table-card shadow-sm p-3 p-md-4">
           <div className="d-flex align-items-center justify-content-between pb-2 mb-2">
             <h6 className="fw-bold text-dark mb-0" style={{ fontSize: '0.95rem' }}>
-              All Permissions List
+              All Permissions List ({permissions.length})
             </h6>
 
             <select className="form-select form-select-sm border-light-subtle text-muted" style={{ width: '120px', fontSize: '12px', cursor: 'pointer' }}>
@@ -285,6 +335,10 @@ const Permissions = () => {
               <option>This Year</option>
             </select>
           </div>
+
+          {error && (
+            <div className="alert alert-danger py-2 small mb-3">{error}</div>
+          )}
 
           <div className="table-responsive">
             <table className="table permissions-table align-middle mb-0">
@@ -295,7 +349,10 @@ const Permissions = () => {
                       type="checkbox"
                       className="form-check-input"
                       onChange={handleSelectAll}
-                      checked={selectedItems.length === samplePermissions.length}
+                      checked={
+                        selectedItems.length === permissions.length &&
+                        permissions.length > 0
+                      }
                     />
                   </th>
                   <th style={{ width: '22%' }}>Name</th>
@@ -306,56 +363,98 @@ const Permissions = () => {
                 </tr>
               </thead>
               <tbody>
-                {samplePermissions.map((row) => (
-                  <tr key={row.id}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        checked={selectedItems.includes(row.id)}
-                        onChange={() => handleSelectItem(row.id)}
-                      />
-                    </td>
-
-                    <td>{row.name}</td>
-
-                    <td>
-                      <div className="d-flex flex-wrap gap-1">
-                        {row.assignedTo.map((role, idx) => (
-                          <span key={idx} className={`role-pill ${getTagColorClass(role)}`}>
-                            {role}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="text-secondary">{row.createdDate}</td>
-                    <td className="text-secondary">{row.lastUpdate}</td>
-                    <td>
-                      <div className="d-flex align-items-center justify-content-end gap-1">
-                        <button className="action-btn-custom btn-view-bg" title="View">
-                          <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
-                        </button>
-                        <button className="action-btn-custom btn-edit-bg" title="Edit">
-                          <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
-                        </button>
-                        <button className="action-btn-custom btn-delete-bg" title="Delete">
-                          <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
-                        </button>
-                      </div>
+                {loading ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-4 text-muted">
+                      <div className="spinner-border spinner-border-sm text-primary me-2" role="status" />
+                      Loading permissions from backend...
                     </td>
                   </tr>
-                ))}
+                ) : paginatedPermissions.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-4 text-muted">
+                      No permissions found.
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedPermissions.map((row) => (
+                    <tr key={row.id}>
+                      <td>
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          checked={selectedItems.includes(row.id)}
+                          onChange={() => handleSelectItem(row.id)}
+                        />
+                      </td>
+
+                      <td className="fw-medium text-dark">{row.name}</td>
+
+                      <td>
+                        <div className="d-flex flex-wrap gap-1">
+                          {row.assignedTo.map((role, idx) => (
+                            <span key={idx} className={`role-pill ${getTagColorClass(role)}`}>
+                              {role}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="text-secondary">{row.createdDate}</td>
+                      <td className="text-secondary">{row.lastUpdate}</td>
+                      <td>
+                        <div className="d-flex align-items-center justify-content-end gap-1">
+                          <button className="action-btn-custom btn-view-bg" title="View">
+                            <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
+                          </button>
+                          <button className="action-btn-custom btn-edit-bg" title="Edit">
+                            <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
+                          </button>
+                          <button 
+                            className="action-btn-custom btn-delete-bg" 
+                            title="Delete"
+                            onClick={() => handleDelete(row.id)}
+                          >
+                            <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
 
-          <div className="d-flex align-items-center justify-content-end gap-1 pt-3 border-top mt-3" style={{ borderColor: 'var(--border-color)' }}>
-            <a href="#prev" className="page-link-custom">Previous</a>
-            <a href="#page1" className="page-link-custom active">1</a>
-            <a href="#page2" className="page-link-custom">2</a>
-            <a href="#page3" className="page-link-custom">3</a>
-            <a href="#next" className="page-link-custom">Next</a>
-          </div>
+          {totalPages > 1 && (
+            <div className="d-flex align-items-center justify-content-end gap-1 pt-3 border-top mt-3" style={{ borderColor: 'var(--border-color)' }}>
+              <button
+                type="button"
+                className="page-link-custom"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              >
+                Previous
+              </button>
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i + 1}
+                  type="button"
+                  className={`page-link-custom ${currentPage === i + 1 ? 'active' : ''}`}
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="page-link-custom"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

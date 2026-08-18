@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { roleAPI } from '../../services/api';
 
 const RoleCreate = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     rolesName: '',
-    workspace: '',
+    workspace: 'Facebook',
     userName: '',
     status: 'Active',
   });
 
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(['Manager', 'Product']);
   const [tagInput, setTagInput] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,12 +38,36 @@ const RoleCreate = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Created New Role:', { ...formData, tags });
-    alert('New Role created successfully!');
-    setFormData({ rolesName: '', workspace: '', userName: '', status: 'Active' });
-    setTags([]);
+    if (!formData.rolesName.trim()) {
+      setError('Please enter a role name.');
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      const descriptionPayload = JSON.stringify({
+        workspace: formData.workspace,
+        tags: tags,
+        users: formData.userName ? [formData.userName] : ['Admin'],
+      });
+
+      await roleAPI.create({
+        role_name: formData.rolesName.trim(),
+        description: descriptionPayload,
+        status: formData.status,
+      });
+
+      alert('New Role created successfully!');
+      navigate('/roles');
+    } catch (err) {
+      console.error('Failed to create role:', err);
+      setError(err.message || 'Failed to create role on the server.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -159,6 +188,7 @@ const RoleCreate = () => {
           font-size: 0.825rem;
           font-weight: 600;
           transition: background-color 0.2s ease;
+          cursor: pointer;
         }
 
         .btn-create-custom:hover {
@@ -174,16 +204,20 @@ const RoleCreate = () => {
               Roles Information
             </h6>
 
+            {error && (
+              <div className="alert alert-danger py-2 small mb-3">{error}</div>
+            )}
+
             <div className="row g-3 g-md-4 mb-3">
               <div className="col-md-6">
                 <label className="form-label-custom">Roles Name</label>
                 <input
                   type="text"
                   name="rolesName"
-                  className="form-control form-control-custom w-100 cursor-pointer"
+                  className="form-control form-control-custom w-100"
                   value={formData.rolesName}
                   onChange={handleInputChange}
-                  placeholder="Role name"
+                  placeholder="Role name (e.g. Workspace Manager)"
                   required
                 />
               </div>
@@ -196,7 +230,6 @@ const RoleCreate = () => {
                   value={formData.workspace}
                   onChange={handleInputChange}
                 >
-                  <option value="" disabled hidden>Select Workspace</option>
                   <option value="Facebook">Facebook</option>
                   <option value="Slack">Slack</option>
                   <option value="Zoom">Zoom</option>
@@ -237,10 +270,10 @@ const RoleCreate = () => {
                 <input
                   type="text"
                   name="userName"
-                  className="form-control form-control-custom w-100 cursor-pointer"
+                  className="form-control form-control-custom w-100"
                   value={formData.userName}
                   onChange={handleInputChange}
-                  placeholder="Enter name"
+                  placeholder="Enter user name (e.g. Gaston Lapierre)"
                 />
               </div>
 
@@ -281,8 +314,8 @@ const RoleCreate = () => {
             </div>
 
             <div className="pt-3 border-top mt-3" style={{ borderColor: 'var(--border-color)' }}>
-              <button type="submit" className="btn btn-create-custom">
-                Create Roles
+              <button type="submit" disabled={submitting} className="btn btn-create-custom">
+                {submitting ? 'Creating...' : 'Create Roles'}
               </button>
             </div>
           </div>

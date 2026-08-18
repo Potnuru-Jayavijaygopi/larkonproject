@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import bgBanner from '../assets/bg.png';
 import imageIcon from '../assets/Frame.svg';
 import penIcon from '../assets/solar_pen-new-square-broken.svg';
@@ -22,8 +22,40 @@ import clockIcon from '../assets/solar_clock-circle-bold-duotone.svg';
 import cupIcon from '../assets/solar_cup-star-bold-duotone.png';
 import notebookIcon from '../assets/solar_notebook-bold-duotone_.svg';
 import qrCodeImg from '../assets/image 25.png';
+import { profileAPI } from '../services/api';
 
 const Profile = () => {
+  const [profile, setProfile] = useState({
+    full_name: 'Gaston Lapierre',
+    designation: 'Project Head Manager',
+    bio: "I'm the model of the new Project Head Manager. I've combined a deep background in brand management at blue chip CPG companies with eCommerce growth marketing at the world's biggest retailer. I've run SingleFire I've created world-class campaigns; I've built digital marketing organizations from the ground up. I have over 20 years' experience leading...",
+    address: 'Pittsburgh, PA 15212',
+    email: 'admin@larkon.com',
+    profile_image: null,
+  });
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const data = await profileAPI.getProfile(1);
+        if (data) {
+          setProfile((prev) => ({
+            ...prev,
+            full_name: data.full_name || data.name || prev.full_name,
+            designation: data.designation || data.role || prev.designation,
+            bio: data.bio || prev.bio,
+            address: data.address || prev.address,
+            email: data.email || prev.email,
+            profile_image: data.profile_image || prev.profile_image,
+          }));
+        }
+      } catch (err) {
+        console.warn('Using default profile view:', err);
+      }
+    };
+    loadProfile();
+  }, []);
+
   return (
     <div className="profile-page-wrapper page-container w-100">
       <style>{`
@@ -130,7 +162,7 @@ const Profile = () => {
                     }}
                   >
                     <img 
-                      src={imageIcon} 
+                      src={profile.profile_image || imageIcon} 
                       alt="Profile Logo" 
                       style={{ width: '38px', height: '38px', objectFit: 'contain' }} 
                     />
@@ -139,7 +171,7 @@ const Profile = () => {
                     <div>
                       <div className="d-flex align-items-center gap-2">
                         <h4 className="font-heading fw-bold mb-0" style={{ fontSize: '1.125rem' }}>
-                          Gaston Lapierre
+                          {profile.full_name}
                         </h4>
                         <img 
                           src={badgeCheckIcon} 
@@ -148,7 +180,7 @@ const Profile = () => {
                         />
                       </div>
                       <p className="text-muted small mb-0 mt-1" style={{ fontSize: '0.825rem' }}>
-                        Project Head Manager
+                        {profile.designation}
                       </p>
                     </div>
 
@@ -236,7 +268,7 @@ const Profile = () => {
                 <div className="d-flex flex-column gap-2 small text-secondary">
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={projectHeadIcon} alt="Manager" style={{ width: '16px', height: '16px' }} /></div>
-                    <span>Project Head Manager</span>
+                    <span>{profile.designation}</span>
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={oxfordIcon} alt="Education" style={{ width: '16px', height: '16px' }} /></div>
@@ -244,7 +276,7 @@ const Profile = () => {
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={locationIcon} alt="Location" style={{ width: '16px', height: '16px' }} /></div>
-                    <span>Lives in <strong className="text-dark">Pittsburgh, PA 15212</strong></span>
+                    <span>Lives in <strong className="text-dark">{profile.address}</strong></span>
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={customerIcon} alt="Followers" style={{ width: '16px', height: '16px' }} /></div>
@@ -252,7 +284,7 @@ const Profile = () => {
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={emailIcon} alt="Email" style={{ width: '16px', height: '16px' }} /></div>
-                    <span>Email: <strong className="text-orange-custom">hello@dundermuffilin.com</strong></span>
+                    <span>Email: <strong className="text-orange-custom">{profile.email}</strong></span>
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={linkIcon} alt="Website" style={{ width: '16px', height: '16px' }} /></div>
@@ -303,7 +335,7 @@ const Profile = () => {
                     marginBottom: '12px' 
                   }}
                 >
-                  I'm the model of the new Project Head Manager. I've combined a deep background in brand management at blue chip CPG companies with eCommerce growth marketing at the world's biggest retailer. I've run SingleFire I've created world-class campaigns; I've built digital marketing organizations from the ground up. I have over 20 years' experience leading...{' '}
+                  {profile.bio}{' '}
                   <span className="text-orange-custom cursor-pointer" style={{ fontWeight: '400' }}>
                     See more
                   </span>
@@ -320,7 +352,7 @@ const Profile = () => {
                       marginBottom: '12px' 
                     }}
                   >
-                    When it comes to Project Head Manager, I believe in a holistic approach that combines creativity with technical expertise. I start by understanding your unique vision and goals, then work tirelessly to bring that vision to life. Whether you need a sleek portfolio site, an engaging e-commerce platform, or anything in between, I've got you covered.
+                    When it comes to {profile.designation}, I believe in a holistic approach that combines creativity with technical expertise. I start by understanding your unique vision and goals, then work tirelessly to bring that vision to life. Whether you need a sleek portfolio site, an engaging e-commerce platform, or anything in between, I've got you covered.
                   </p>
                 </div>
 
@@ -641,7 +673,7 @@ const Profile = () => {
 
                     <div>
                       <h6 className="fw-bold text-dark mb-0 font-heading" style={{ fontSize: '0.825rem' }}>
-                        Gaston Lapierre <span className="fw-normal text-muted small">, Project Head Manager . Nov 16</span>
+                        {profile.full_name} <span className="fw-normal text-muted small">, {profile.designation} . Nov 16</span>
                       </h6>
                       <small className="text-muted" style={{ fontSize: '11px' }}>
                         Asked a question <span className="text-orange-custom" style={{ fontWeight: '500' }}>#Inbound #SaaS</span>
@@ -687,7 +719,7 @@ const Profile = () => {
 
                     <div>
                       <h6 className="fw-bold text-dark mb-0 font-heading" style={{ fontSize: '0.825rem' }}>
-                        Gaston Lapierre <span className="fw-normal text-muted small">, Project Head Manager . Nov 11</span>
+                        {profile.full_name} <span className="fw-normal text-muted small">, {profile.designation} . Nov 11</span>
                       </h6>
                       <small className="text-muted" style={{ fontSize: '11px' }}>
                         Asked a question <span className="text-orange-custom" style={{ fontWeight: '500' }}>#LatAm #Europe</span>
@@ -733,7 +765,7 @@ const Profile = () => {
 
                     <div>
                       <h6 className="fw-bold text-dark mb-0 font-heading" style={{ fontSize: '0.825rem' }}>
-                        Gaston Lapierre <span className="fw-normal text-muted small">, Project Head Manager . Nov 08</span>
+                        {profile.full_name} <span className="fw-normal text-muted small">, {profile.designation} . Nov 08</span>
                       </h6>
                       <small className="text-muted" style={{ fontSize: '11px' }}>
                         Asked a question <span className="text-orange-custom" style={{ fontWeight: '500' }}>#Performance-marketing #CRM</span>

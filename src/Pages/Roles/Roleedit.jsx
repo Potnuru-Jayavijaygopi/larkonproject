@@ -1,6 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { roleAPI } from '../../services/api';
 
 const Roleedit = () => {
+  const navigate = useNavigate();
+  const params = useParams();
+  const [searchParams] = useSearchParams();
+  const roleId = params.id || searchParams.get('id') || '1';
+
   const [formData, setFormData] = useState({
     rolesName: 'Workspace Manager',
     workspace: 'Facebook',
@@ -10,6 +17,49 @@ const Roleedit = () => {
 
   const [tags, setTags] = useState(['Data', 'Manager']);
   const [tagInput, setTagInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRoleData = async () => {
+      if (!roleId) return;
+      setLoading(true);
+      try {
+        const res = await roleAPI.getById(roleId);
+        const r = res.data || res;
+        if (r) {
+          let ws = 'Facebook';
+          let tagList = ['Data', 'Manager'];
+          let usr = 'Gaston Lapierre';
+
+          if (r.description && r.description.startsWith('{')) {
+            try {
+              const parsed = JSON.parse(r.description);
+              if (parsed.workspace) ws = parsed.workspace;
+              if (Array.isArray(parsed.tags)) tagList = parsed.tags;
+              if (Array.isArray(parsed.users) && parsed.users.length > 0) usr = parsed.users[0];
+            } catch (e) {}
+          } else if (r.description) {
+            tagList = [r.description];
+          }
+
+          setFormData({
+            rolesName: r.role_name || '',
+            workspace: ws,
+            userName: usr,
+            status: r.status || 'Active',
+          });
+          setTags(tagList);
+        }
+      } catch (err) {
+        console.warn('Could not fetch role details, using default values:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRoleData();
+  }, [roleId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,10 +83,36 @@ const Roleedit = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Updated Role Information:', { ...formData, tags });
-    alert('Role Information saved successfully!');
+    if (!formData.rolesName.trim()) {
+      setError('Please enter a role name.');
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      const descriptionPayload = JSON.stringify({
+        workspace: formData.workspace,
+        tags: tags,
+        users: formData.userName ? [formData.userName] : ['Admin'],
+      });
+
+      await roleAPI.update(roleId, {
+        role_name: formData.rolesName.trim(),
+        description: descriptionPayload,
+        status: formData.status,
+      });
+
+      alert('Role Information saved successfully!');
+      navigate('/roles');
+    } catch (err) {
+      console.error('Failed to update role:', err);
+      setError(err.message || 'Failed to update role on the server.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -153,6 +229,7 @@ const Roleedit = () => {
           font-size: 0.825rem;
           font-weight: 600;
           transition: background-color 0.2s ease;
+          cursor: pointer;
         }
 
         .btn-save-custom:hover {
@@ -164,118 +241,139 @@ const Roleedit = () => {
       <div className="container-fluid p-0">
         <form onSubmit={handleSubmit}>
           <div className="figma-card-container shadow-sm p-3 p-md-4">
-            <h6 className="card-header-title pb-3 mb-4">
-              Roles Information
-            </h6>
-
-            <div className="row g-3 g-md-4 mb-3">
-              <div className="col-md-6">
-                <label className="form-label-custom">Roles Name</label>
-                <input
-                  type="text"
-                  name="rolesName"
-                  className="form-control form-control-custom w-100 cursor-pointer"
-                  value={formData.rolesName}
-                  onChange={handleInputChange}
-                  placeholder="Enter Roles Name"
-                  required
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label-custom">Add Workspace</label>
-                <select
-                  name="workspace"
-                  className="form-select form-select-custom w-100 cursor-pointer"
-                  value={formData.workspace}
-                  onChange={handleInputChange}
-                >
-                  <option value="Facebook">Facebook</option>
-                  <option value="Slack">Slack</option>
-                  <option value="Zoom">Zoom</option>
-                  <option value="Analytics">Analytics</option>
-                  <option value="Meet">Meet</option>
-                  <option value="Mail">Mail</option>
-                  <option value="Stripe">Stripe</option>
-                </select>
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label-custom">Tag</label>
-                <div className="tags-input-container">
-                  {tags.map((tag, index) => (
-                    <span key={index} className="tag-pill">
-                      {tag}
-                      <span
-                        className="tag-pill-close"
-                        onClick={() => handleRemoveTag(tag)}
-                      >
-                        ✕
-                      </span>
-                    </span>
-                  ))}
-                  <input
-                    type="text"
-                    className="tag-input-field"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={handleTagKeyDown}
-                    placeholder={tags.length === 0 ? "Type tag & press enter" : ""}
-                  />
-                </div>
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label-custom">User Name</label>
-                <input
-                  type="text"
-                  name="userName"
-                  className="form-control form-control-custom w-100 cursor-pointer"
-                  value={formData.userName}
-                  onChange={handleInputChange}
-                  placeholder="Enter User Name"
-                />
-              </div>
-
-              <div className="col-12 mt-2">
-                <label className="form-label-custom">User Status</label>
-                <div className="d-flex align-items-center gap-4">
-                  <div className="form-check d-flex align-items-center gap-2 mb-0">
-                    <input
-                      className="form-check-input form-check-input-custom"
-                      type="radio"
-                      name="status"
-                      id="statusActive"
-                      value="Active"
-                      checked={formData.status === 'Active'}
-                      onChange={handleInputChange}
-                    />
-                    <label className="form-check-label small text-dark fw-medium" htmlFor="statusActive" style={{ cursor: 'pointer' }}>
-                      Active
-                    </label>
-                  </div>
-
-                  <div className="form-check d-flex align-items-center gap-2 mb-0">
-                    <input
-                      className="form-check-input form-check-input-custom"
-                      type="radio"
-                      name="status"
-                      id="statusInactive"
-                      value="In Active"
-                      checked={formData.status === 'In Active'}
-                      onChange={handleInputChange}
-                    />
-                    <label className="form-check-label small text-muted fw-medium" htmlFor="statusInactive" style={{ cursor: 'pointer' }}>
-                      In Active
-                    </label>
-                  </div>
-                </div>
-              </div>
+            <div className="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
+              <h6 className="card-header-title mb-0 border-0 p-0">
+                Roles Information
+              </h6>
+              <button
+                type="button"
+                className="btn btn-sm btn-light border text-muted px-2 py-1"
+                style={{ fontSize: '0.78rem' }}
+                onClick={() => navigate('/roles')}
+              >
+                Back to Roles
+              </button>
             </div>
 
+            {error && (
+              <div className="alert alert-danger py-2 small mb-3">{error}</div>
+            )}
+
+            {loading ? (
+              <div className="text-center py-4 text-muted">
+                <div className="spinner-border spinner-border-sm text-primary me-2" role="status" />
+                Loading role information...
+              </div>
+            ) : (
+              <div className="row g-3 g-md-4 mb-3">
+                <div className="col-md-6">
+                  <label className="form-label-custom">Roles Name</label>
+                  <input
+                    type="text"
+                    name="rolesName"
+                    className="form-control form-control-custom w-100"
+                    value={formData.rolesName}
+                    onChange={handleInputChange}
+                    placeholder="Enter Roles Name"
+                    required
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label-custom">Add Workspace</label>
+                  <select
+                    name="workspace"
+                    className="form-select form-select-custom w-100 cursor-pointer"
+                    value={formData.workspace}
+                    onChange={handleInputChange}
+                  >
+                    <option value="Facebook">Facebook</option>
+                    <option value="Slack">Slack</option>
+                    <option value="Zoom">Zoom</option>
+                    <option value="Analytics">Analytics</option>
+                    <option value="Meet">Meet</option>
+                    <option value="Mail">Mail</option>
+                    <option value="Stripe">Stripe</option>
+                  </select>
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label-custom">Tag</label>
+                  <div className="tags-input-container">
+                    {tags.map((tag, index) => (
+                      <span key={index} className="tag-pill">
+                        {tag}
+                        <span
+                          className="tag-pill-close"
+                          onClick={() => handleRemoveTag(tag)}
+                        >
+                          ✕
+                        </span>
+                      </span>
+                    ))}
+                    <input
+                      type="text"
+                      className="tag-input-field"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyDown={handleTagKeyDown}
+                      placeholder={tags.length === 0 ? "Type tag & press enter" : ""}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label-custom">User Name</label>
+                  <input
+                    type="text"
+                    name="userName"
+                    className="form-control form-control-custom w-100"
+                    value={formData.userName}
+                    onChange={handleInputChange}
+                    placeholder="Enter User Name"
+                  />
+                </div>
+
+                <div className="col-12 mt-2">
+                  <label className="form-label-custom">User Status</label>
+                  <div className="d-flex align-items-center gap-4">
+                    <div className="form-check d-flex align-items-center gap-2 mb-0">
+                      <input
+                        className="form-check-input form-check-input-custom"
+                        type="radio"
+                        name="status"
+                        id="statusActive"
+                        value="Active"
+                        checked={formData.status === 'Active'}
+                        onChange={handleInputChange}
+                      />
+                      <label className="form-check-label small text-dark fw-medium" htmlFor="statusActive" style={{ cursor: 'pointer' }}>
+                        Active
+                      </label>
+                    </div>
+
+                    <div className="form-check d-flex align-items-center gap-2 mb-0">
+                      <input
+                        className="form-check-input form-check-input-custom"
+                        type="radio"
+                        name="status"
+                        id="statusInactive"
+                        value="In Active"
+                        checked={formData.status === 'In Active'}
+                        onChange={handleInputChange}
+                      />
+                      <label className="form-check-label small text-muted fw-medium" htmlFor="statusInactive" style={{ cursor: 'pointer' }}>
+                        In Active
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="pt-3 border-top mt-3" style={{ borderColor: 'var(--border-color)' }}>
-              <button type="submit" className="btn btn-save-custom">
-                Save Change
+              <button type="submit" disabled={submitting || loading} className="btn btn-save-custom">
+                {submitting ? 'Saving...' : 'Save Change'}
               </button>
             </div>
           </div>
