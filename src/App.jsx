@@ -149,6 +149,8 @@ const router = createBrowserRouter([
       // Coupons & Reviews
       { path: 'coupons/list', element: <CouponsList /> },
       { path: 'coupons/add', element: <CouponAdd /> },
+      { path: 'coupons/add/:id', element: <CouponAdd /> },
+      { path: 'coupons/edit/:id', element: <CouponAdd /> },
       { path: 'reviews', element: <ReviewsList /> },
 
       // Apps

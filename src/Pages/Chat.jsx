@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { chatAPI } from '../services/api';
 
 import searchIcon from '../assets/Search.png';
 import settingsIcon from '../assets/settings.png';
@@ -14,49 +15,143 @@ import defaultAvatar from '../assets/Image (1).png';
 import chatCardImg1 from '../assets/Frame 116.png';
 import chatCardImg2 from '../assets/Frame 116.png';
 
-const initialConversations = [
-  { id: 1, name: 'Gaston Lapierre', time: '10:20am', lastMessage: 'How are you today?', unread: false },
-  { id: 2, name: 'Fantina LeBatelier', time: '11:03am', lastMessage: "Hey! a reminder for tommorow's meeting...", unread: false },
-  { id: 3, name: 'Gilbert Chicoine', time: 'now', lastMessage: 'typing...', isTyping: true, unread: false },
-  { id: 4, name: 'Mignonette Brodeur', time: 'Yesterday', lastMessage: "Are we going to have this week's planning meeting today?", unread: false },
-  { id: 5, name: 'Thomas Menard', time: 'Yesterday', lastMessage: 'Please check this template...', unread: false },
-  { id: 6, name: 'Melisande Lapointe', time: 'Yesterday', lastMessage: 'Are free for 10 minutes? would like to discuss something...', unread: false },
-  { id: 7, name: 'Danielle Despins', time: '7/8/21', lastMessage: 'How are you?', unread: false },
-  { id: 8, name: 'Onfroi Pichette', time: '7/8/21', lastMessage: 'whats going on?', unread: false },
-];
-
-const initialMessages = [
-  { id: 1, sender: 'Gilbert Chicoine', text: 'Hey 😊', time: '8:20 am', isSender: false },
-  { id: 2, sender: 'You', text: 'Hi', time: '8:20 am', isSender: true },
-  { id: 3, sender: 'Gilbert Chicoine', text: "Hi Gaston, thanks for joining the meeting. Let's dive into our quarterly performance review.", time: '8:25 am', isSender: false },
-  { id: 4, sender: 'You', text: "Hi Gilbert, thanks for having me. I'm ready to discuss how things have been going.", time: '8:25 am', isSender: true },
-  { id: 5, sender: 'Gilbert Chicoine', hasImages: true, images: [chatCardImg1, chatCardImg2], time: '8:26 am', isSender: false },
-  { id: 6, sender: 'You', text: 'I appreciate your honesty. Can you elaborate on some of those challenges? I want to understand how we can support you better in the future.', time: '8:27 am', isSender: true },
-  { id: 7, sender: 'Gilbert Chicoine', text: "Thanks, Emily. I appreciate your support. Overall, I'm optimistic about our team's performance and looking forward to tackling new challenges in the next quarter.", time: '8:29 am', isSender: false },
-];
-
 export default function Chat() {
   const [activeTab, setActiveTab] = useState('Chat');
-  const [selectedChat, setSelectedChat] = useState(initialConversations[2]);
-  const [messages, setMessages] = useState(initialMessages);
+  const [conversations, setConversations] = useState([]);
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(false);
 
-  const handleSendMessage = (e) => {
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.href =
+      'https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }, []);
+
+  // Fetch all conversations from backend
+  useEffect(() => {
+    async function loadConversations() {
+      setLoading(true);
+      try {
+        const res = await chatAPI.getConversations();
+        const data = Array.isArray(res.data) ? res.data : Array.isArray(res) ? res : [];
+        if (data.length > 0) {
+          // Format conversation items
+          const formatted = data.map((item, idx) => ({
+            id: item.conversation_id || item.user_id || idx + 1,
+            conversationId: item.conversation_id,
+            userId: item.user_id,
+            name: `${item.first_name || ''} ${item.last_name || ''}`.trim() || 'Chat Contact',
+            time: item.last_message_time
+              ? new Date(item.last_message_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              : 'now',
+            lastMessage: item.last_message || 'Start a conversation',
+            status: item.status || 'Active',
+            avatar: item.profile_image || defaultAvatar,
+            unreadCount: parseInt(item.unread_count || 0, 10),
+          }));
+          setConversations(formatted);
+          setSelectedChat(formatted[0]);
+        }
+      } catch (err) {
+        console.warn('Could not load conversations from server:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadConversations();
+  }, []);
+
+  // Fetch messages when selected chat changes
+  useEffect(() => {
+    if (!selectedChat) return;
+
+    async function loadMessages() {
+      if (selectedChat.conversationId) {
+        setLoadingMessages(true);
+        try {
+          const res = await chatAPI.getMessages(selectedChat.conversationId);
+          const msgs = Array.isArray(res.data) ? res.data : Array.isArray(res) ? res : [];
+          if (msgs.length > 0) {
+            setMessages(
+              msgs.map((m) => ({
+                id: m.id,
+                sender: m.sender_name || (m.is_sender ? 'You' : selectedChat.name),
+                text: m.message_text || m.text || m.message,
+                time: m.created_at
+                  ? new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  : 'Just now',
+                isSender: Boolean(m.is_sender || m.sender_id === 1),
+              }))
+            );
+            return;
+          }
+        } catch (e) {
+          console.warn('Failed to load conversation messages:', e);
+        } finally {
+          setLoadingMessages(false);
+        }
+      }
+
+      // Default sample messages if conversation is empty
+      setMessages([
+        {
+          id: 1,
+          sender: selectedChat.name,
+          text: `Hi! How can I assist you with your orders today?`,
+          time: '10:00 am',
+          isSender: false,
+        },
+        {
+          id: 2,
+          sender: 'You',
+          text: `Hello ${selectedChat.name}, I wanted to check the status of my recent purchase.`,
+          time: '10:02 am',
+          isSender: true,
+        },
+      ]);
+    }
+
+    loadMessages();
+  }, [selectedChat]);
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!inputText.trim()) return;
+    if (!inputText.trim() || !selectedChat) return;
 
-    setMessages([
-      ...messages,
-      {
-        id: Date.now(),
-        sender: 'You',
-        text: inputText,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        isSender: true,
-      },
-    ]);
+    const newMessage = {
+      id: Date.now(),
+      sender: 'You',
+      text: inputText.trim(),
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      isSender: true,
+    };
+
+    setMessages((prev) => [...prev, newMessage]);
+    const textToSend = inputText.trim();
     setInputText('');
+
+    // Try sending to backend if conversationId exists
+    if (selectedChat.conversationId) {
+      try {
+        await chatAPI.sendMessage(selectedChat.conversationId, {
+          message: textToSend,
+        });
+      } catch (err) {
+        console.warn('Could not post message to API:', err.message);
+      }
+    }
   };
+
+  // Filter conversations
+  const filteredConversations = conversations.filter((c) =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="p-4" style={{ backgroundColor: '#F4F5F8', minHeight: '100vh', fontFamily: "'Hanken Grotesk', sans-serif" }}>
@@ -73,6 +168,7 @@ export default function Chat() {
       `}</style>
 
       <div className="row g-3">
+        {/* Left Contact List */}
         <div className="col-12 col-lg-4 col-xl-3">
           <div className="card border-0 rounded-3 shadow-sm bg-white p-3 h-100">
             <div className="d-flex align-items-center justify-content-between mb-3">
@@ -87,6 +183,8 @@ export default function Chat() {
                 type="text"
                 className="form-control bg-light border-0 ps-3 pe-5"
                 placeholder="Search ..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 style={{ borderRadius: '8px', fontSize: '0.85rem', height: '38px', fontFamily: "'Hanken Grotesk', sans-serif" }}
               />
               <img
@@ -97,12 +195,17 @@ export default function Chat() {
               />
             </div>
 
+            {/* Active Users Avatars */}
             <div className="d-flex gap-2 overflow-x-auto pb-3 mb-2 border-bottom">
-              {[...Array(8)].map((_, idx) => (
-                <div key={idx} className="position-relative flex-shrink-0">
+              {conversations.slice(0, 8).map((c, idx) => (
+                <div 
+                  key={idx} 
+                  className="position-relative flex-shrink-0 cursor-pointer"
+                  onClick={() => setSelectedChat(c)}
+                >
                   <img
                     src={defaultAvatar}
-                    alt="avatar"
+                    alt={c.name}
                     className="rounded-circle"
                     style={{ width: '36px', height: '36px', objectFit: 'cover' }}
                   />
@@ -136,186 +239,186 @@ export default function Chat() {
             </div>
 
             <div className="d-flex flex-column gap-1 overflow-y-auto" style={{ maxHeight: '550px', overflowX: 'hidden' }}>
-              {initialConversations.map((chat) => {
-                const isSelected = selectedChat.id === chat.id;
-                return (
-                  <div
-                    key={chat.id}
-                    onClick={() => setSelectedChat(chat)}
-                    className={`d-flex align-items-center p-2 rounded-3 ${isSelected ? 'bg-light' : ''}`}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <img
-                      src={defaultAvatar}
-                      alt={chat.name}
-                      className="rounded-circle flex-shrink-0 me-3"
-                      style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-                    />
-                    <div className="flex-grow-1 min-w-0 me-2">
-                      <div className="d-flex justify-content-between align-items-center mb-1">
-                        <h6
-                          className="mb-0 text-truncate"
+              {loading ? (
+                <div className="text-center py-4 text-secondary small">
+                  Loading chats...
+                </div>
+              ) : filteredConversations.length === 0 ? (
+                <div className="text-center py-4 text-secondary small">
+                  No contacts found.
+                </div>
+              ) : (
+                filteredConversations.map((chat) => {
+                  const isSelected = selectedChat && selectedChat.id === chat.id;
+                  return (
+                    <div
+                      key={chat.id}
+                      onClick={() => setSelectedChat(chat)}
+                      className={`d-flex align-items-center p-2 rounded-3 ${isSelected ? 'bg-light' : ''}`}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <img
+                        src={defaultAvatar}
+                        alt={chat.name}
+                        className="rounded-circle flex-shrink-0 me-3"
+                        style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                      />
+                      <div className="flex-grow-1 min-w-0 me-2">
+                        <div className="d-flex justify-content-between align-items-center mb-1">
+                          <h6
+                            className="mb-0 text-truncate"
+                            style={{
+                              color: '#313B5E',
+                              fontWeight: 700,
+                              fontSize: '15px',
+                              fontFamily: "'Hanken Grotesk', sans-serif",
+                            }}
+                          >
+                            {chat.name}
+                          </h6>
+                          <span className="text-muted flex-shrink-0" style={{ fontSize: '0.72rem' }}>
+                            {chat.time}
+                          </span>
+                        </div>
+                        <p
+                          className="mb-0 text-truncate text-secondary"
                           style={{
-                            color: '#313B5E',
-                            fontWeight: 700,
-                            fontSize: '15px',
-                            fontFamily: "'Hanken Grotesk', sans-serif",
+                            fontSize: '0.8rem',
                           }}
                         >
-                          {chat.name}
-                        </h6>
-                        <span className="text-muted flex-shrink-0" style={{ fontSize: '0.72rem' }}>
-                          {chat.time}
-                        </span>
+                          {chat.lastMessage}
+                        </p>
                       </div>
-                      <p
-                        className={`mb-0 text-truncate ${chat.isTyping ? 'fw-semibold' : 'text-secondary'}`}
-                        style={{
-                          fontSize: '0.8rem',
-                          color: chat.isTyping ? '#FF6C2F' : undefined,
-                        }}
-                      >
-                        {chat.lastMessage}
-                      </p>
-                    </div>
-                    {!chat.isTyping && (
                       <img src={doubleCheckIcon} alt="read" style={{ width: '14px', height: '14px', opacity: 0.6 }} className="flex-shrink-0" />
-                    )}
-                  </div>
-                );
-              })}
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         </div>
 
+        {/* Right Chat Pane */}
         <div className="col-12 col-lg-8 col-xl-9">
           <div className="card border-0 rounded-3 shadow-sm bg-white h-100 d-flex flex-column">
-            <div className="p-3 border-bottom d-flex align-items-center justify-content-between">
-              <div className="d-flex align-items-center">
-                <img
-                  src={defaultAvatar}
-                  alt={selectedChat.name}
-                  className="rounded-circle me-3"
-                  style={{ width: '42px', height: '42px', objectFit: 'cover' }}
-                />
-                <div>
-                  <h6
-                    className="mb-0"
-                    style={{
-                      color: '#313B5E',
-                      fontWeight: 600,
-                      fontSize: '16px',
-                      fontFamily: "'Hanken Grotesk', sans-serif",
-                    }}
-                  >
-                    {selectedChat.name}
-                  </h6>
-                  <small className="fw-semibold" style={{ fontSize: '0.75rem', color: '#28a745' }}>
-                    typing...
-                  </small>
-                </div>
-              </div>
-
-              <div className="d-flex align-items-center gap-3">
-                <button className="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center">
-                  <img src={videoIcon} alt="video" style={{ width: '18px', height: '18px' }} />
-                </button>
-                <button className="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center">
-                  <img src={phoneIcon} alt="phone" style={{ width: '18px', height: '18px' }} />
-                </button>
-                <button className="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center">
-                  <img src={userIcon} alt="profile" style={{ width: '18px', height: '18px' }} />
-                </button>
-                <button className="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center">
-                  <img src={dotsIcon} alt="more" style={{ width: '18px', height: '18px' }} />
-                </button>
-              </div>
-            </div>
-
-            <div className="p-4 flex-grow-1 d-flex flex-column gap-3" style={{ backgroundColor: '#FAFAFA' }}>
-              {messages.map((msg) => (
-                <div key={msg.id} className={`d-flex flex-column ${msg.isSender ? 'align-items-end' : 'align-items-start'}`}>
-                  {msg.text && (
-                    <div
-                      className="p-3 shadow-sm"
-                      style={{
-                        maxWidth: '70%',
-                        borderRadius: msg.isSender ? '12px 12px 0px 12px' : '12px 12px 12px 0px',
-                        backgroundColor: msg.isSender ? '#FF6C2F' : '#F1F3F5',
-                        color: msg.isSender ? '#FFFFFF' : '#313B5E',
-                        fontSize: '14px',
-                        fontWeight: 500,
-                        lineHeight: '1.4',
-                        fontFamily: "'Hanken Grotesk', sans-serif",
-                      }}
-                    >
-                      {msg.text}
+            {selectedChat ? (
+              <>
+                <div className="p-3 border-bottom d-flex align-items-center justify-content-between">
+                  <div className="d-flex align-items-center">
+                    <img
+                      src={defaultAvatar}
+                      alt={selectedChat.name}
+                      className="rounded-circle me-3"
+                      style={{ width: '42px', height: '42px', objectFit: 'cover' }}
+                    />
+                    <div>
+                      <h6
+                        className="mb-0"
+                        style={{
+                          color: '#313B5E',
+                          fontWeight: 600,
+                          fontSize: '16px',
+                          fontFamily: "'Hanken Grotesk', sans-serif",
+                        }}
+                      >
+                        {selectedChat.name}
+                      </h6>
+                      <small className="fw-semibold" style={{ fontSize: '0.75rem', color: '#28a745' }}>
+                        Active Now
+                      </small>
                     </div>
-                  )}
-                  {msg.hasImages && (
-                    <div className="d-flex" style={{ gap: '48px' }}>
-                      {msg.images.map((imgSrc, i) => (
-                        <div
-                          key={i}
-                          className="d-flex align-items-center justify-content-center rounded-3"
-                          style={{
-                            width: '110px',
-                            height: '80px',
-                            backgroundColor: '#DCDCDC',
-                            flexShrink: 0,
-                          }}
-                        >
-                          <img
-                            src={imgSrc}
-                            alt="attachment icon"
-                            style={{ width: '32px', height: '32px', objectFit: 'contain' }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  </div>
 
-                  <div className="d-flex align-items-center gap-1 mt-1">
-                    <span className="text-muted" style={{ fontSize: '0.7rem' }}>
-                      {msg.time}
-                    </span>
-                    {msg.isSender && <img src={doubleCheckIcon} alt="delivered" style={{ width: '12px', height: '12px', opacity: 0.6 }} />}
+                  <div className="d-flex align-items-center gap-3">
+                    <button className="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center">
+                      <img src={videoIcon} alt="video" style={{ width: '18px', height: '18px' }} />
+                    </button>
+                    <button className="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center">
+                      <img src={phoneIcon} alt="phone" style={{ width: '18px', height: '18px' }} />
+                    </button>
+                    <button className="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center">
+                      <img src={userIcon} alt="profile" style={{ width: '18px', height: '18px' }} />
+                    </button>
+                    <button className="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center">
+                      <img src={dotsIcon} alt="more" style={{ width: '18px', height: '18px' }} />
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
 
-            <div className="p-3 border-top bg-white">
-              <form onSubmit={handleSendMessage} className="d-flex align-items-center gap-2">
-                <button type="button" className="btn btn-link p-1 text-muted">
-                  <img src={smileIcon} alt="smile" style={{ width: '20px', height: '20px' }} />
-                </button>
+                <div className="p-4 flex-grow-1 d-flex flex-column gap-3 overflow-y-auto" style={{ backgroundColor: '#FAFAFA', maxHeight: '580px' }}>
+                  {loadingMessages ? (
+                    <div className="text-center py-4 text-secondary small">
+                      Loading conversation...
+                    </div>
+                  ) : (
+                    messages.map((msg) => (
+                      <div key={msg.id} className={`d-flex flex-column ${msg.isSender ? 'align-items-end' : 'align-items-start'}`}>
+                        {msg.text && (
+                          <div
+                            className="p-3 shadow-sm"
+                            style={{
+                              maxWidth: '70%',
+                              borderRadius: msg.isSender ? '12px 12px 0px 12px' : '12px 12px 12px 0px',
+                              backgroundColor: msg.isSender ? '#FF6C2F' : '#F1F3F5',
+                              color: msg.isSender ? '#FFFFFF' : '#313B5E',
+                              fontSize: '14px',
+                              fontWeight: 500,
+                              lineHeight: '1.4',
+                              fontFamily: "'Hanken Grotesk', sans-serif",
+                            }}
+                          >
+                            {msg.text}
+                          </div>
+                        )}
 
-                <input
-                  type="text"
-                  className="form-control border-0 bg-light px-3 py-2"
-                  placeholder="Enter your Message"
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  style={{ borderRadius: '8px', fontSize: '0.88rem', color: '#313B5E', fontFamily: "'Hanken Grotesk', sans-serif" }}
-                />
+                        <div className="d-flex align-items-center gap-1 mt-1">
+                          <span className="text-muted" style={{ fontSize: '0.7rem' }}>
+                            {msg.time}
+                          </span>
+                          {msg.isSender && <img src={doubleCheckIcon} alt="delivered" style={{ width: '12px', height: '12px', opacity: 0.6 }} />}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
 
-                <button type="button" className="btn btn-link p-1 text-muted">
-                  <img src={paperclipIcon} alt="attach" style={{ width: '20px', height: '20px' }} />
-                </button>
-                <button type="button" className="btn btn-link p-1 text-muted">
-                  <img src={videoIcon} alt="video attach" style={{ width: '20px', height: '20px' }} />
-                </button>
+                <div className="p-3 border-top bg-white">
+                  <form onSubmit={handleSendMessage} className="d-flex align-items-center gap-2">
+                    <button type="button" className="btn btn-link p-1 text-muted">
+                      <img src={smileIcon} alt="smile" style={{ width: '20px', height: '20px' }} />
+                    </button>
 
-                <button
-                  type="submit"
-                  className="btn border-0 d-flex align-items-center justify-content-center p-2 ms-1"
-                  style={{ backgroundColor: '#FF6C2F', borderRadius: '8px' }}
-                >
-                  <img src={sendIcon} alt="send" style={{ width: '18px', height: '18px' }} />
-                </button>
-              </form>
-            </div>
+                    <input
+                      type="text"
+                      className="form-control border-0 bg-light px-3 py-2"
+                      placeholder="Enter your Message"
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      style={{ borderRadius: '8px', fontSize: '0.88rem', color: '#313B5E', fontFamily: "'Hanken Grotesk', sans-serif" }}
+                    />
+
+                    <button type="button" className="btn btn-link p-1 text-muted">
+                      <img src={paperclipIcon} alt="attach" style={{ width: '20px', height: '20px' }} />
+                    </button>
+                    <button type="button" className="btn btn-link p-1 text-muted">
+                      <img src={videoIcon} alt="video attach" style={{ width: '20px', height: '20px' }} />
+                    </button>
+
+                    <button
+                      type="submit"
+                      className="btn border-0 d-flex align-items-center justify-content-center p-2 ms-1"
+                      style={{ backgroundColor: '#FF6C2F', borderRadius: '8px' }}
+                    >
+                      <img src={sendIcon} alt="send" style={{ width: '18px', height: '18px' }} />
+                    </button>
+                  </form>
+                </div>
+              </>
+            ) : (
+              <div className="p-5 text-center text-muted m-auto">
+                Select a conversation to start chatting.
+              </div>
+            )}
           </div>
         </div>
       </div>

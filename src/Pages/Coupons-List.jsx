@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { couponAPI, formatDate } from '../services/api';
 
 import shoppingBagIcon from '../assets/bag-smile.png';
 import groupPatternIcon from '../assets/Group.png';
@@ -9,144 +11,16 @@ import trashIcon from '../assets/trash (2).png';
 import checkDoubleIcon from '../assets/buttons.png';
 import cancelIcon from '../assets/tick (2).png';
 
-const initialProducts = [
-  {
-    id: 1,
-    name: 'Black T-shirt',
-    category: 'Fashion',
-    price: '$80.00',
-    discount: '$20.00',
-    code: 'FASHION123',
-    startDate: '12 May 2023',
-    endDate: '12 Jun 2023',
-    status: 'Active',
-  },
-  {
-    id: 2,
-    name: 'Olive Green Leather Bag',
-    category: 'Hand Bag',
-    price: '$136.00',
-    discount: '$37.00',
-    code: 'SUMMER24',
-    startDate: '19 July 2023',
-    endDate: '23 Aug 2023',
-    status: 'Expired',
-  },
-  {
-    id: 3,
-    name: 'Women Golden Dress',
-    category: 'Fashion',
-    price: '$219.00',
-    discount: '$20.00',
-    code: 'FASHION123',
-    startDate: '24 Aug 2023',
-    endDate: '20 Sep 2023',
-    status: 'Active',
-  },
-  {
-    id: 4,
-    name: 'Gray Cap For Men',
-    category: 'Cap',
-    price: '$76.00',
-    discount: '$12.00',
-    code: 'CODE000',
-    startDate: '30 Dec 2023',
-    endDate: '17 Jan 2024',
-    status: 'Active',
-  },
-  {
-    id: 5,
-    name: 'Dark Green Cargo Pent',
-    category: 'Fashion',
-    price: '$110.00',
-    discount: '$20.00',
-    code: 'FASHION123',
-    startDate: '11 Jan 2024',
-    endDate: '15 Feb 2024',
-    status: 'Expired',
-  },
-  {
-    id: 6,
-    name: 'Orange Multi Color Headphone',
-    category: 'Electronics',
-    price: '$231.00',
-    discount: '35%',
-    code: 'HEADPHONE24',
-    startDate: '31 May 2023',
-    endDate: '23 Jun 2023',
-    status: 'Expired',
-  },
-  {
-    id: 7,
-    name: "Kid's Yellow Shoes",
-    category: 'Foot Wares',
-    price: '$89.00',
-    discount: '$19.00',
-    code: "KID'S24",
-    startDate: '16 May 2024',
-    endDate: '12 Jun 2024',
-    status: 'Active',
-  },
-  {
-    id: 8,
-    name: 'Men Dark Brown Wallet',
-    category: 'Wallet',
-    price: '$132.00',
-    discount: '50%',
-    code: 'BRAND24',
-    startDate: '25 Jan 2024',
-    endDate: '16 Feb 2024',
-    status: 'Expired',
-  },
-  {
-    id: 9,
-    name: 'Sky Blue Sunglass',
-    category: 'Sunglass',
-    price: '$77.00',
-    discount: '$23.00',
-    code: 'EYEWARE24',
-    startDate: '23 Feb 2024',
-    endDate: '24 March 2024',
-    status: 'Active',
-  },
-  {
-    id: 10,
-    name: "Kid's Yellow T-shirt",
-    category: 'Fashion',
-    price: '$110.00',
-    discount: '$35.00',
-    code: "KID'S24",
-    startDate: '14 Aug 2023',
-    endDate: '15 Sep 2023',
-    status: 'Active',
-  },
-  {
-    id: 11,
-    name: 'White Rubber Band Smart Watch',
-    category: 'Electronics',
-    price: '$77.00',
-    discount: '$14.00',
-    code: 'WATCH2W1',
-    startDate: '27 March 2024',
-    endDate: '12 Apr 2024',
-    status: 'Expired',
-  },
-  {
-    id: 12,
-    name: 'Men Brown Leather Shoes',
-    category: 'Size : 40 , 41 , 42 , 43',
-    price: '$222.00',
-    discount: '40%',
-    code: 'FOOTWARE23',
-    startDate: '23 Dec 2023',
-    endDate: '22 Jan 2024',
-    status: 'Active',
-  },
-];
-
 export default function CouponsList() {
+  const navigate = useNavigate();
+  const [coupons, setCoupons] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [dateFilter, setDateFilter] = useState('All Time');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   useEffect(() => {
     const link = document.createElement('link');
@@ -156,11 +30,60 @@ export default function CouponsList() {
     document.head.appendChild(link);
   }, []);
 
+  const fetchCoupons = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await couponAPI.getAll();
+      if (Array.isArray(data)) {
+        setCoupons(data);
+      } else {
+        setCoupons([]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch coupons:', err);
+      setError('Unable to load coupons from server.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCoupons();
+  }, []);
+
+  const handleDelete = async (id, e) => {
+    if (e) e.stopPropagation();
+    if (!window.confirm('Are you sure you want to deactivate/delete this coupon?')) {
+      return;
+    }
+    try {
+      await couponAPI.delete(id);
+      // Update local state to reflect deactivation
+      setCoupons((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, status: 'In Active' } : c))
+      );
+    } catch (err) {
+      console.error('Failed to deactivate coupon:', err);
+      alert(err.message || 'Failed to delete coupon.');
+    }
+  };
+
+  const handleEdit = (id, e) => {
+    if (e) e.stopPropagation();
+    navigate(`/coupons/add?id=${id}`);
+  };
+
+  const handleView = (id, e) => {
+    if (e) e.stopPropagation();
+    navigate(`/coupons/add?id=${id}&mode=view`);
+  };
+
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(initialProducts.map((item) => item.id));
+      setSelectedItems(filteredCoupons.map((item) => item.id));
     }
     setSelectAll(!selectAll);
   };
@@ -172,6 +95,42 @@ export default function CouponsList() {
       setSelectedItems([...selectedItems, id]);
     }
   };
+
+  // Date filtering logic
+  const now = new Date();
+  const filteredCoupons = coupons.filter((coupon) => {
+    if (dateFilter === 'All Time') return true;
+    const itemDate = new Date(coupon.created_at || coupon.start_date);
+    if (isNaN(itemDate.getTime())) return true;
+
+    if (dateFilter === 'This Month') {
+      return (
+        itemDate.getMonth() === now.getMonth() &&
+        itemDate.getFullYear() === now.getFullYear()
+      );
+    }
+    if (dateFilter === 'Last Month') {
+      const prevMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+      const prevYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+      return itemDate.getMonth() === prevMonth && itemDate.getFullYear() === prevYear;
+    }
+    if (dateFilter === 'This Year') {
+      return itemDate.getFullYear() === now.getFullYear();
+    }
+    return true;
+  });
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredCoupons.length / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const displayedCoupons = filteredCoupons.slice(startIndex, startIndex + itemsPerPage);
+
+  // Active coupons count
+  const activeCount = coupons.filter(
+    (c) => c.status === 'Active' && (!c.end_date || new Date(c.end_date) >= now)
+  ).length;
+
+  const inactiveCount = coupons.length - activeCount;
 
   return (
     <div 
@@ -193,7 +152,7 @@ export default function CouponsList() {
         }
       `}</style>
 
-      
+      {/* Top Banner Cards */}
       <div className="row g-3 mb-4">
         <div className="col-lg-4 col-md-4">
           <div
@@ -202,7 +161,7 @@ export default function CouponsList() {
           >
             <div>
               <h5 className="fw-bold mb-1" style={{ color: '#1e293b' }}>
-                4 Coupons
+                {activeCount} Active Coupons
               </h5>
               <p className="text-secondary small mb-3">
                 Small nice summer coupons pack
@@ -215,6 +174,7 @@ export default function CouponsList() {
                 <button
                   className="btn text-white fw-medium px-3 py-2 border-0 rounded-3 btn-add-product"
                   style={{ fontSize: '0.875rem', backgroundColor: '#ff5e29' }}
+                  onClick={() => navigate('/coupons/add')}
                 >
                   Buy Now
                 </button>
@@ -232,7 +192,7 @@ export default function CouponsList() {
           >
             <div>
               <h5 className="fw-bold mb-1" style={{ color: '#1e293b' }}>
-                8 Coupons
+                {coupons.length} Total Coupons
               </h5>
               <p className="text-secondary small mb-3">
                 Medium nice summer coupons pack
@@ -245,6 +205,7 @@ export default function CouponsList() {
                 <button
                   className="btn text-white fw-medium px-3 py-2 border-0 rounded-3"
                   style={{ backgroundColor: '#2EC4B6', fontSize: '0.875rem' }}
+                  onClick={() => navigate('/coupons/add')}
                 >
                   Buy Now
                 </button>
@@ -290,6 +251,7 @@ export default function CouponsList() {
                 <button
                   className="btn text-white fw-medium px-3 py-2 border-0 rounded-3 btn-add-product"
                   style={{ fontSize: '0.85rem', backgroundColor: '#ff5e29' }}
+                  onClick={() => navigate('/coupons/add')}
                 >
                   View Plan
                 </button>
@@ -314,7 +276,7 @@ export default function CouponsList() {
         </div>
       </div>
 
-     
+      {/* Main Table Card */}
       <div className="content-card bg-white rounded-4 shadow-sm p-3">
         <div className="card-header-custom bg-transparent d-flex align-items-center justify-content-between pb-3">
           <h2 className="card-title-custom fs-5 fw-bold mb-0 text-dark">
@@ -323,12 +285,24 @@ export default function CouponsList() {
           <select
             className="form-select form-select-sm border-light-subtle shadow-none"
             style={{ width: '130px', fontSize: '0.85rem' }}
+            value={dateFilter}
+            onChange={(e) => {
+              setDateFilter(e.target.value);
+              setCurrentPage(1);
+            }}
           >
-            <option>This Month</option>
-            <option>Last Month</option>
-            <option>This Year</option>
+            <option value="All Time">All Time</option>
+            <option value="This Month">This Month</option>
+            <option value="Last Month">Last Month</option>
+            <option value="This Year">This Year</option>
           </select>
         </div>
+
+        {error && (
+          <div className="alert alert-danger py-2 small mb-3" role="alert">
+            {error}
+          </div>
+        )}
 
         <div className="table-responsive">
           <table className="table table-custom align-middle text-nowrap mb-0">
@@ -353,102 +327,132 @@ export default function CouponsList() {
               </tr>
             </thead>
             <tbody>
-              {initialProducts.map((product) => {
-                const isSelected = selectedItems.includes(product.id);
-                return (
-                  <tr key={product.id}>
-                    <td className="ps-3">
-                      <input
-                        type="checkbox"
-                        className="form-check-input cursor-pointer shadow-none"
-                        checked={isSelected}
-                        onChange={() => handleSelectItem(product.id)}
-                      />
-                    </td>
-                    <td>
-                     <div className="d-flex align-items-center gap-2">
-                      <div 
-                        className="product-img-box flex-shrink-0" 
-                        style={{ 
-                          backgroundColor: '#D9D9D9', 
-                          borderRadius: '12px', 
-                          width: '48px', 
-                          height: '48px', 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center' 
-                        }}
-                      >
-                        <img
-                          src={imagePlaceholderIcon}
-                          alt="Product"
-                          style={{
-                            width: '20px',
-                            height: '20px',
-                            objectFit: 'contain',
-                            opacity: 0.6,
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <div className="product-name fw-semibold text-dark" style={{ fontSize: '0.9rem' }}>
-                          {product.name}
-                        </div>
-                        <div className="product-sizes text-secondary small">
-                          {product.category}
-                        </div>
-                      </div>
-                    </div> 
-                    </td>
-                    <td className="text-secondary fw-medium">{product.price}</td>
-                    <td className="text-secondary fw-medium">{product.discount}</td>
-                    <td>
-                      <span className="text-uppercase text-secondary fw-semibold" style={{ fontSize: '0.85rem' }}>
-                        {product.code}
-                      </span>
-                    </td>
-                    <td className="text-secondary">{product.startDate}</td>
-                    <td className="text-secondary">{product.endDate}</td>
+              {loading ? (
+                <tr>
+                  <td colSpan="9" className="text-center py-4 text-secondary">
+                    <div className="spinner-border spinner-border-sm text-primary me-2" role="status" />
+                    Loading coupons...
+                  </td>
+                </tr>
+              ) : displayedCoupons.length === 0 ? (
+                <tr>
+                  <td colSpan="9" className="text-center py-4 text-secondary">
+                    No coupons found.
+                  </td>
+                </tr>
+              ) : (
+                displayedCoupons.map((coupon) => {
+                  const isSelected = selectedItems.includes(coupon.id);
+                  const isExpired =
+                    coupon.status === 'In Active' ||
+                    (coupon.end_date && new Date(coupon.end_date) < now);
+                  const isActive = coupon.status === 'Active' && !isExpired;
 
-                    <td>
-                      {product.status === 'Active' ? (
-                      <span
-                        className="d-inline-flex align-items-center gap-1 rounded-2 px-2 py-1 fw-semibold"
-                        style={{
-                          backgroundColor: '#22C55E',
-                          color: '#FFFFFF',
-                          fontSize: '0.78rem',
-                        }}
-                      >
-                        <img
-                          src={checkDoubleIcon}
-                          alt="Active"
-                          style={{ width: '14px', height: '14px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
-                        />
-                        Active
-                        </span>
-                      ) : (
-                        <span
-                          className="d-inline-flex align-items-center gap-1 rounded-2 px-2 py-1 fw-semibold"
-                          style={{
-                            backgroundColor: '#F8D7DA',
-                            color: '#842029',
-                            fontSize: '0.78rem',
-                          }}
-                        >
-                          <img
-                            src={cancelIcon}
-                            alt="Expired"
-                            style={{ width: '14px', height: '14px', objectFit: 'contain' }}
-                          />
-                          Expired
-                        </span>
-                      )}
-                    </td>
+                  // Format discount string (e.g., "20%" or "$20.00")
+                  const discountDisplay =
+                    coupon.coupon_type?.toLowerCase() === 'percentage'
+                      ? `${parseFloat(coupon.discount_value || 0)}%`
+                      : `$${parseFloat(coupon.discount_value || 0).toFixed(2)}`;
 
-                    <td>
-                      <div className="d-flex align-items-center justify-content-center gap-1">
-                        <button 
+                  // Format price/min order amount
+                  const priceDisplay = coupon.minimum_order_amount
+                    ? `$${parseFloat(coupon.minimum_order_amount).toFixed(2)}`
+                    : '$0.00';
+
+                  return (
+                    <tr key={coupon.id}>
+                      <td className="ps-3">
+                        <input
+                          type="checkbox"
+                          className="form-check-input cursor-pointer shadow-none"
+                          checked={isSelected}
+                          onChange={() => handleSelectItem(coupon.id)}
+                        />
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center gap-2">
+                          <div 
+                            className="product-img-box flex-shrink-0" 
+                            style={{ 
+                              backgroundColor: '#D9D9D9', 
+                              borderRadius: '12px', 
+                              width: '48px', 
+                              height: '48px', 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              justifyContent: 'center' 
+                            }}
+                          >
+                            <img
+                              src={imagePlaceholderIcon}
+                              alt="Product"
+                              style={{
+                                width: '20px',
+                                height: '20px',
+                                objectFit: 'contain',
+                                opacity: 0.6,
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <div className="product-name fw-semibold text-dark" style={{ fontSize: '0.9rem' }}>
+                              {coupon.coupon_code} Promo
+                            </div>
+                            <div className="product-sizes text-secondary small">
+                              {coupon.country || 'Global'} • {coupon.coupon_type || 'General'}
+                            </div>
+                          </div>
+                        </div> 
+                      </td>
+                      <td className="text-secondary fw-medium">{priceDisplay}</td>
+                      <td className="text-secondary fw-medium">{discountDisplay}</td>
+                      <td>
+                        <span className="text-uppercase text-secondary fw-semibold" style={{ fontSize: '0.85rem' }}>
+                          {coupon.coupon_code}
+                        </span>
+                      </td>
+                      <td className="text-secondary">{formatDate(coupon.start_date)}</td>
+                      <td className="text-secondary">{formatDate(coupon.end_date)}</td>
+
+                      <td>
+                        {isActive ? (
+                          <span
+                            className="d-inline-flex align-items-center gap-1 rounded-2 px-2 py-1 fw-semibold"
+                            style={{
+                              backgroundColor: '#22C55E',
+                              color: '#FFFFFF',
+                              fontSize: '0.78rem',
+                            }}
+                          >
+                            <img
+                              src={checkDoubleIcon}
+                              alt="Active"
+                              style={{ width: '14px', height: '14px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+                            />
+                            Active
+                          </span>
+                        ) : (
+                          <span
+                            className="d-inline-flex align-items-center gap-1 rounded-2 px-2 py-1 fw-semibold"
+                            style={{
+                              backgroundColor: '#F8D7DA',
+                              color: '#842029',
+                              fontSize: '0.78rem',
+                            }}
+                          >
+                            <img
+                              src={cancelIcon}
+                              alt="Expired"
+                              style={{ width: '14px', height: '14px', objectFit: 'contain' }}
+                            />
+                            {coupon.status === 'In Active' ? 'In Active' : 'Expired'}
+                          </span>
+                        )}
+                      </td>
+
+                      <td>
+                        <div className="d-flex align-items-center justify-content-center gap-1">
+                          <button 
                             className="action-btn" 
                             title="View"
                             style={{
@@ -460,7 +464,9 @@ export default function CouponsList() {
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
+                              cursor: 'pointer'
                             }}
+                            onClick={(e) => handleView(coupon.id, e)}
                           >
                             <img
                               src={eyeIcon}
@@ -469,7 +475,7 @@ export default function CouponsList() {
                             />
                           </button>
 
-                         <button 
+                          <button 
                             className="action-btn" 
                             title="Edit"
                             style={{
@@ -481,7 +487,9 @@ export default function CouponsList() {
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
+                              cursor: 'pointer'
                             }}
+                            onClick={(e) => handleEdit(coupon.id, e)}
                           >
                             <img
                               src={penIcon}
@@ -501,7 +509,9 @@ export default function CouponsList() {
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
+                              cursor: 'pointer'
                             }}
+                            onClick={(e) => handleDelete(coupon.id, e)}
                           >
                             <img
                               src={trashIcon}
@@ -509,34 +519,53 @@ export default function CouponsList() {
                               style={{ width: '14px', height: '14px', objectFit: 'contain' }}
                             />
                           </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
         <div
           className="card-footer bg-transparent py-3 border-0 d-flex align-items-center justify-content-end gap-1"
           style={{ borderTop: '1px solid var(--border-color)' }}
         >
-          <button className="btn btn-outline-secondary btn-sm px-3" style={{ fontSize: '0.85rem' }}>
+          <button 
+            className="btn btn-outline-secondary btn-sm px-3" 
+            style={{ fontSize: '0.85rem' }}
+            disabled={currentPage <= 1}
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          >
             Previous
           </button>
-          <button
-            className="btn btn-sm text-white px-3 py-1 fw-bold btn-add-product"
-            style={{ backgroundColor: '#ff5e29', fontSize: '0.85rem' }}
+          
+          {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((pageNum) => (
+            <button
+              key={pageNum}
+              className={`btn btn-sm px-3 py-1 fw-bold ${
+                currentPage === pageNum ? 'btn-add-product text-white' : 'btn-outline-secondary'
+              }`}
+              style={{
+                backgroundColor: currentPage === pageNum ? '#ff5e29' : 'transparent',
+                borderColor: currentPage === pageNum ? '#ff5e29' : 'var(--bs-border-color)',
+                fontSize: '0.85rem',
+              }}
+              onClick={() => setCurrentPage(pageNum)}
+            >
+              {pageNum}
+            </button>
+          ))}
+
+          <button 
+            className="btn btn-outline-secondary btn-sm px-3" 
+            style={{ fontSize: '0.85rem' }}
+            disabled={currentPage >= totalPages}
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
           >
-            1
-          </button>
-          <button className="btn btn-outline-secondary btn-sm px-3" style={{ fontSize: '0.85rem' }}>
-            2
-          </button>
-          <button className="btn btn-outline-secondary btn-sm px-3" style={{ fontSize: '0.85rem' }}>
-            3
-          </button>
-          <button className="btn btn-outline-secondary btn-sm px-3" style={{ fontSize: '0.85rem' }}>
             Next
           </button>
         </div>
