@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createAttribute } from '../../services/apiService';
+import { toast } from 'react-toastify';
 
 function CreateAttribute() {
   const navigate = useNavigate();
@@ -30,11 +31,14 @@ function CreateAttribute() {
         attribute_name: formData.variant || 'General',
         attribute_value: formData.value || 'Default',
       });
-      alert('Attribute Created Successfully!');
+      toast.success('Attribute Created Successfully!');
+       setTimeout(() => {
       navigate('/attributes/list');
+    }, 1000);
     } catch (err) {
       console.error('Error creating attribute:', err);
       setError(err.message || 'Failed to create attribute');
+      toast.error(errorMessage);
     } finally {
       setSubmitting(false);
     }

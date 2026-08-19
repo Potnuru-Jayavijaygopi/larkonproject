@@ -63,7 +63,7 @@ function AddAttribute() {
       toast.success('Attribute updated successfully!');
       setTimeout(() => {
       navigate('/attributes/list');
-    }, 1500);
+    }, 1000);
     } catch (err) {
       console.error('Error updating attribute:', err);
       setError(err.message || 'Failed to update attribute');

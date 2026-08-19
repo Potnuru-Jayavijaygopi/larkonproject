@@ -41,10 +41,12 @@ const request = async (endpoint, options = {}) => {
 export const getPurchaseOrders = () => request('/purchases');
 export const getPurchaseOrderById = (id) => request(`/purchases/${id}`);
 export const createPurchaseOrder = (data) => request('/purchases', { method: 'POST', body: JSON.stringify(data) });
+export const deletePurchaseOrder = (id) =>request(`/purchases/${id}`, {method: 'DELETE',});
 
 
 export const getPurchaseLists = () => request('/purchase-list');
 export const getPurchaseListById = (id) => request(`/purchase-list/${id}`);
+export const deletePurchase = (id) =>request(`/purchase-list/${id}`, {method: 'DELETE',});
 
 export const getPurchaseReturns = () => request('/returns');
 export const getPurchaseReturnById = (id) => request(`/purchase-returns/${id}`);

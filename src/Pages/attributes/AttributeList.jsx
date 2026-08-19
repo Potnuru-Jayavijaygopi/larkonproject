@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BsEye, BsPencil, BsTrash } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { getAttributes, deleteAttribute, updateAttribute } from '../../services/apiService';
+import { toast } from 'react-toastify';
 
 function AttributeList() {
   const navigate = useNavigate();
@@ -72,16 +73,33 @@ function AttributeList() {
     }
   };
 
-  const handleDeleteRow = async (id) => {
-    try {
-      await deleteAttribute(id);
-      setAttributes((prev) => prev.filter((item) => item.id !== id));
-      setSelectedIds((prev) => prev.filter((item) => item !== id));
-    } catch (err) {
-      console.error('Failed to delete attribute:', err);
-      setAttributes((prev) => prev.filter((item) => item.id !== id));
-    }
-  };
+const handleDeleteRow = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this attribute?"
+  );
+
+  if (!confirmDelete) {
+    return;
+  }
+
+  try {
+    await deleteAttribute(id);
+
+    setAttributes((prev) =>
+      prev.filter((item) => item.id !== id)
+    );
+
+    setSelectedIds((prev) =>
+      prev.filter((item) => item !== id)
+    );
+
+    toast.success("Attribute deleted successfully!");
+  } catch (err) {
+    console.error("Failed to delete attribute:", err);
+
+    toast.error("Failed to delete attribute.");
+  }
+};
 
   const actionButtons = (item) => [
     {

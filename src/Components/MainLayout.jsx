@@ -24,8 +24,7 @@ function MainLayout() {
 
         <Footer />
       </div>
-       <ToastContainer
-      />
+       <ToastContainer/>
     </div>
   );
 }
