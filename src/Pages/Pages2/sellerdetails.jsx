@@ -1,6 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams, useParams } from 'react-router-dom';
 
 import zaraLogo from '../../assets/logozara.png';
+import rolexLogo from '../../assets/logorolex.png';
+import dysonLogo from '../../assets/dyson.png';
+import goproLogo from '../../assets/gopro.png';
+import hmLogo from '../../assets/hm.png';
+import huaweiLogo from '../../assets/huawei.png';
+import nikeLogo from '../../assets/nike.png';
+import northFaceLogo from '../../assets/northface.png';
+
 import locationIcon from '../../assets/location.png';
 import mailIcon from '../../assets/mail.png';
 import phoneIcon from '../../assets/phone.png';
@@ -17,14 +26,131 @@ import usersIcon from '../../assets/usersicon.png';
 import revenueChartImg from '../../assets/Chart (2).png';
 import accountingBg from '../../assets/Frame (1).png';
 
+const API_BASE = "http://localhost:3000/api/v1";
+
+const getAuthToken = async () => {
+  let token = localStorage.getItem("token") || localStorage.getItem("accessToken");
+  if (token) return token;
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "john@lavitra.com", password: "123456" })
+    });
+    const data = await res.json();
+    if (data && data.accessToken) {
+      localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("accessToken", data.accessToken);
+      return data.accessToken;
+    }
+  } catch (err) {
+    console.error("Auto login failed:", err);
+  }
+  return null;
+};
+
+const LOGO_MAP = {
+  zara: zaraLogo,
+  rolex: rolexLogo,
+  dyson: dysonLogo,
+  gopro: goproLogo,
+  'h&m': hmLogo,
+  hm: hmLogo,
+  huawei: huaweiLogo,
+  nike: nikeLogo,
+  northface: northFaceLogo,
+  'north face': northFaceLogo,
+};
+
+const getLogoForSeller = (seller) => {
+  if (seller?.logo_url) return seller.logo_url;
+  const nameLower = (seller?.business_name || '').toLowerCase();
+  for (const [key, logo] of Object.entries(LOGO_MAP)) {
+    if (nameLower.includes(key)) return logo;
+  }
+  return zaraLogo;
+};
+
+const DEFAULT_PRODUCTS = [
+  { id: 'ID46765', name: 'Black T-shirt', variants: '4', category: 'Fashion', date: '08/05/2023', status: 'Published', statusBg: '#DCFCE7', statusColor: '#16A34A' },
+  { id: 'ID36192', name: 'Olive Green Leather Bag', variants: '2', category: 'Hand Bag', date: '10/05/2023', status: 'Pending', statusBg: '#E2E8F0', statusColor: '#334155' },
+  { id: 'ID37729', name: 'Women Golden Dress', variants: '5', category: 'Fashion', date: '20/05/2023', status: 'Published', statusBg: '#DCFCE7', statusColor: '#16A34A' },
+  { id: 'ID09260', name: 'Gray Cap For Men', variants: '3', category: 'Cap', date: '21/05/2023', status: 'Published', statusBg: '#DCFCE7', statusColor: '#16A34A' },
+  { id: 'ID24109', name: 'Dark Green Cargo Pent', variants: '6', category: 'Fashion', date: '23/05/2023', status: 'Draft', statusBg: '#FEE2E2', statusColor: '#EF4444' },
+];
+
 export default function SellerDetails() {
-  const products = [
-    { id: 'ID46765', name: 'Black T-shirt', variants: '4', category: 'Fashion', date: '08/05/2023', status: 'Published', statusBg: '#DCFCE7', statusColor: '#16A34A' },
-    { id: 'ID36192', name: 'Olive Green Leather Bag', variants: '2', category: 'Hand Bag', date: '10/05/2023', status: 'Pending', statusBg: '#E2E8F0', statusColor: '#334155' },
-    { id: 'ID37729', name: 'Women Golden Dress', variants: '5', category: 'Fashion', date: '20/05/2023', status: 'Published', statusBg: '#DCFCE7', statusColor: '#16A34A' },
-    { id: 'ID09260', name: 'Gray Cap For Men', variants: '3', category: 'Cap', date: '21/05/2023', status: 'Published', statusBg: '#DCFCE7', statusColor: '#16A34A' },
-    { id: 'ID24109', name: 'Dark Green Cargo Pent', variants: '6', category: 'Fashion', date: '23/05/2023', status: 'Draft', statusBg: '#FEE2E2', statusColor: '#EF4444' },
-  ];
+  const [searchParams] = useSearchParams();
+  const params = useParams();
+  const sellerId = searchParams.get('id') || params.id;
+
+  const [seller, setSeller] = useState(null);
+  const [products, setProducts] = useState(DEFAULT_PRODUCTS);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch Seller & Products Data from Backend
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const token = await getAuthToken();
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      };
+
+      // 1. Fetch Sellers
+      const sellersRes = await fetch(`${API_BASE}/sellers`, { headers });
+      if (sellersRes.ok) {
+        const sellersData = await sellersRes.json();
+        if (sellersData && sellersData.data && sellersData.data.length > 0) {
+          let found = null;
+          if (sellerId) {
+            found = sellersData.data.find(s => String(s.id) === String(sellerId));
+          }
+          setSeller(found || sellersData.data[0]);
+        }
+      }
+
+      // 2. Fetch Products
+      const prodRes = await fetch(`${API_BASE}/products`, { headers });
+      if (prodRes.ok) {
+        const prodData = await prodRes.json();
+        if (prodData && prodData.data && prodData.data.length > 0) {
+          const mapped = prodData.data.slice(0, 5).map((p, idx) => ({
+            id: `ID${p.id || 46760 + idx}`,
+            name: p.title || p.name || 'Product Item',
+            variants: '4',
+            category: p.category_name || 'Fashion',
+            date: '08/05/2023',
+            status: p.status || 'Published',
+            statusBg: (p.status === 'Draft' || p.status === 'inactive') ? '#FEE2E2' : '#DCFCE7',
+            statusColor: (p.status === 'Draft' || p.status === 'inactive') ? '#EF4444' : '#16A34A',
+          }));
+          setProducts(mapped);
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching seller details:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [sellerId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Derived Info
+  const sellerName = seller?.business_name || "ZARA International";
+  const sellerCategory = seller?.category || "Fashion";
+  const sellerWebsite = seller?.website || "www.zarafashion.co";
+  const sellerAddress = seller?.address ? `${seller.address}, ${seller.city || ''} ${seller.state || ''}`.trim() : "4604 , Philli Lane Kiowa IN 47404";
+  const sellerEmail = seller?.email || "zarafashionworld@dayrep.com";
+  const sellerPhone = seller?.phone || "+243 812-801-9335";
+  const sellerRating = seller?.rating && parseFloat(seller.rating) > 0 ? seller.rating : "4.5";
+  const sellerStock = seller?.total_products > 0 ? seller.total_products : 865;
+  const sellerRevenue = seller?.total_sales && parseFloat(seller.total_sales) > 0 ? `$${parseFloat(seller.total_sales).toLocaleString()}` : "$5,563.786";
+  const sellerLogo = getLogoForSeller(seller);
 
   return (
     <div className="container-fluid p-4" style={{ backgroundColor: '#F8FAFC', minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
@@ -33,16 +159,15 @@ export default function SellerDetails() {
         
         <div className="row g-4 pb-4 border-bottom">
           
-
           <div className="col-lg-3 col-md-4 d-flex flex-column gap-3">
             <div 
               className="rounded-4 d-flex align-items-center justify-content-center overflow-hidden"
               style={{ backgroundColor: '#F8FAFC', height: '180px', border: '1px solid #F1F5F9' }}
             >
               <img 
-                src={zaraLogo} 
-                alt="ZARA Logo" 
-                style={{ width: '100%', height: '100%', objectFit: 'fill' }} 
+                src={sellerLogo} 
+                alt={`${sellerName} Logo`} 
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
               />
             </div>
             <button 
@@ -54,33 +179,30 @@ export default function SellerDetails() {
             </button>
           </div>
 
-
           <div className="col-lg-4 col-md-8 d-flex flex-column justify-content-between">
             <div>
               <h5 className="fw-bold mb-0 text-dark" style={{ fontSize: '18px' }}>
-                ZARA International
+                {sellerName}
               </h5>
               <span className="text-muted d-block mb-2" style={{ fontSize: '11px' }}>
-                (Most Selling Fashion Brand)
+                (Most Selling {sellerCategory} Brand)
               </span>
 
               <a 
-                href="https://www.larkon.co" 
+                href={`https://${sellerWebsite.replace(/^https?:\/\//, '')}`} 
                 target="_blank" 
                 rel="noreferrer" 
                 className="text-decoration-none fw-medium d-block mb-3"
                 style={{ color: '#FF5722', fontSize: '13px' }}
               >
-                www.larkon.co
+                {sellerWebsite.replace(/^https?:\/\//, '')}
               </a>
-
 
               <div className="d-flex align-items-center gap-1 mb-3" style={{ fontSize: '12px' }}>
                 <span style={{ color: '#FFB800' }}>★ ★ ★ ★ ★</span>
-                <span className="fw-bold text-dark ms-1">4.5/5</span>
+                <span className="fw-bold text-dark ms-1">{sellerRating}/5</span>
                 <span className="text-muted" style={{ fontSize: '11px' }}>(+23.3K Review)</span>
               </div>
-
               
               <div className="d-flex flex-column gap-2" style={{ fontSize: '12px', color: '#64748B' }}>
                 <div className="d-flex align-items-center gap-3">
@@ -90,7 +212,7 @@ export default function SellerDetails() {
                   >
                     <img src={locationIcon} alt="Location" style={{ width: '15px', height: '15px', objectFit: 'contain' }} />
                   </div>
-                  <span>4604 , Philli Lane Kiowa IN 47404</span>
+                  <span>{sellerAddress}</span>
                 </div>
 
                 <div className="d-flex align-items-center gap-3">
@@ -100,7 +222,7 @@ export default function SellerDetails() {
                   >
                     <img src={mailIcon} alt="Mail" style={{ width: '15px', height: '15px', objectFit: 'contain' }} />
                   </div>
-                  <span>zarafashionworld@dayrep.com</span>
+                  <span>{sellerEmail}</span>
                 </div>
 
                 <div className="d-flex align-items-center gap-3">
@@ -110,13 +232,12 @@ export default function SellerDetails() {
                   >
                     <img src={phoneIcon} alt="Phone" style={{ width: '15px', height: '15px', objectFit: 'contain' }} />
                   </div>
-                  <span>+243 812-801-9335</span>
+                  <span>{sellerPhone}</span>
                 </div>
               </div>
             </div>
           </div>
 
-     
           <div className="col-lg-5 col-md-12 d-flex flex-column justify-content-between ps-lg-4" style={{ borderLeft: '1px solid #F1F5F9' }}>
             <h6 className="fw-bold text-dark mb-3" style={{ fontSize: '14px' }}>
               Profit by Product Category
@@ -167,7 +288,6 @@ export default function SellerDetails() {
 
         </div>
 
-        
         <div className="pt-3 pb-2">
           <span className="fw-bold text-dark d-block mb-3" style={{ fontSize: '13px', color: '#1E293B' }}>
             Social Media :
@@ -191,11 +311,10 @@ export default function SellerDetails() {
           </div>
         </div>
 
-        
         <div className="pt-2 pb-2">
           <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '13px' }}>Our Story :</h6>
           <p className="text-muted mb-3" style={{ fontSize: '12px', lineHeight: '1.6' }}>
-            At ZARA, we believe that fashion is more than just clothing—it's an expression of individuality and a celebration of diversity. Founded in 2003, our journey began with a simple yet powerful vision: to create high-quality, stylish, and comfortable apparel that resonates with people from all walks of life.
+            {seller?.description || "At ZARA, we believe that fashion is more than just clothing—it's an expression of individuality and a celebration of diversity. Founded in 2003, our journey began with a simple yet powerful vision: to create high-quality, stylish, and comfortable apparel that resonates with people from all walks of life."}
           </p>
 
           <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '13px' }}>Our Mission :</h6>
@@ -204,11 +323,10 @@ export default function SellerDetails() {
           </p>
         </div>
 
-        
         <div className="row g-3 pt-2">
           <div className="col-6 col-md-3">
             <div className="p-3 text-center rounded-3" style={{ backgroundColor: '#F8FAFC' }}>
-              <div className="fw-bold text-dark" style={{ fontSize: '15px' }}>865</div>
+              <div className="fw-bold text-dark" style={{ fontSize: '15px' }}>{sellerStock}</div>
               <div className="text-muted" style={{ fontSize: '11px' }}>Item Stock</div>
             </div>
           </div>
@@ -234,17 +352,15 @@ export default function SellerDetails() {
 
       </div>
 
-     
       <div className="row g-4 mb-4">
         
-
         <div className="col-lg-8">
           <div className="card border-0 p-4 rounded-4 shadow-sm bg-white h-100 d-flex flex-column justify-content-between">
            
             <div className="d-flex align-items-center justify-content-between mb-2">
               <div>
                 <div className="d-flex align-items-center gap-2">
-                  <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '20px' }}>$5,563.786</h4>
+                  <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '20px' }}>{sellerRevenue}</h4>
                   <span className="badge rounded-pill fw-medium px-2 py-1" style={{ backgroundColor: '#DCFCE7', color: '#16A34A', fontSize: '10px' }}>
                     ↑ 4.53%
                   </span>
@@ -258,7 +374,6 @@ export default function SellerDetails() {
               </div>
             </div>
 
-           
             <div className="w-100 mt-3 d-flex align-items-center justify-content-center overflow-hidden" style={{ minHeight: '220px' }}>
               <img 
                 src={revenueChartImg} 
@@ -270,7 +385,6 @@ export default function SellerDetails() {
           </div>
         </div>
 
-       
         <div className="col-lg-4">
           <div className="card border-0 p-4 rounded-4 shadow-sm bg-white h-100 d-flex flex-column justify-content-between">
             <div>
@@ -278,7 +392,7 @@ export default function SellerDetails() {
               
               <div className="rounded-3 p-2.5 text-center mb-3 d-flex align-items-center justify-content-center gap-2" style={{ backgroundColor: '#F8FAFC' }}>
                 <span style={{ color: '#FFB800', fontSize: '14px' }}>★ ★ ★ ★ ★</span>
-                <span className="fw-bold text-dark" style={{ fontSize: '12px' }}>4.5 Out of 5</span>
+                <span className="fw-bold text-dark" style={{ fontSize: '12px' }}>{sellerRating} Out of 5</span>
               </div>
 
               <div className="text-center text-muted mb-3" style={{ fontSize: '11px' }}>
@@ -335,7 +449,6 @@ export default function SellerDetails() {
 
       <div className="row g-4">
         
-       
         <div className="col-lg-8">
           <div className="card border-0 p-4 rounded-4 shadow-sm bg-white h-100">
             <div className="d-flex align-items-center justify-content-between mb-3">
@@ -397,10 +510,8 @@ export default function SellerDetails() {
           </div>
         </div>
 
-
         <div className="col-lg-4 d-flex flex-column gap-3">
           
-
           <div
             className="card border-0 p-4 rounded-4 position-relative overflow-hidden text-white shadow-sm"
             style={{
@@ -422,13 +533,10 @@ export default function SellerDetails() {
               }}
             />
 
-
             <div className="position-relative z-1 d-flex flex-column justify-content-between h-100">
               
-
               <div className="d-flex align-items-center justify-content-between mb-3">
                 <div className="d-flex align-items-center gap-3">
-                 
                   <div
                     className="d-flex align-items-center justify-content-center rounded-3 fw-bold"
                     style={{
@@ -447,7 +555,6 @@ export default function SellerDetails() {
                   </h5>
                 </div>
 
-               
                 <button
                   type="button"
                   className="btn p-0 border-0 text-white-50"
@@ -457,7 +564,6 @@ export default function SellerDetails() {
                 </button>
               </div>
 
-              
               <div className="my-2">
                 <h2
                   className="fw-bold mb-2"
@@ -491,7 +597,6 @@ export default function SellerDetails() {
             </div>
           </div>
 
-          
           <div className="row g-3">
             <div className="col-6">
               <div className="card border-0 p-3 rounded-4 shadow-sm bg-white text-center">

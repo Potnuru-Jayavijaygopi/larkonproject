@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 
 import zaraLogo from '../../assets/logozara.png';
 import rolexLogo from '../../assets/logorolex.png';
@@ -16,7 +17,53 @@ import arrowUpIcon from '../../assets/arrow.png';
 import heartIcon from '../../assets/like.png';
 import progressBarImg from '../../assets/progress bar.png';
 
-const SELLERS = [
+const API_BASE = "http://localhost:3000/api/v1";
+
+const getAuthToken = async () => {
+  let token = localStorage.getItem("token") || localStorage.getItem("accessToken");
+  if (token) return token;
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "john@lavitra.com", password: "123456" })
+    });
+    const data = await res.json();
+    if (data && data.accessToken) {
+      localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("accessToken", data.accessToken);
+      return data.accessToken;
+    }
+  } catch (err) {
+    console.error("Auto login failed:", err);
+  }
+  return null;
+};
+
+const LOGO_MAP = {
+  zara: zaraLogo,
+  rolex: rolexLogo,
+  dyson: dysonLogo,
+  gopro: goproLogo,
+  'h&m': hmLogo,
+  hm: hmLogo,
+  huawei: huaweiLogo,
+  nike: nikeLogo,
+  northface: northFaceLogo,
+  'north face': northFaceLogo,
+};
+
+const getLogoForSeller = (seller, index) => {
+  if (seller.logo_url) return seller.logo_url;
+  const nameLower = (seller.business_name || seller.name || '').toLowerCase();
+  for (const [key, logo] of Object.entries(LOGO_MAP)) {
+    if (nameLower.includes(key)) return logo;
+  }
+  const logos = [zaraLogo, rolexLogo, dysonLogo, goproLogo, hmLogo, huaweiLogo, nikeLogo, northFaceLogo];
+  return logos[index % logos.length];
+};
+
+const DEFAULT_SELLERS = [
   {
     id: 1,
     name: 'ZARA International',
@@ -156,10 +203,73 @@ const SELLERS = [
 ];
 
 export default function SellerList() {
+  const navigate = useNavigate();
+  const [sellers, setSellers] = useState(DEFAULT_SELLERS);
+  const [favorites, setFavorites] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  // Fetch Sellers from Backend API
+  const fetchSellers = useCallback(async () => {
+    try {
+      setLoading(true);
+      const token = await getAuthToken();
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      };
+
+      const res = await fetch(`${API_BASE}/sellers`, { headers });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.data && data.data.length > 0) {
+          const apiSellers = data.data.map((s, idx) => ({
+            id: s.id,
+            name: s.business_name || s.owner_name || 'Seller Store',
+            category: s.category || 'Fashion',
+            subCategory: s.category || 'Fashion',
+            rating: s.rating && parseFloat(s.rating) > 0 ? s.rating : '4.5',
+            reviews: '3.5k',
+            website: (s.website || 'www.sellerstore.co').replace(/^https?:\/\//, ''),
+            address: s.address ? `${s.address}, ${s.city || ''} ${s.state || ''}`.trim() : '4604, Main Lane NY 10001',
+            email: s.email || 'seller@dayrep.com',
+            phone: s.phone || '+243 812-801-9335',
+            revenue: s.total_sales && parseFloat(s.total_sales) > 0 ? `$${parseFloat(s.total_sales).toLocaleString()}k` : '$200k',
+            stock: s.total_products > 0 ? String(s.total_products) : '865',
+            sells: '+4.5k',
+            clients: '+2k',
+            logo: getLogoForSeller(s, idx),
+          }));
+
+          // Merge backend sellers with defaults if fewer than 8 cards
+          const combined = [...apiSellers];
+          for (let i = 0; i < DEFAULT_SELLERS.length; i++) {
+            if (combined.length >= 8) break;
+            if (!combined.some(c => c.name.toLowerCase() === DEFAULT_SELLERS[i].name.toLowerCase())) {
+              combined.push(DEFAULT_SELLERS[i]);
+            }
+          }
+          setSellers(combined);
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching sellers list:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSellers();
+  }, [fetchSellers]);
+
+  const toggleFavorite = (id) => {
+    setFavorites(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
   return (
     <div className="p-4" style={{ backgroundColor: '#F8F9FA' }}>
       <div className="row g-4">
-        {SELLERS.map((seller) => (
+        {sellers.map((seller) => (
           <div key={seller.id} className="col-xl-3 col-lg-4 col-md-6">
             <div 
               className="card bg-white p-3 h-100 d-flex flex-column justify-content-between border-0"
@@ -169,11 +279,7 @@ export default function SellerList() {
               }}
             >
               <div>
-                {/* 
-                  Logo Frame Container 
-                  Matches exact Figma dimensions (height: 144px)
-                  overflow-hidden keeps exported PNG backgrounds seamlessly fitting the rounded frame
-                */}
+                {/* Logo Frame Container */}
                 <div 
                   className="rounded-3 overflow-hidden d-flex align-items-center justify-content-center mb-3"
                   style={{ height: '144px', width: '100%', backgroundColor: '#F3F4F7' }}
@@ -184,7 +290,7 @@ export default function SellerList() {
                     style={{ 
                       width: '100%', 
                       height: '100%', 
-                      objectFit: 'cover' // Fills the banner perfectly without double inner margins
+                      objectFit: 'cover'
                     }}
                   />
                 </div>
@@ -215,7 +321,6 @@ export default function SellerList() {
                   {seller.website}
                 </a>
 
-              
                 <div className="text-muted mb-3" style={{ fontSize: '12px', lineHeight: '1.9' }}>
                   <div className="d-flex align-items-center gap-2 text-truncate">
                     <img src={locationIcon} alt="location" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
@@ -261,19 +366,22 @@ export default function SellerList() {
               </div>
               <div className="d-flex gap-2">
                 <button 
-                  className="btn btn-sm text-white flex-fill py-2 fw-medium"
+                  onClick={() => navigate(`/sellers/details?id=${seller.id}`)}
+                  className="btn btn-sm text-white flex-fill py-2 fw-medium cursor-pointer"
                   style={{ backgroundColor: '#FF5722', borderRadius: '8px', fontSize: '12px', border: 'none' }}
                 >
                   View Profile
                 </button>
                 <button 
-                  className="btn btn-sm flex-fill py-2 fw-medium"
+                  onClick={() => navigate(`/sellers/edit?id=${seller.id}`)}
+                  className="btn btn-sm flex-fill py-2 fw-medium cursor-pointer"
                   style={{ backgroundColor: '#F3F4F7', color: '#555', borderRadius: '8px', fontSize: '12px', border: 'none' }}
                 >
                   Edit Profile
                 </button>
                 <button 
-                  className="btn btn-sm py-2 px-3 d-flex align-items-center justify-content-center"
+                  onClick={() => toggleFavorite(seller.id)}
+                  className={`btn btn-sm py-2 px-3 d-flex align-items-center justify-content-center cursor-pointer ${favorites[seller.id] ? 'bg-danger-subtle' : ''}`}
                   style={{ backgroundColor: '#FFF2F2', borderRadius: '8px', border: 'none' }}
                 >
                   <img src={heartIcon} alt="favorite" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />

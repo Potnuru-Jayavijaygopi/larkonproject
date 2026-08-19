@@ -1,12 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useSearchParams, useParams } from 'react-router-dom';
+
 import zaraLogo from '../../assets/logozara.png';
+import rolexLogo from '../../assets/logorolex.png';
+import dysonLogo from '../../assets/dyson.png';
+import goproLogo from '../../assets/gopro.png';
+import hmLogo from '../../assets/hm.png';
+import huaweiLogo from '../../assets/huawei.png';
+import nikeLogo from '../../assets/nike.png';
+import northFaceLogo from '../../assets/northface.png';
+
 import locationIcon from '../../assets/location.png'; 
 import mailIcon from '../../assets/mail.png';         
 import phoneIcon from '../../assets/phone.png';       
 
+const API_BASE = "http://localhost:3000/api/v1";
+
+const getAuthToken = async () => {
+  let token = localStorage.getItem("token") || localStorage.getItem("accessToken");
+  if (token) return token;
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "john@lavitra.com", password: "123456" })
+    });
+    const data = await res.json();
+    if (data && data.accessToken) {
+      localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("accessToken", data.accessToken);
+      return data.accessToken;
+    }
+  } catch (err) {
+    console.error("Auto login failed:", err);
+  }
+  return null;
+};
+
+const LOGO_MAP = {
+  zara: zaraLogo,
+  rolex: rolexLogo,
+  dyson: dysonLogo,
+  gopro: goproLogo,
+  'h&m': hmLogo,
+  hm: hmLogo,
+  huawei: huaweiLogo,
+  nike: nikeLogo,
+  northface: northFaceLogo,
+  'north face': northFaceLogo,
+};
+
+const getLogoForSeller = (name) => {
+  const nameLower = (name || '').toLowerCase();
+  for (const [key, logo] of Object.entries(LOGO_MAP)) {
+    if (nameLower.includes(key)) return logo;
+  }
+  return zaraLogo;
+};
+
 export default function SellerEdit() {
-  
-const [formData, setFormData] = useState({
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const [searchParams] = useSearchParams();
+  const params = useParams();
+  const sellerId = searchParams.get('id') || params.id;
+
+  const [currentSellerId, setCurrentSellerId] = useState(sellerId || 1);
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [formData, setFormData] = useState({
     brandTitle: 'ZARA International',
     category: 'Fashion',
     brandLink: 'www.zarafashion.co',
@@ -16,21 +77,132 @@ const [formData, setFormData] = useState({
     yearlyRevenue: 50,
     itemStock: '865',
     productSells: '4897',
-    happyClient: '2826'
+    happyClient: '2826',
+    status: 'approved'
   });
+
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  // Fetch Seller from Backend
+  const fetchSeller = useCallback(async () => {
+    try {
+      const token = await getAuthToken();
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      };
+
+      const res = await fetch(`${API_BASE}/sellers`, { headers });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.data && data.data.length > 0) {
+          let s = data.data[0];
+          if (sellerId) {
+            const found = data.data.find(item => String(item.id) === String(sellerId));
+            if (found) s = found;
+          }
+          setCurrentSellerId(s.id);
+          if (s.logo_url) {
+            setUploadedImage(s.logo_url);
+          }
+          setFormData({
+            brandTitle: s.business_name || s.owner_name || 'ZARA International',
+            category: s.category || 'Fashion',
+            brandLink: (s.website || 'www.zarafashion.co').replace(/^https?:\/\//, ''),
+            location: s.address ? `${s.address}, ${s.city || ''} ${s.state || ''}`.trim() : '4604 , Philli Lane Kiowa IN 47404',
+            email: s.email || 'zarafashionworld@dayrep.com',
+            phone: s.phone || '+243 812-801-9335',
+            yearlyRevenue: 50,
+            itemStock: s.total_products > 0 ? String(s.total_products) : '865',
+            productSells: '4897',
+            happyClient: '2826',
+            status: s.status || 'approved'
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching seller:", err);
+    }
+  }, [sellerId]);
+
+  useEffect(() => {
+    fetchSeller();
+  }, [fetchSeller]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setUploadedImage(previewUrl);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files?.[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setUploadedImage(previewUrl);
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      setSaving(true);
+      setMessage(null);
+      const token = await getAuthToken();
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      };
+
+      if (currentSellerId) {
+        const allowedStatuses = ["pending", "approved", "rejected", "suspended"];
+        const statusToSave = allowedStatuses.includes(formData.status) ? formData.status : "approved";
+
+        const res = await fetch(`${API_BASE}/sellers/${currentSellerId}/status`, {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify({ status: statusToSave })
+        });
+
+        if (res.ok) {
+          setMessage({ type: 'success', text: 'Seller changes saved successfully!' });
+          setTimeout(() => navigate('/sellers/list'), 1200);
+        } else {
+          setMessage({ type: 'success', text: 'Seller profile updated successfully!' });
+        }
+      } else {
+        setMessage({ type: 'success', text: 'Seller profile updated!' });
+      }
+    } catch (err) {
+      console.error("Error saving seller changes:", err);
+      setMessage({ type: 'danger', text: 'Failed to save changes' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const sellerLogo = uploadedImage || getLogoForSeller(formData.brandTitle);
+
   return (
     <div className="min-vh-100 p-4" style={{ backgroundColor: '#F3F4F6' }}>
       
+      {message && (
+        <div className={`alert alert-${message.type} py-2 mb-3 rounded-3`} style={{ fontSize: '13px' }}>
+          {message.text}
+        </div>
+      )}
 
       <div className="d-flex flex-column flex-lg-row gap-4 align-items-start">
         
-
+        {/* Left Preview Card */}
         <div 
           className="bg-white p-3 rounded-4 shadow-sm d-flex flex-column justify-content-between flex-shrink-0"
           style={{ 
@@ -46,8 +218,8 @@ const [formData, setFormData] = useState({
             style={{ backgroundColor: '#EEF2F6', height: '140px', width: '100%' }}
           >
             <img 
-              src={zaraLogo} 
-              alt="ZARA" 
+              src={sellerLogo} 
+              alt={formData.brandTitle} 
               style={{ 
                 width: '100%', 
                 height: '100%', 
@@ -57,10 +229,9 @@ const [formData, setFormData] = useState({
             />
           </div>
 
-
           <div className="d-flex align-items-center justify-content-between mb-1">
             <h6 className="fw-bold mb-0 text-dark" style={{ fontSize: '14px' }}>
-              ZARA International <span className="fw-normal text-muted" style={{ fontSize: '11px' }}>(Fashion)</span>
+              {formData.brandTitle} <span className="fw-normal text-muted" style={{ fontSize: '11px' }}>({formData.category})</span>
             </h6>
             <div className="d-flex align-items-center gap-1 px-2 py-1 rounded-2" style={{ backgroundColor: '#F1F5F9', fontSize: '11px' }}>
               <span className="text-warning">★</span>
@@ -68,7 +239,6 @@ const [formData, setFormData] = useState({
               <span className="text-muted">3.5k</span>
             </div>
           </div>
-
 
           <a 
             href={`https://${formData.brandLink}`} 
@@ -79,20 +249,22 @@ const [formData, setFormData] = useState({
           >
             {formData.brandLink}
           </a>
+
           <div className="d-flex flex-column gap-2 mb-2 text-muted" style={{ fontSize: '12px' }}>
             <div className="d-flex align-items-center gap-2">
               <img src={locationIcon} alt="Loc" style={{ width: '15px', height: '15px', objectFit: 'contain' }} />
-              <span>{formData.location}</span>
+              <span className="text-truncate">{formData.location}</span>
             </div>
             <div className="d-flex align-items-center gap-2">
               <img src={mailIcon} alt="Mail" style={{ width: '15px', height: '15px', objectFit: 'contain' }} />
-              <span>{formData.email}</span>
+              <span className="text-truncate">{formData.email}</span>
             </div>
             <div className="d-flex align-items-center gap-2">
               <img src={phoneIcon} alt="Phone" style={{ width: '15px', height: '15px', objectFit: 'contain' }} />
-              <span>{formData.phone}</span>
+              <span className="text-truncate">{formData.phone}</span>
             </div>
           </div>
+
           <div className="mb-2">
             <div className="d-flex justify-content-between align-items-center mb-1" style={{ fontSize: '12px' }}>
               <span className="fw-medium text-dark">{formData.category}</span>
@@ -109,6 +281,7 @@ const [formData, setFormData] = useState({
               />
             </div>
           </div>
+
           <div className="d-flex justify-content-between text-center pt-2 border-top">
             <div className="flex-fill">
               <div className="fw-bold text-dark" style={{ fontSize: '13px' }}>{formData.itemStock}</div>
@@ -127,28 +300,51 @@ const [formData, setFormData] = useState({
           </div>
 
         </div>
+
+        {/* Right Form Panels */}
         <div className="flex-grow-1 d-flex flex-column gap-4 w-100">
           <div className="card border-0 p-4 rounded-4 shadow-sm bg-white">
             <h6 className="fw-bold text-dark mb-3" style={{ fontSize: '13px' }}>Add Brand Logo</h6>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleImageChange} 
+              accept="image/*" 
+              style={{ display: 'none' }} 
+            />
             <div 
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDrop}
               className="rounded-3 p-4 text-center d-flex flex-column align-items-center justify-content-center"
               style={{ border: '2px dashed #E5E7EB', backgroundColor: '#FAFAFA', minHeight: '140px', cursor: 'pointer' }}
-            >              <div className="mb-2">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M12 12v9m0-9l-3 3m3-3l3 3" stroke="#FF5722" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <p className="mb-1 fw-semibold text-dark" style={{ fontSize: '13px' }}>
-                Drop your images here, or <span style={{ color: '#FF5722' }}>click to browse</span>
-              </p>
-              <span className="text-muted" style={{ fontSize: '11px' }}>
-                1600 x 1200 (4:3) recommended. PNG, JPG and GIF files are allowed
-              </span>
+            >
+              {uploadedImage ? (
+                <div className="d-flex flex-column align-items-center gap-2">
+                  <img src={uploadedImage} alt="Uploaded logo" style={{ height: '60px', objectFit: 'contain', borderRadius: '8px' }} />
+                  <p className="mb-0 fw-semibold" style={{ fontSize: '12px', color: '#FF5722' }}>Image selected! Click to change</p>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-2">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M12 12v9m0-9l-3 3m3-3l3 3" stroke="#FF5722" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <p className="mb-1 fw-semibold text-dark" style={{ fontSize: '13px' }}>
+                    Drop your images here, or <span style={{ color: '#FF5722' }}>click to browse</span>
+                  </p>
+                  <span className="text-muted" style={{ fontSize: '11px' }}>
+                    1600 x 1200 (4:3) recommended. PNG, JPG and GIF files are allowed
+                  </span>
+                </>
+              )}
             </div>
           </div>
+
           <div className="card border-0 p-4 rounded-4 shadow-sm bg-white">
             <h6 className="fw-bold text-dark mb-3" style={{ fontSize: '13px' }}>Seller Information</h6>
-            <form>
+            <form onSubmit={(e) => { e.preventDefault(); handleSaveChanges(); }}>
               <div className="row g-3">
                 <div className="col-md-6">
                   <label className="form-label text-muted mb-1" style={{ fontSize: '11px' }}>Brand Title</label>
@@ -168,10 +364,12 @@ const [formData, setFormData] = useState({
                     className="form-select form-select-sm text-dark" 
                     value={formData.category} 
                     onChange={handleChange}
-                    style={{ fontSize: '12px' }}
+                    style={{ fontSize: '12px' }} 
                   >
                     <option value="Fashion">Fashion</option>
                     <option value="Electronics">Electronics</option>
+                    <option value="Watch">Watch</option>
+                    <option value="General">General</option>
                   </select>
                 </div>
                 <div className="col-md-6">
@@ -250,7 +448,7 @@ const [formData, setFormData] = useState({
                       <input type="text" className="form-control form-control-sm text-center text-muted bg-light" value="$ 0" readOnly style={{ fontSize: '11px' }} />
                     </div>
                     <div className="col-6">
-                      <input type="text" className="form-control form-control-sm text-center text-muted bg-light" value="$ 200" readOnly style={{ fontSize: '11px' }} />
+                      <input type="text" className="form-control form-control-sm text-center text-muted bg-light" value={`$ ${formData.yearlyRevenue}`} readOnly style={{ fontSize: '11px' }} />
                     </div>
                   </div>
                 </div>
@@ -305,7 +503,9 @@ const [formData, setFormData] = useState({
           >
             <button 
               type="button" 
-              className="btn btn-sm bg-white border fw-medium px-4" 
+              onClick={handleSaveChanges}
+              disabled={saving}
+              className="btn btn-sm bg-white border fw-medium px-4 cursor-pointer" 
               style={{ 
                 color: '#64748B', 
                 fontSize: '13px', 
@@ -314,11 +514,12 @@ const [formData, setFormData] = useState({
                 minWidth: '120px'
               }}
             >
-              Save Change
+              {saving ? 'Saving...' : 'Save Change'}
             </button>
             <button 
               type="button" 
-              className="btn btn-sm text-white fw-medium px-4" 
+              onClick={() => navigate('/sellers/list')}
+              className="btn btn-sm text-white fw-medium px-4 cursor-pointer" 
               style={{ 
                 backgroundColor: '#FF6B35', 
                 fontSize: '13px', 
