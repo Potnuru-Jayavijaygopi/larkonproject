@@ -37,15 +37,13 @@ const eventColors = ["#FF6C2F", "#4ECAC2", "#22C55E", "#EF5F5F", "#F9B931", "#5D
 function Calendar() {
     const containerRef = useRef(null);
     const [scale, setScale] = useState(1);
-
-    // Dynamic State
     const [currentDate, setCurrentDate] = useState(new Date(2026, 7, 1)); // Default to Aug 2026 where seed data exists
     const [events, setEvents] = useState([]);
     const [categories, setCategories] = useState([]);
     const [viewMode, setViewMode] = useState("Month");
     const [loading, setLoading] = useState(false);
 
-    // Modal State
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [newEvent, setNewEvent] = useState({
@@ -78,7 +76,7 @@ function Calendar() {
         };
     }, []);
 
-    // Fetch Events and Categories
+
     const fetchCalendarData = useCallback(async () => {
         try {
             setLoading(true);
@@ -88,7 +86,7 @@ function Calendar() {
                 ...(token ? { Authorization: `Bearer ${token}` } : {})
             };
 
-            // Fetch Events
+
             const eventsRes = await fetch(`${API_BASE}/calendar/events`, { headers });
             if (eventsRes.ok) {
                 const eventsData = await eventsRes.json();
@@ -97,7 +95,7 @@ function Calendar() {
                 }
             }
 
-            // Fetch Categories
+
             const catRes = await fetch(`${API_BASE}/calendar/categories`, { headers });
             if (catRes.ok) {
                 const catData = await catRes.json();
@@ -116,7 +114,7 @@ function Calendar() {
         fetchCalendarData();
     }, [fetchCalendarData]);
 
-    // Handle Month Navigation
+
     const handlePrevMonth = () => {
         setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
     };
@@ -129,7 +127,7 @@ function Calendar() {
         setCurrentDate(new Date(2026, 7, 18));
     };
 
-    // Format Helpers
+
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -139,15 +137,15 @@ function Calendar() {
     const currentMonth = currentDate.getMonth();
     const monthYearTitle = `${monthNames[currentMonth]} ${currentYear}`;
 
-    // Calculate Days for Month Grid
+
     const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
     const totalDaysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const totalDaysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
 
-    // Create Calendar Grid Days (up to 35 or 42 cells)
+
     const calendarDays = [];
 
-    // Previous month filler days
+
     for (let i = firstDayIndex - 1; i >= 0; i--) {
         calendarDays.push({
             day: totalDaysInPrevMonth - i,
@@ -156,7 +154,7 @@ function Calendar() {
         });
     }
 
-    // Current month days
+
     for (let i = 1; i <= totalDaysInMonth; i++) {
         calendarDays.push({
             day: i,
@@ -165,7 +163,7 @@ function Calendar() {
         });
     }
 
-    // Next month filler days (to make total cells divisible by 7)
+
     const remainingCells = 35 - calendarDays.length > 0 ? 35 - calendarDays.length : (42 - calendarDays.length > 0 ? 42 - calendarDays.length : 0);
     for (let i = 1; i <= remainingCells; i++) {
         calendarDays.push({
@@ -175,13 +173,13 @@ function Calendar() {
         });
     }
 
-    // Chunk into weeks of 7
+
     const weeks = [];
     for (let i = 0; i < calendarDays.length; i += 7) {
         weeks.push(calendarDays.slice(i, i + 7));
     }
 
-    // Filter events for a given cell date
+
     const getEventsForDate = (date) => {
         return events.filter(event => {
             if (!event.start_time) return false;
@@ -194,7 +192,7 @@ function Calendar() {
         });
     };
 
-    // Format event time (e.g. "4:52p", "10:00a")
+
     const formatEventTime = (isoString) => {
         if (!isoString) return "";
         try {
@@ -210,7 +208,7 @@ function Calendar() {
         }
     };
 
-    // Create New Event
+
     const handleCreateEvent = async (e) => {
         e.preventDefault();
         try {
@@ -253,7 +251,7 @@ function Calendar() {
         }
     };
 
-    // Delete Event
+
     const handleDeleteEvent = async (id) => {
         try {
             const token = await getAuthToken();
@@ -273,7 +271,7 @@ function Calendar() {
         }
     };
 
-    // Fallback default categories if empty
+
     const displayCategories = categories.length > 0 ? categories : [
         { id: 1, name: "Team Building Retreat Meeting", color: "#FF6C2F" },
         { id: 2, name: "Product Launch Strategy Meeting", color: "#4ECAC2" },
@@ -289,21 +287,18 @@ function Calendar() {
                 className="w-full min-w-0"
                 style={{
                     height: `${770 * scale}px`,
-                }}
-            >
+                }}>
                 <div
                     className="w-[1534px] h-[770px] bg-[#FFFFFF] !rounded-[12px] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] p-[35px]"
                     style={{
                         transform: `scale(${scale})`,
                         transformOrigin: "top left",
-                    }}
-                >
-                    {/* Top Action Bar */}
+                    }}>
+
                     <div className="flex items-center gap-[14px]">
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="w-[370px] h-[39px] bg-[#FF6C2F] !rounded-[8px] flex items-center justify-center gap-[10px] cursor-pointer hover:bg-[#e05b22] transition-colors"
-                        >
+                            className="w-[370px] h-[39px] bg-[#FF6C2F] !rounded-[8px] flex items-center justify-center gap-[10px] cursor-pointer hover:bg-[#e05b22] transition-colors">
                             <img src={Plus} alt="plus" className="w-[12px] h-[12px]" />
                             <span className="text-white text-[14px] font-normal leading-[100%]">
                                 Add New Schedule
@@ -312,21 +307,18 @@ function Calendar() {
                         <div className="w-[102px] h-[32px] bg-[#FF6C2F] !rounded-[8px] flex items-center justify-center py-[3px]">
                             <button
                                 onClick={handlePrevMonth}
-                                className="w-1/2 h-full text-[#FFFFFF] text-[12.6px] font-[400] cursor-pointer hover:bg-black/10 rounded-l-[8px]"
-                            >
+                                className="w-1/2 h-full text-[#FFFFFF] text-[12.6px] font-[400] cursor-pointer hover:bg-black/10 rounded-l-[8px]">
                                 Prev
                             </button>
                             <button
                                 onClick={handleNextMonth}
-                                className="w-1/2 h-full text-[#FFFFFF] text-[12.6px] font-[400] cursor-pointer hover:bg-black/10 rounded-r-[8px]"
-                            >
+                                className="w-1/2 h-full text-[#FFFFFF] text-[12.6px] font-[400] cursor-pointer hover:bg-black/10 rounded-r-[8px]">
                                 Next
                             </button>
                         </div>
                         <button
                             onClick={handleToday}
-                            className="w-[60px] h-[32px] bg-[#FF6C2F]/65 !rounded-[8px] text-[#FFFFFF] text-[12.6px] font-[400] py-[3px] cursor-pointer hover:bg-[#FF6C2F] transition-colors"
-                        >
+                            className="w-[60px] h-[32px] bg-[#FF6C2F]/65 !rounded-[8px] text-[#FFFFFF] text-[12.6px] font-[400] py-[3px] cursor-pointer hover:bg-[#FF6C2F] transition-colors">
                             Today
                         </button>
                         <span className="w-[120px] ml-[140px] text-[12.6px] font-semibold leading-[100%] tracking-[0%] text-[#313B5E] whitespace-nowrap">
@@ -335,34 +327,30 @@ function Calendar() {
                         <div className="ml-[480px] w-[213px] h-[32px] bg-[#FF6C2F] !rounded-[8px] flex items-center !rounded-l-[8px] overflow-hidden">
                             <button
                                 onClick={() => setViewMode("Month")}
-                                className={`w-[54px] h-full ${viewMode === "Month" ? "bg-[#D95A23]" : "bg-transparent"} text-white text-[12px] font-normal cursor-pointer`}
-                            >
+                                className={`w-[54px] h-full ${viewMode === "Month" ? "bg-[#D95A23]" : "bg-transparent"} text-white text-[12px] font-normal cursor-pointer`}>
                                 Month
                             </button>
                             <button
                                 onClick={() => setViewMode("Week")}
-                                className={`w-[53px] h-full ${viewMode === "Week" ? "bg-[#D95A23]" : "bg-transparent"} text-white text-[12px] font-normal cursor-pointer`}
-                            >
+                                className={`w-[53px] h-full ${viewMode === "Week" ? "bg-[#D95A23]" : "bg-transparent"} text-white text-[12px] font-normal cursor-pointer`}>
                                 Week
                             </button>
                             <button
                                 onClick={() => setViewMode("Day")}
-                                className={`w-[50px] h-full ${viewMode === "Day" ? "bg-[#D95A23]" : "bg-transparent"} text-white text-[12px] font-normal cursor-pointer`}
-                            >
+                                className={`w-[50px] h-full ${viewMode === "Day" ? "bg-[#D95A23]" : "bg-transparent"} text-white text-[12px] font-normal cursor-pointer`}>
                                 Day
                             </button>
                             <button
                                 onClick={() => setViewMode("List")}
-                                className={`w-[56px] h-full ${viewMode === "List" ? "bg-[#D95A23]" : "bg-transparent"} text-white text-[12px] font-normal cursor-pointer`}
-                            >
+                                className={`w-[56px] h-full ${viewMode === "List" ? "bg-[#D95A23]" : "bg-transparent"} text-white text-[12px] font-normal cursor-pointer`}>
                                 List
                             </button>
                         </div>
                     </div>
 
-                    {/* Main Content Grid */}
+
                     <div className="flex gap-[32px] mt-[16px]">
-                        {/* Left Sidebar Categories */}
+
                         <div className="w-[354px]">
                             <p className="w-[315px] h-[16px] text-[14px] font-normal leading-[100%] tracking-[0px] text-[#5D7186] !mt-[23px]">
                                 Drag and drop your event or click in the calendar
@@ -374,8 +362,7 @@ function Calendar() {
                                 return (
                                     <div
                                         key={cat.id || idx}
-                                        className={`!mt-[15px] w-[354px] h-[37px] ${bgClass} rounded-[4px] flex items-center px-[10px] gap-[12px] transition-all hover:scale-[1.01]`}
-                                    >
+                                        className={`!mt-[15px] w-[354px] h-[37px] ${bgClass} rounded-[4px] flex items-center px-[10px] gap-[12px] transition-all hover:scale-[1.01]`}>
                                         <img src={dotIcon} alt="dot" className="w-[14px] h-[14px]" />
                                         <span className={`text-[12px] font-normal leading-[100%] ${textClass} truncate`}>
                                             {cat.name}
@@ -385,9 +372,9 @@ function Calendar() {
                             })}
                         </div>
 
-                        {/* Calendar 7-Column Grid */}
+
                         <div className="w-[1108px] h-[655px] border border-[#EAEDF1] rounded-[4px] bg-white overflow-hidden flex flex-col">
-                            {/* Days Header */}
+
                             <div className="grid grid-cols-7 h-[22px] mt-[8px]">
                                 <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Sun</div>
                                 <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Mon</div>
@@ -399,32 +386,27 @@ function Calendar() {
                             </div>
                             <div className="border-t border-[#EAEDF1] mt-[8px]"></div>
 
-                            {/* Weeks Rows */}
+
                             <div className="flex-1 flex flex-col">
                                 {weeks.map((week, weekIdx) => (
                                     <div
                                         key={weekIdx}
-                                        className={`grid grid-cols-7 flex-1 border-b border-[#EAEDF1] last:border-b-0 min-h-[90px]`}
-                                    >
+                                        className={`grid grid-cols-7 flex-1 border-b border-[#EAEDF1] last:border-b-0 min-h-[90px]`}>
                                         {week.map((cell, cellIdx) => {
                                             const cellEvents = getEventsForDate(cell.date);
                                             const isHighlight = cell.isCurrentMonth && (cell.day === 14 || cell.day === 18);
                                             return (
                                                 <div
                                                     key={cellIdx}
-                                                    className={`relative border-r border-[#EAEDF1] last:border-r-0 p-[6px] overflow-hidden ${
-                                                        isHighlight ? "bg-[#FFDC28]/15" : ""
-                                                    }`}
-                                                >
+                                                    className={`relative border-r border-[#EAEDF1] last:border-r-0 p-[6px] overflow-hidden ${isHighlight ? "bg-[#FFDC28]/15" : ""
+                                                        }`}>
                                                     <span
-                                                        className={`absolute top-[8px] right-[8px] text-[10px] ${
-                                                            cell.isCurrentMonth ? "text-[#5D7186]" : "text-[#D7DCE2]"
-                                                        }`}
-                                                    >
+                                                        className={`absolute top-[8px] right-[8px] text-[10px] ${cell.isCurrentMonth ? "text-[#5D7186]" : "text-[#D7DCE2]"
+                                                            }`}>
                                                         {cell.day}
                                                     </span>
 
-                                                    {/* Cell Events List */}
+
                                                     <div className="mt-[18px] flex flex-col gap-[3px]">
                                                         {cellEvents.map((evt, evtIdx) => {
                                                             const colorHex = evt.color || eventColors[evtIdx % eventColors.length];
@@ -434,8 +416,7 @@ function Calendar() {
                                                                     onClick={() => setSelectedEvent(evt)}
                                                                     className="w-full h-[26px] rounded-[2px] flex items-center px-[6px] cursor-pointer hover:opacity-90 transition-opacity"
                                                                     style={{ backgroundColor: colorHex }}
-                                                                    title={`${evt.title} - ${evt.description || ""}`}
-                                                                >
+                                                                    title={`${evt.title} - ${evt.description || ""}`}>
                                                                     <div className="w-[6px] h-[6px] rounded-full bg-white shrink-0"></div>
                                                                     <span className="ml-[6px] text-[11px] font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis">
                                                                         {formatEventTime(evt.start_time)} {evt.title}
@@ -455,7 +436,7 @@ function Calendar() {
                 </div>
             </div>
 
-            {/* Event Details / Delete Modal */}
+
             {selectedEvent && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                     <div className="bg-white rounded-[12px] p-[24px] w-[420px] shadow-xl border border-[#EAEDF1]">
@@ -463,8 +444,7 @@ function Calendar() {
                             <h3 className="text-[16px] font-bold text-[#313B5E]">Event Details</h3>
                             <button
                                 onClick={() => setSelectedEvent(null)}
-                                className="text-[#5D7186] hover:text-black font-bold text-[18px] cursor-pointer"
-                            >
+                                className="text-[#5D7186] hover:text-black font-bold text-[18px] cursor-pointer">
                                 ×
                             </button>
                         </div>
@@ -499,14 +479,12 @@ function Calendar() {
                         <div className="mt-[20px] flex justify-end gap-[10px]">
                             <button
                                 onClick={() => setSelectedEvent(null)}
-                                className="px-[14px] py-[6px] rounded-[6px] text-[#5D7186] bg-[#EAEDF1] text-[13px] font-medium cursor-pointer"
-                            >
+                                className="px-[14px] py-[6px] rounded-[6px] text-[#5D7186] bg-[#EAEDF1] text-[13px] font-medium cursor-pointer">
                                 Close
                             </button>
                             <button
                                 onClick={() => handleDeleteEvent(selectedEvent.id)}
-                                className="px-[14px] py-[6px] rounded-[6px] text-white bg-[#EF5F5F] text-[13px] font-medium cursor-pointer hover:bg-[#d94848]"
-                            >
+                                className="px-[14px] py-[6px] rounded-[6px] text-white bg-[#EF5F5F] text-[13px] font-medium cursor-pointer hover:bg-[#d94848]">
                                 Delete Event
                             </button>
                         </div>
@@ -514,7 +492,7 @@ function Calendar() {
                 </div>
             )}
 
-            {/* Add New Schedule Modal */}
+
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                     <div className="bg-white rounded-[12px] p-[24px] w-[460px] shadow-xl border border-[#EAEDF1]">
@@ -522,8 +500,7 @@ function Calendar() {
                             <h3 className="text-[16px] font-bold text-[#313B5E]">Add New Schedule</h3>
                             <button
                                 onClick={() => setIsModalOpen(false)}
-                                className="text-[#5D7186] hover:text-black font-bold text-[18px] cursor-pointer"
-                            >
+                                className="text-[#5D7186] hover:text-black font-bold text-[18px] cursor-pointer">
                                 ×
                             </button>
                         </div>
@@ -600,11 +577,9 @@ function Calendar() {
                                             key={color}
                                             type="button"
                                             onClick={() => setNewEvent({ ...newEvent, color })}
-                                            className={`w-[26px] h-[26px] rounded-full cursor-pointer transition-transform ${
-                                                newEvent.color === color ? "scale-125 ring-2 ring-offset-2 ring-[#313B5E]" : ""
-                                            }`}
-                                            style={{ backgroundColor: color }}
-                                        />
+                                            className={`w-[26px] h-[26px] rounded-full cursor-pointer transition-transform ${newEvent.color === color ? "scale-125 ring-2 ring-offset-2 ring-[#313B5E]" : ""
+                                                }`}
+                                            style={{ backgroundColor: color }} />
                                     ))}
                                 </div>
                             </div>
@@ -612,14 +587,12 @@ function Calendar() {
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-[14px] py-[7px] rounded-[6px] text-[#5D7186] bg-[#EAEDF1] text-[13px] font-medium cursor-pointer"
-                                >
+                                    className="px-[14px] py-[7px] rounded-[6px] text-[#5D7186] bg-[#EAEDF1] text-[13px] font-medium cursor-pointer">
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-[16px] py-[7px] rounded-[6px] text-white bg-[#FF6C2F] text-[13px] font-medium cursor-pointer hover:bg-[#e05b22]"
-                                >
+                                    className="px-[16px] py-[7px] rounded-[6px] text-white bg-[#FF6C2F] text-[13px] font-medium cursor-pointer hover:bg-[#e05b22]">
                                     Save Schedule
                                 </button>
                             </div>

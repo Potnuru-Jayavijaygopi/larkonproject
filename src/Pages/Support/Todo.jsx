@@ -265,7 +265,7 @@ function Todo() {
         }
     };
 
-    // Handle Delete Task
+   
     const handleDeleteTask = async (id) => {
         if (!window.confirm("Are you sure you want to delete this task?")) return;
         try {
@@ -285,7 +285,7 @@ function Todo() {
         }
     };
 
-    // Filter Tasks by Search
+    
     const filteredTasks = tasks.filter(task => {
         if (!searchTerm) return true;
         const term = searchTerm.toLowerCase();
@@ -296,7 +296,7 @@ function Todo() {
         );
     });
 
-    // Helper to render Status Badge
+    
     const renderStatusBadge = (statusName) => {
         const s = (statusName || "").toLowerCase();
         if (s === "in progress" || s === "in-progress") {
@@ -327,7 +327,7 @@ function Todo() {
         );
     };
 
-    // Helper to render Priority
+   
     const renderPriority = (priorityName) => {
         const p = (priorityName || "").toLowerCase();
         if (p === "high") {
@@ -360,22 +360,15 @@ function Todo() {
 
     return (
         <div className="w-full h-[2010px] px-[20px]">
-            <div
-                ref={containerRef}
-                className="w-full min-w-0"
-                style={{
-                    height: `${2010 * scale}px`,
-                }}
-            >
+            <div ref={containerRef} className="w-full min-w-0" style={{ height: `${2010 * scale}px`, }}>
                 <div
                     className="w-[1534px] h-[2010px]"
                     style={{
                         transform: `scale(${scale})`,
                         transformOrigin: "top left",
-                    }}
-                >
+                    }}>
                     <div className="w-[1534px] min-h-[814px] bg-[#FFFFFF] !rounded-[12px] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] pb-[20px]">
-                        {/* Top Action Bar */}
+                       
                         <div className="flex items-center justify-between px-[24px] pt-[20px]">
                             <div className="w-[220px] h-[39px] border border-[#D8DFE7] rounded-[8px] bg-white flex items-center gap-[8px] px-[12px]">
                                 <img src={TodoSearch} alt="search" className="w-[16px] h-[16px]" />
@@ -389,14 +382,13 @@ function Todo() {
                             </div>
                             <button
                                 onClick={() => setIsCreateModalOpen(true)}
-                                className="w-[128px] h-[39px] bg-[#FF6C2F] !rounded-[12px] flex items-center justify-center gap-[8px] cursor-pointer hover:bg-[#e05b22] transition-colors"
-                            >
+                                className="w-[128px] h-[39px] bg-[#FF6C2F] !rounded-[12px] flex items-center justify-center gap-[8px] cursor-pointer hover:bg-[#e05b22] transition-colors">
                                 <img src={Plus} className="w-[14px] h-[14px]" alt="plus" />
                                 <span className="font-[Play] text-[14px] font-normal leading-[100%] tracking-[0%] text-white">Create Task</span>
                             </button>
                         </div>
 
-                        {/* Table Header */}
+                       
                         <div className="w-[1534px] h-[45px] bg-[#EEF2F7]/50 rounded-t-[8px] mt-[15px] grid grid-cols-[500px_220px_150px_200px_130px_110px_110px] items-center px-[16px]">
                             <div>
                                 <span className="text-[14px] font-bold leading-[100%] tracking-[0%] text-[#5D7186]">Task Name</span>
@@ -421,21 +413,19 @@ function Todo() {
                             </div>
                         </div>
 
-                        {/* Dynamic Table Rows */}
+                       
                         {filteredTasks.map((task) => {
                             const isCompleted = task.status_name === "Done" || task.status_name === "Completed" || task.progress_percentage === 100;
                             return (
                                 <div
                                     key={task.id}
-                                    className="w-full h-[60px] border-b border-[#EAEDF1] grid grid-cols-[500px_220px_150px_200px_130px_140px_130px] items-center px-[16px] hover:bg-gray-50/50 transition-colors"
-                                >
-                                    {/* Task Name & Checkbox */}
+                                    className="w-full h-[60px] border-b border-[#EAEDF1] grid grid-cols-[500px_220px_150px_200px_130px_140px_130px] items-center px-[16px] hover:bg-gray-50/50 transition-colors">
+                                   
                                     <div className="flex items-center">
                                         <button
                                             type="button"
                                             onClick={() => handleToggleComplete(task)}
-                                            className="w-[20px] h-[20px] flex items-center justify-center shrink-0 cursor-pointer"
-                                        >
+                                            className="w-[20px] h-[20px] flex items-center justify-center shrink-0 cursor-pointer">
                                             {isCompleted ? (
                                                 <img src={Checkbox} className="w-[20px] h-[20px]" alt="completed" />
                                             ) : (
@@ -446,18 +436,17 @@ function Todo() {
                                             className={`font-[Play] ml-[12px] text-[14px] font-normal leading-[100%] text-[#5D7186] truncate max-w-[440px] ${
                                                 isCompleted ? "line-through" : ""
                                             }`}
-                                            title={task.task_name}
-                                        >
+                                            title={task.task_name}>
                                             {task.task_name}
                                         </span>
                                     </div>
 
-                                    {/* Created Date */}
+                                
                                     <span className="text-[14px] font-normal leading-[100%] text-[#5D7186]">
                                         {formatCreatedDate(task.created_at || task.due_date)}
                                     </span>
 
-                                    {/* Due Date */}
+                                   
                                     <span className="text-[14px] font-normal leading-[100%] text-[#5D7186]">
                                         {formatDueDate(task.due_date)}
                                     </span>
