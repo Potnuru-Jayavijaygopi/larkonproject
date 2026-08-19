@@ -14,6 +14,7 @@ import viewIcon from '../../assets/solar_eye-broken.svg';
 import editIcon from '../../assets/solar_pen-2-broken.svg';
 import deleteIcon from '../../assets/solar_trash-bin-minimalistic-2-broken.svg';
 import { roleAPI } from '../../services/api';
+import { toast } from 'react-toastify';
 
 const workspaceLogos = {
   Facebook: fbLogo,
@@ -51,7 +52,6 @@ const RolesList = () => {
         let tags = ['Product'];
         let users = [1, 2];
 
-        // Parse structured description if stored as JSON
         if (r.description && r.description.startsWith('{')) {
           try {
             const parsed = JSON.parse(r.description);
@@ -65,7 +65,6 @@ const RolesList = () => {
           tags = [r.description];
         }
 
-        // Map default workspaces for sample roles
         if (!workspace) {
           const defaultWorkspaces = ['Facebook', 'Slack', 'Zoom', 'Analytics', null, 'Meet', 'Mail', 'Stripe'];
           workspace = defaultWorkspaces[index % defaultWorkspaces.length];
@@ -120,6 +119,7 @@ const RolesList = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this role?')) {
       setRoles((prev) => prev.filter((r) => r.id !== id));
+      toast.success("Deleted Successfully")
       try {
         await roleAPI.delete(id);
       } catch (err) {

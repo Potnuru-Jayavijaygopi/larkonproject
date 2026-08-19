@@ -200,7 +200,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className="d-flex align-items-center flex-wrap gap-4 mt-0 pt-3 py-4 justify-content-start border-top" style={{ borderColor: 'var(--border-color)' }}>
+              <div className="d-flex align-items-center flex-wrap gap-4 mt-0 pt-3 py-4 justify-content-start " style={{ borderColor: 'var(--border-color)' }}>
 
                 <div className="d-flex align-items-start gap-2 stat-item-border px-4">
                   <div className="flex-shrink-0">

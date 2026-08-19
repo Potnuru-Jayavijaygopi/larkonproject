@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { roleAPI } from '../../services/api';
+import { toast } from 'react-toastify';
 
 const RoleCreate = () => {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ const RoleCreate = () => {
         status: formData.status,
       });
 
-      alert('New Role created successfully!');
+      toast.success('New Role created successfully!');
       navigate('/roles');
     } catch (err) {
       console.error('Failed to create role:', err);

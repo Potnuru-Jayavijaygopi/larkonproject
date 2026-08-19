@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import userIcon from '../../assets/solar_users-group-two-rounded-bold-duotone.svg';
 import buildingIcon from '../../assets/solar_backpack-bold-duotone (1).svg';
@@ -85,6 +86,7 @@ const Permissions = () => {
     if (window.confirm('Are you sure you want to delete this permission?')) {
       setPermissions((prev) => prev.filter((p) => p.id !== id));
       setSelectedItems((prev) => prev.filter((itemId) => itemId !== id));
+      toast.success("Deleted Successfully")
       try {
         await permissionAPI.delete(id);
       } catch (err) {
@@ -359,7 +361,7 @@ const Permissions = () => {
                   <th style={{ width: '30%' }}>Assigned To</th>
                   <th style={{ width: '20%' }}>Created Date & Time</th>
                   <th style={{ width: '14%' }}>Last Update</th>
-                  <th className="text-end" style={{ width: '10%' }}>Action</th>
+                  <th className="text-start" style={{ width: '10%' }}>Action</th>
                 </tr>
               </thead>
               <tbody>

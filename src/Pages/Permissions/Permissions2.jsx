@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import userGroupIcon from '../../assets/solar_users-group-two-rounded-bold-duotone.svg';
 import boxIcon from '../../assets/solar_box-bold-duotone.svg';
@@ -106,6 +107,7 @@ const Permissions2 = () => {
     if (window.confirm('Are you sure you want to remove this item?')) {
       setCustomers(customers.filter((c) => c.id !== id));
       setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
+      toast.success("Deleted Successfully")
     }
   };
 
@@ -413,7 +415,7 @@ const Permissions2 = () => {
                   <th style={{ width: '12%' }}>Amount Due</th>
                   <th style={{ width: '12%' }}>Due Date</th>
                   <th style={{ width: '10%' }}>Payment Method</th>
-                  <th className="text-end" style={{ width: '6%' }}>Action</th>
+                  <th className="text-start" style={{ width: '6%' }}>Action</th>
                 </tr>
               </thead>
               <tbody>

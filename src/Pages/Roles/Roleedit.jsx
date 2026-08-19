@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { roleAPI } from '../../services/api';
+import { toast } from 'react-toastify';
 
 const Roleedit = () => {
   const navigate = useNavigate();
@@ -105,7 +106,7 @@ const Roleedit = () => {
         status: formData.status,
       });
 
-      alert('Role Information saved successfully!');
+      toast.success('Role Information saved successfully!');
       navigate('/roles');
     } catch (err) {
       console.error('Failed to update role:', err);
