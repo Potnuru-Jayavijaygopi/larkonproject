@@ -254,6 +254,14 @@ export const reviewAPI = {
   }
 };
 
+// Pricing APIs
+export const pricingAPI = {
+  getPlans: async () => {
+    const res = await request('/pricing-plans', { method: 'GET', requiresAuth: false });
+    return res.data || [];
+  }
+};
+
 // Auth APIs
 export const authAPI = {
   login: async (credentials) => {
@@ -296,6 +304,7 @@ export default {
   categories: categoryAPI,
   attributes: attributeAPI,
   reviews: reviewAPI,
+  pricing: pricingAPI,
   auth: authAPI,
   parseProductImages
 };
