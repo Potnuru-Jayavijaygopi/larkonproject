@@ -29,6 +29,7 @@ export const setAuthData = (token, user = null) => {
     if (token.accessToken) {
       localStorage.setItem('accessToken', token.accessToken);
       localStorage.setItem('token', token.accessToken);
+      console.log('🔑 [Token Generated & Stored]:', token.accessToken);
     }
     if (token.refreshToken) {
       localStorage.setItem('refreshToken', token.refreshToken);
@@ -41,6 +42,7 @@ export const setAuthData = (token, user = null) => {
   if (token) {
     localStorage.setItem('accessToken', token);
     localStorage.setItem('token', token);
+    console.log('🔑 [Token Generated & Stored]:', token);
   }
   if (user) {
     localStorage.setItem('user', JSON.stringify(user));
@@ -76,10 +78,11 @@ export const ensureAuthenticated = async (forceRefresh = false) => {
     });
 
     const data = await res.json();
-    if (data.success && (data.accessToken || data.data?.accessToken)) {
-      const accessToken = data.accessToken || data.data?.accessToken;
-      setAuthData(accessToken, data.user || data.data?.user);
-      return accessToken;
+    const token = data.accessToken || data.data?.accessToken || data.token;
+    if (data.success && token) {
+      setAuthData(token, data.user || data.data?.user);
+      console.log('🔑 [Auto-Authenticated Bearer Token]:', token);
+      return token;
     }
   } catch (err) {
     console.warn('Auto-auth notice:', err);
@@ -101,6 +104,10 @@ async function request(endpoint, options = {}, isRetry = false) {
     }
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
+      headers['x-access-token'] = token;
+      console.log(`🔑 [API Request ${options.method || 'GET'}] ${endpoint} -> Authorization: Bearer ${token}`);
+    } else {
+      console.warn(`⚠️ [API Request ${options.method || 'GET'}] ${endpoint} -> No Auth Token Available!`);
     }
   }
 
