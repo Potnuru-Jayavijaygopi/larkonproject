@@ -73,11 +73,14 @@ function ProductDetails() {
         if (targetProduct) {
           setProduct(targetProduct);
           if (targetProduct.size) {
-            const firstSize = targetProduct.size.split(',')[0].trim();
+            const firstSize = (Array.isArray(targetProduct.size)
+              ? targetProduct.size[0]
+              : String(targetProduct.size).split(',')[0]
+            ).trim();
             setSelectedSize(firstSize);
           }
           if (targetProduct.color) {
-            setSelectedColor(targetProduct.color.toLowerCase());
+            setSelectedColor(String(targetProduct.color).toLowerCase());
           }
         }
       } catch (err) {
@@ -124,7 +127,10 @@ function ProductDetails() {
   const reviewsCount = product?.review_count ?? 55;
 
   const displaySizes = product?.size
-    ? product.size.split(',').map((s) => s.trim().replace(/^Size\s*:\s*/i, ''))
+    ? (Array.isArray(product.size)
+        ? product.size
+        : String(product.size).split(',')
+      ).map((s) => String(s).trim().replace(/^Size\s*:\s*/i, ''))
     : ['S', 'M', 'XL', 'XXL'];
 
   const availableColors = [

@@ -50,11 +50,14 @@ function AddProduct({ onNavigate }) {
     setWeight(prod.weight || '');
     setGender(prod.gender || 'Men');
     if (prod.size) {
-      const firstSz = prod.size.split(',')[0].trim().replace(/^Size\s*:\s*/i, '');
+      const firstSz = (Array.isArray(prod.size)
+        ? prod.size[0]
+        : String(prod.size).split(',')[0]
+      ).trim().replace(/^Size\s*:\s*/i, '');
       setSelectedSize(firstSz);
     }
     if (prod.color) {
-      setSelectedColor(prod.color.toLowerCase());
+      setSelectedColor(String(prod.color).toLowerCase());
     }
     setDescription(prod.description || '');
     setTagNumber(prod.tag_number || '');

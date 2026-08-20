@@ -3,6 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { BsPlusLg, BsImage, BsStarFill, BsEye, BsPencil, BsTrash } from 'react-icons/bs';
 import { productAPI, categoryAPI, parseProductImages } from '../services/api';
 
+function formatSizes(sizeVal) {
+  if (sizeVal === null || sizeVal === undefined || sizeVal === '') {
+    return 'Size : S , M , L';
+  }
+  if (Array.isArray(sizeVal)) {
+    return `Size : ${sizeVal.join(' , ')}`;
+  }
+  if (typeof sizeVal === 'string') {
+    const trimmed = sizeVal.trim();
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) return `Size : ${parsed.join(' , ')}`;
+      } catch {}
+    }
+    if (trimmed.toLowerCase().startsWith('size')) {
+      return trimmed;
+    }
+    return `Size : ${trimmed}`;
+  }
+  return `Size : ${String(sizeVal)}`;
+}
+
 function ProductTable({ onNavigate }) {
   const navigate = useNavigate();
 
@@ -197,11 +220,7 @@ function ProductTable({ onNavigate }) {
                 const formattedPrice = item.price
                   ? `$${parseFloat(item.price).toFixed(2)}`
                   : '$0.00';
-                const formattedSizes = item.size
-                  ? item.size.toLowerCase().startsWith('size')
-                    ? item.size
-                    : `Size : ${item.size}`
-                  : 'Size : S , M , L';
+                const formattedSizes = formatSizes(item.size);
                 const categoryName =
                   categories[item.category_id] || item.tag || 'Fashion';
                 const rating = item.average_rating
