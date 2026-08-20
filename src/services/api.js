@@ -306,18 +306,31 @@ export const authAPI = {
   },
 
   register: async (userData) => {
+    const rawName = (userData.full_name || userData.name || userData.first_name || '').trim();
+    const parts = rawName.split(' ');
+    const first_name = userData.first_name || parts[0] || 'User';
+    const last_name = userData.last_name || parts.slice(1).join(' ') || 'Admin';
+    const full_name = rawName || `${first_name} ${last_name}`.trim();
+    const username = userData.username || (userData.email ? userData.email.split('@')[0] : `user_${Date.now()}`);
+
+    const payload = {
+      first_name,
+      last_name,
+      full_name,
+      username,
+      email: userData.email,
+      password: userData.password,
+      phone: userData.phone || null,
+      role: userData.role || 'user',
+    };
+
     const res = await request('/auth/register', {
       method: 'POST',
       requiresAuth: false,
-      body: JSON.stringify(userData),
-    });
-    
-    // Auto-login newly registered user to generate & store JWT access token
-    const email = userData.email;
-    const password = userData.password;
-    if (email && password) {
+    // Auto-login to generate JWT access token and save token to localStorage
+    if (userData.email && userData.password) {
       try {
-        const loginRes = await authAPI.login(email, password);
+        const loginRes = await authAPI.login(userData.email, userData.password);
         return loginRes;
       } catch (loginErr) {
         console.warn('Auto-login after register notice:', loginErr);
