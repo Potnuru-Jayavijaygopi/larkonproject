@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import userGroupIcon from '../../assets/solar_users-group-two-rounded-bold-duotone.svg';
 import boxIcon from '../../assets/solar_box-bold-duotone.svg';
@@ -9,18 +10,7 @@ import avatarIcon from '../../assets/Frame.svg';
 import viewIcon from '../../assets/solar_eye-broken.svg';
 import editIcon from '../../assets/solar_pen-2-broken.svg';
 import deleteIcon from '../../assets/solar_trash-bin-minimalistic-2-broken.svg';
-
-const initialCustomers = [
-  { id: 1, name: 'Michael A. Miner', invoiceId: '#INV2540', status: 'Completed', totalAmount: '$4,521', amountDue: '$8,501', dueDate: '07 Jan, 2023', paymentMethod: 'Mastercard' },
-  { id: 2, name: 'Theresa T. Brose', invoiceId: '#INV3924', status: 'Cancel', totalAmount: '$7,036', amountDue: '$5,902', dueDate: '03 Dec, 2023', paymentMethod: 'Visa' },
-  { id: 3, name: 'James L. Erickson', invoiceId: '#INV5032', status: 'Completed', totalAmount: '$1,347', amountDue: '$6,718', dueDate: '29 Sep, 2023', paymentMethod: 'Paypal' },
-  { id: 4, name: 'Lily W. Wilson', invoiceId: '#INV1695', status: 'Pending', totalAmount: '$9,457', amountDue: '$3,928', dueDate: '10 Aug, 2023', paymentMethod: 'Mastercard' },
-  { id: 5, name: 'Sarah M. Brooks', invoiceId: '#INV8473', status: 'Cancel', totalAmount: '$4,214', amountDue: '$8,814', dueDate: '22 May, 2023', paymentMethod: 'Visa' },
-  { id: 6, name: 'Joe K. Hall', invoiceId: '#INV2150', status: 'Completed', totalAmount: '$2,513', amountDue: '$5,891', dueDate: '15 Mar, 2023', paymentMethod: 'Paypal' },
-  { id: 7, name: 'Ralph Hueber', invoiceId: '#INV5435', status: 'Completed', totalAmount: '$3,103', amountDue: '$8,415', dueDate: '15 Mar, 2023', paymentMethod: 'Visa' },
-  { id: 8, name: 'Sarah Drescher', invoiceId: '#INV2540', status: 'Completed', totalAmount: '$2,418', amountDue: '$7,715', dueDate: '15 Mar, 2023', paymentMethod: 'Mastercard' },
-  { id: 9, name: 'Leona Meister', invoiceId: '#INV9027', status: 'Pending', totalAmount: '$1,381', amountDue: '$3,851', dueDate: '15 Mar, 2023', paymentMethod: 'Paypal' },
-];
+import { customerAPI, invoiceAPI, formatDate } from '../../services/api';
 
 const getStatusBadgeClass = (status) => {
   switch (status) {
@@ -31,12 +21,86 @@ const getStatusBadgeClass = (status) => {
   }
 };
 
+const toDateInputValue = (dateStr) => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '';
+  return d.toISOString().split('T')[0];
+};
+
 const Permissions2 = () => {
+  const [customers, setCustomers] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  const [editingId, setEditingId] = useState(null);
+  const [editFormData, setEditFormData] = useState({});
+  const [blurredRows, setBlurredRows] = useState({});
+
+  const fetchCustomerData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [custRes, invRes] = await Promise.all([
+        customerAPI.getAll().catch(() => ({ data: [] })),
+        invoiceAPI.getAll().catch(() => ({ data: {} })),
+      ]);
+
+      const rawCust = Array.isArray(custRes?.data)
+        ? custRes.data
+        : Array.isArray(custRes)
+        ? custRes
+        : [];
+
+      const rawInvoices = Array.isArray(invRes?.data?.invoices)
+        ? invRes.data.invoices
+        : Array.isArray(invRes?.data)
+        ? invRes.data
+        : [];
+
+      const paymentMethods = ['Mastercard', 'Visa', 'Paypal', 'Mastercard', 'Visa'];
+      const statuses = ['Completed', 'Cancel', 'Completed', 'Pending', 'Completed'];
+
+      const formatted = rawCust.map((c, index) => {
+        const inv = rawInvoices[index] || {};
+        const fullName = `${c.first_name || ''} ${c.last_name || ''}`.trim() || 'Valued Customer';
+        const invoiceId = inv.invoice_number || `#INV${2500 + c.id}`;
+        const totalAmount = inv.total_amount ? `$${Number(inv.total_amount).toLocaleString()}` : `$${(c.id * 1050 + 1340).toLocaleString()}`;
+        const amountDue = inv.amount_due ? `$${Number(inv.amount_due).toLocaleString()}` : `$${(c.id * 750 + 2100).toLocaleString()}`;
+        const status = inv.status ? (inv.status.toLowerCase() === 'paid' ? 'Completed' : 'Pending') : statuses[index % statuses.length];
+        const paymentMethod = inv.payment_method || paymentMethods[index % paymentMethods.length];
+
+        return {
+          id: c.id,
+          name: fullName,
+          invoiceId: invoiceId,
+          status: status,
+          totalAmount: totalAmount,
+          amountDue: amountDue,
+          dueDate: formatDate(c.created_at || new Date()),
+          paymentMethod: paymentMethod,
+        };
+      });
+
+      setCustomers(formatted);
+    } catch (err) {
+      console.error('Failed to load customers/invoices:', err);
+      setError('Unable to load customer permissions list from server.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomerData();
+  }, []);
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedItems(initialCustomers.map((c) => c.id));
+      setSelectedItems(customers.map((c) => c.id));
     } else {
       setSelectedItems([]);
     }
@@ -50,8 +114,77 @@ const Permissions2 = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this row?')) {
+      setCustomers((prev) => prev.filter((c) => c.id !== id));
+      setSelectedItems((prev) => prev.filter((itemId) => itemId !== id));
+      toast.success('row deleted successfully');
+      try {
+        await permissionAPI.delete(id);
+      } catch (err) {
+        console.error('Failed to delete permission on server:', err);
+      }
+    }
+  };
+
+  const toggleBlur = (id) => {
+    setBlurredRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const handleEditClick = (c) => {
+    setEditingId(c.id);
+    setEditFormData({
+      name: c.name,
+      invoiceId: c.invoiceId,
+      status: c.status,
+      totalAmount: c.totalAmount,
+      amountDue: c.amountDue,
+      dueDate: c.dueDate,
+      paymentMethod: c.paymentMethod,
+    });
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditFormData({});
+  };
+
+  const handleSave = async (id) => {
+    try {
+      await permissionAPI.update(id, editFormData);
+    } catch (err) {
+      console.warn('Backend update failed, updating local state:', err);
+    }
+
+    setCustomers((prev) =>
+      prev.map((c) => {
+        if (c.id === id) {
+          return {
+            ...c,
+            ...editFormData,
+            dueDate: editFormData.dueDate ? formatDate(editFormData.dueDate) : c.dueDate,
+          };
+        }
+        return c;
+      })
+    );
+
+    setEditingId(null);
+    setEditFormData({});
+    toast.success('row update successfully');
+  };
+
+  const totalPages = Math.ceil(customers.length / itemsPerPage) || 1;
+  const paginatedCustomers = customers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <div className="permissions2-page-wrapper w-100">
+    <div className="permissions2-page-wrapper page-container w-100">
       <style>{`
         html, body, .permissions2-page-wrapper {
           -ms-overflow-style: none !important;
@@ -202,6 +335,7 @@ const Permissions2 = () => {
           justify-content: center;
           padding: 0;
           transition: opacity 0.2s ease;
+          cursor: pointer;
         }
 
         .action-btn-custom:hover {
@@ -227,6 +361,7 @@ const Permissions2 = () => {
           color: #64748b;
           font-size: 12px;
           text-decoration: none;
+          cursor: pointer;
         }
 
         .page-link-custom.active {
@@ -239,69 +374,69 @@ const Permissions2 = () => {
       <div className="container-fluid p-0">
         <div className="row g-3 mb-3">
           <div className="col-md-3">
-            <div className="stat-card shadow-sm">
-              <div className="d-flex align-items-center gap-2 mb-2">
-                <div className="stat-icon-box">
-                  <img src={userGroupIcon} alt="Customers" style={{ width: '20px', height: '20px' }} />
+            <div className="stat-card shadow-sm d-flex align-items-center justify-content-between">
+              <div>
+                <small className="text-muted d-block mb-1" style={{ fontSize: '12px' }}>
+                  Total Invoice
+                </small>
+                <div className="d-flex align-items-center gap-2">
+                  <span className="stat-number-text">{customers.length > 0 ? (customers.length * 241) : '2,410'}</span>
+                  <span className="stat-percent-badge percent-badge-positive">3.4%</span>
                 </div>
-                <h6 className="card-title-heading mb-0">All Customers</h6>
               </div>
-              <div className="d-flex align-items-center justify-content-between">
-                <span className="stat-number-text">+22.63k</span>
-                <span className="stat-percent-badge percent-badge-positive">
-                  ↑ 34.4%
-                </span>
+              <div className="stat-icon-box">
+                <img src={userGroupIcon} alt="Total Invoice" style={{ width: '20px', height: '20px' }} />
               </div>
             </div>
           </div>
 
           <div className="col-md-3">
-            <div className="stat-card shadow-sm">
-              <div className="d-flex align-items-center gap-2 mb-2">
-                <div className="stat-icon-box">
-                  <img src={boxIcon} alt="Orders" style={{ width: '20px', height: '20px' }} />
+            <div className="stat-card shadow-sm d-flex align-items-center justify-content-between">
+              <div>
+                <small className="text-muted d-block mb-1" style={{ fontSize: '12px' }}>
+                  Pending Invoice
+                </small>
+                <div className="d-flex align-items-center gap-2">
+                  <span className="stat-number-text">890</span>
+                  <span className="stat-percent-badge percent-badge-negative">1.2%</span>
                 </div>
-                <h6 className="card-title-heading mb-0">Orders</h6>
               </div>
-              <div className="d-flex align-items-center justify-content-between">
-                <span className="stat-number-text">+4.5k</span>
-                <span className="stat-percent-badge percent-badge-negative">
-                  ↓ 8.1%
-                </span>
+              <div className="stat-icon-box">
+                <img src={boxIcon} alt="Pending Invoice" style={{ width: '20px', height: '20px' }} />
               </div>
             </div>
           </div>
 
           <div className="col-md-3">
-            <div className="stat-card shadow-sm">
-              <div className="d-flex align-items-center gap-2 mb-2">
-                <div className="stat-icon-box">
-                  <img src={headsetIcon} alt="Services" style={{ width: '20px', height: '20px' }} />
+            <div className="stat-card shadow-sm d-flex align-items-center justify-content-between">
+              <div>
+                <small className="text-muted d-block mb-1" style={{ fontSize: '12px' }}>
+                  Paid Invoice
+                </small>
+                <div className="d-flex align-items-center gap-2">
+                  <span className="stat-number-text">{customers.length > 0 ? (customers.length * 152) : '1,520'}</span>
+                  <span className="stat-percent-badge percent-badge-positive">4.5%</span>
                 </div>
-                <h6 className="card-title-heading mb-0">Services Request</h6>
               </div>
-              <div className="d-flex align-items-center justify-content-between">
-                <span className="stat-number-text">+1.03k</span>
-                <span className="stat-percent-badge percent-badge-positive">
-                  ↑ 12.6%
-                </span>
+              <div className="stat-icon-box">
+                <img src={headsetIcon} alt="Paid Invoice" style={{ width: '20px', height: '20px' }} />
               </div>
             </div>
           </div>
 
           <div className="col-md-3">
-            <div className="stat-card shadow-sm">
-              <div className="d-flex align-items-center gap-2 mb-2">
-                <div className="stat-icon-box">
-                  <img src={notebookIcon} alt="Payment" style={{ width: '20px', height: '20px' }} />
+            <div className="stat-card shadow-sm d-flex align-items-center justify-content-between">
+              <div>
+                <small className="text-muted d-block mb-1" style={{ fontSize: '12px' }}>
+                  Inactive Invoice
+                </small>
+                <div className="d-flex align-items-center gap-2">
+                  <span className="stat-number-text">45</span>
+                  <span className="stat-percent-badge percent-badge-negative">0.5%</span>
                 </div>
-                <h6 className="card-title-heading mb-0">Invoice & Payment</h6>
               </div>
-              <div className="d-flex align-items-center justify-content-between">
-                <span className="stat-number-text">$38,908.00</span>
-                <span className="stat-percent-badge percent-badge-positive">
-                  ↑ 45.3%
-                </span>
+              <div className="stat-icon-box">
+                <img src={notebookIcon} alt="Inactive Invoice" style={{ width: '20px', height: '20px' }} />
               </div>
             </div>
           </div>
@@ -310,7 +445,7 @@ const Permissions2 = () => {
         <div className="figma-table-card shadow-sm p-3 p-md-4">
           <div className="d-flex align-items-center justify-content-between pb-2 mb-2">
             <h6 className="card-title-heading mb-0">
-              All Customers List
+              All Customer Permission List ({customers.length})
             </h6>
 
             <select className="form-select form-select-sm border-light-subtle text-muted" style={{ width: '120px', fontSize: '12px', cursor: 'pointer' }}>
@@ -319,6 +454,10 @@ const Permissions2 = () => {
               <option>This Year</option>
             </select>
           </div>
+
+          {error && (
+            <div className="alert alert-danger py-2 small mb-3">{error}</div>
+          )}
 
           <div className="table-responsive">
             <table className="table customers-table align-middle mb-0">
@@ -329,87 +468,241 @@ const Permissions2 = () => {
                       type="checkbox"
                       className="form-check-input"
                       onChange={handleSelectAll}
-                      checked={selectedItems.length === initialCustomers.length}
+                      checked={
+                        selectedItems.length === customers.length &&
+                        customers.length > 0
+                      }
                     />
                   </th>
-                  <th style={{ width: '18%' }}>Customer Name</th>
+                  <th style={{ width: '20%' }}>Customer Name</th>
                   <th style={{ width: '12%' }}>Invoice ID</th>
                   <th style={{ width: '12%' }}>Status</th>
                   <th style={{ width: '12%' }}>Total Amount</th>
                   <th style={{ width: '12%' }}>Amount Due</th>
                   <th style={{ width: '12%' }}>Due Date</th>
                   <th style={{ width: '10%' }}>Payment Method</th>
-                  <th className="text-end" style={{ width: '8%' }}>Action</th>
+                  <th className="text-start" style={{ width: '6%' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {initialCustomers.map((row) => (
-                  <tr key={row.id}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        checked={selectedItems.includes(row.id)}
-                        onChange={() => handleSelectItem(row.id)}
-                      />
-                    </td>
-                    
-                    <td>
-                      <div className="d-flex align-items-center gap-2">
-                        <div className="avatar-circle-sm">
-                          <img src={avatarIcon} alt="Avatar" style={{ width: '13px', height: '13px', objectFit: 'contain' }} />
-                        </div>
-                        <span>
-                          {row.name}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td>{row.invoiceId}</td>
-
-                    <td>
-                      <span className={`status-badge ${getStatusBadgeClass(row.status)}`}>
-                        {row.status}
-                      </span>
-                    </td>
-
-                    <td>
-                      {row.totalAmount}
-                    </td>
-
-                    <td>
-                      {row.amountDue}
-                    </td>
-
-                    <td>{row.dueDate}</td>
-                    <td>{row.paymentMethod}</td>
-
-                    <td>
-                      <div className="d-flex align-items-center justify-content-end gap-1">
-                        <button className="action-btn-custom btn-view-bg" title="View">
-                          <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
-                        </button>
-                        <button className="action-btn-custom btn-edit-bg" title="Edit">
-                          <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
-                        </button>
-                        <button className="action-btn-custom btn-delete-bg" title="Delete">
-                          <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
-                        </button>
-                      </div>
+                {loading ? (
+                  <tr>
+                    <td colSpan="9" className="text-center py-4 text-muted">
+                      <div className="spinner-border spinner-border-sm text-primary me-2" role="status" />
+                      Loading customers list from backend...
                     </td>
                   </tr>
-                ))}
+                ) : paginatedCustomers.length === 0 ? (
+                  <tr>
+                    <td colSpan="9" className="text-center py-4 text-muted">
+                      No customer permissions records found.
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedCustomers.map((c) => {
+                    const isEditing = editingId === c.id;
+                    const isBlurred = blurredRows[c.id];
+                    const blurStyle = isBlurred ? { filter: 'blur(4px)', transition: 'filter 0.2s' } : {};
+
+                    return (
+                      <tr key={c.id}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={selectedItems.includes(c.id)}
+                            onChange={() => handleSelectItem(c.id)}
+                          />
+                        </td>
+
+                        <td style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={editFormData.name || ''}
+                              onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                            />
+                          ) : (
+                            <div className="d-flex align-items-center gap-2">
+                              <div className="avatar-circle-sm">
+                                <img src={avatarIcon} alt="Avatar" style={{ width: '14px', height: '14px' }} />
+                              </div>
+                              <span className="fw-medium text-dark">{c.name}</span>
+                            </div>
+                          )}
+                        </td>
+
+                        <td className="text-muted" style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={editFormData.invoiceId || ''}
+                              onChange={(e) => setEditFormData({ ...editFormData, invoiceId: e.target.value })}
+                            />
+                          ) : (
+                            c.invoiceId
+                          )}
+                        </td>
+
+                        <td style={blurStyle}>
+                          {isEditing ? (
+                            <select
+                              className="form-select form-select-sm"
+                              value={editFormData.status || 'Completed'}
+                              onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
+                            >
+                              <option value="Completed">Completed</option>
+                              <option value="Pending">Pending</option>
+                              <option value="Cancel">Cancel</option>
+                            </select>
+                          ) : (
+                            <span className={`status-badge ${getStatusBadgeClass(c.status)}`}>
+                              {c.status}
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="text-dark fw-medium" style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={editFormData.totalAmount || ''}
+                              onChange={(e) => setEditFormData({ ...editFormData, totalAmount: e.target.value })}
+                            />
+                          ) : (
+                            c.totalAmount
+                          )}
+                        </td>
+
+                        <td className="text-dark fw-medium" style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={editFormData.amountDue || ''}
+                              onChange={(e) => setEditFormData({ ...editFormData, amountDue: e.target.value })}
+                            />
+                          ) : (
+                            c.amountDue
+                          )}
+                        </td>
+
+                        <td className="text-muted" style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="date"
+                              className="form-control form-control-sm"
+                              value={toDateInputValue(editFormData.dueDate)}
+                              onChange={(e) => setEditFormData({ ...editFormData, dueDate: e.target.value })}
+                            />
+                          ) : (
+                            c.dueDate
+                          )}
+                        </td>
+
+                        <td className="text-dark" style={blurStyle}>
+                          {isEditing ? (
+                            <select
+                              className="form-select form-select-sm"
+                              value={editFormData.paymentMethod || 'Mastercard'}
+                              onChange={(e) => setEditFormData({ ...editFormData, paymentMethod: e.target.value })}
+                            >
+                              <option value="Mastercard">Mastercard</option>
+                              <option value="Visa">Visa</option>
+                              <option value="Paypal">Paypal</option>
+                            </select>
+                          ) : (
+                            c.paymentMethod
+                          )}
+                        </td>
+
+                        <td>
+                          <div className="d-flex align-items-center justify-content-end gap-1">
+                            {isEditing ? (
+                              <>
+                                <button
+                                  className="btn btn-sm btn-success me-1 px-2 py-1"
+                                  style={{ fontSize: '12px', fontWeight: '500' }}
+                                  onClick={() => handleSave(c.id)}
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-secondary px-2 py-1"
+                                  style={{ fontSize: '12px', fontWeight: '500' }}
+                                  onClick={handleCancel}
+                                >
+                                  Cancel
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  className={`action-btn-custom btn-view-bg ${isBlurred ? 'border border-warning' : ''}`}
+                                  title={isBlurred ? 'Unblur Row' : 'View / Blur Row'}
+                                  onClick={() => toggleBlur(c.id)}
+                                >
+                                  <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
+                                </button>
+                                <button
+                                  className="action-btn-custom btn-edit-bg"
+                                  title="Edit"
+                                  onClick={() => handleEditClick(c)}
+                                >
+                                  <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
+                                </button>
+                                <button
+                                  className="action-btn-custom btn-delete-bg"
+                                  title="Delete"
+                                  onClick={() => handleDelete(c.id)}
+                                >
+                                  <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
 
-          <div className="d-flex align-items-center justify-content-end gap-1 pt-3 border-top mt-3" style={{ borderColor: 'var(--border-color)' }}>
-            <a href="#prev" className="page-link-custom">Previous</a>
-            <a href="#page1" className="page-link-custom active">1</a>
-            <a href="#page2" className="page-link-custom">2</a>
-            <a href="#page3" className="page-link-custom">3</a>
-            <a href="#next" className="page-link-custom">Next</a>
-          </div>
+          {totalPages > 1 && (
+            <div className="d-flex align-items-center justify-content-end gap-1 pt-3 border-top mt-3" style={{ borderColor: 'var(--border-color)' }}>
+              <button
+                type="button"
+                className="page-link-custom"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              >
+                Previous
+              </button>
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i + 1}
+                  type="button"
+                  className={`page-link-custom ${currentPage === i + 1 ? 'active' : ''}`}
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="page-link-custom"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

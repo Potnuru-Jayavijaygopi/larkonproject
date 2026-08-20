@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import bgBanner from '../assets/bg.png';
 import imageIcon from '../assets/Frame.svg';
 import penIcon from '../assets/solar_pen-new-square-broken.svg';
@@ -22,10 +22,52 @@ import clockIcon from '../assets/solar_clock-circle-bold-duotone.svg';
 import cupIcon from '../assets/solar_cup-star-bold-duotone.png';
 import notebookIcon from '../assets/solar_notebook-bold-duotone_.svg';
 import qrCodeImg from '../assets/image 25.png';
+import { profileAPI } from '../services/api';
 
 const Profile = () => {
+  const [profile, setProfile] = useState({
+    full_name: 'Gaston Lapierre',
+    designation: 'Project Head Manager',
+    bio: "I'm the model of the new Project Head Manager. I've combined a deep background in brand management at blue chip CPG companies with eCommerce growth marketing at the world's biggest retailer. I've run SingleFire I've created world-class campaigns; I've built digital marketing organizations from the ground up. I have over 20 years' experience leading...",
+    address: 'Pittsburgh, PA 15212',
+    email: 'admin@larkon.com',
+    profile_image: null,
+  });
+
+  const [copied, setCopied] = useState(false);
+  const shareUrl = 'https://larkon-mileage.com';
+  const shareTitle = `Check out ${profile.full_name}'s Profile on Larkon`;
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const data = await profileAPI.getProfile(1);
+        if (data) {
+          setProfile((prev) => ({
+            ...prev,
+            full_name: data.full_name || data.name || prev.full_name,
+            designation: data.designation || data.role || prev.designation,
+            bio: data.bio || prev.bio,
+            address: data.address || prev.address,
+            email: data.email || prev.email,
+            profile_image: data.profile_image || prev.profile_image,
+          }));
+        }
+      } catch (err) {
+        console.warn('Using default profile view:', err);
+      }
+    };
+    loadProfile();
+  }, []);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="profile-page-wrapper w-100">
+    <div className="profile-page-wrapper page-container w-100">
       <style>{`
         .profile-page-wrapper {
           font-family: 'Public Sans', sans-serif !important;
@@ -92,6 +134,16 @@ const Profile = () => {
           border-right: 1px solid var(--border-color, #e2e8f0);
         }
 
+        .social-share-btn {
+          transition: transform 0.2s ease, opacity 0.2s ease;
+          text-decoration: none;
+        }
+
+        .social-share-btn:hover {
+          transform: translateY(-2px);
+          opacity: 0.85;
+        }
+
         @media (max-width: 768px) {
           .stat-item-border {
             border-right: none;
@@ -130,7 +182,7 @@ const Profile = () => {
                     }}
                   >
                     <img 
-                      src={imageIcon} 
+                      src={profile.profile_image || imageIcon} 
                       alt="Profile Logo" 
                       style={{ width: '38px', height: '38px', objectFit: 'contain' }} 
                     />
@@ -139,7 +191,7 @@ const Profile = () => {
                     <div>
                       <div className="d-flex align-items-center gap-2">
                         <h4 className="font-heading fw-bold mb-0" style={{ fontSize: '1.125rem' }}>
-                          Gaston Lapierre
+                          {profile.full_name}
                         </h4>
                         <img 
                           src={badgeCheckIcon} 
@@ -148,7 +200,7 @@ const Profile = () => {
                         />
                       </div>
                       <p className="text-muted small mb-0 mt-1" style={{ fontSize: '0.825rem' }}>
-                        Project Head Manager
+                        {profile.designation}
                       </p>
                     </div>
 
@@ -236,7 +288,7 @@ const Profile = () => {
                 <div className="d-flex flex-column gap-2 small text-secondary">
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={projectHeadIcon} alt="Manager" style={{ width: '16px', height: '16px' }} /></div>
-                    <span>Project Head Manager</span>
+                    <span>{profile.designation}</span>
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={oxfordIcon} alt="Education" style={{ width: '16px', height: '16px' }} /></div>
@@ -244,7 +296,7 @@ const Profile = () => {
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={locationIcon} alt="Location" style={{ width: '16px', height: '16px' }} /></div>
-                    <span>Lives in <strong className="text-dark">Pittsburgh, PA 15212</strong></span>
+                    <span>Lives in <strong className="text-dark">{profile.address}</strong></span>
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={customerIcon} alt="Followers" style={{ width: '16px', height: '16px' }} /></div>
@@ -252,11 +304,11 @@ const Profile = () => {
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={emailIcon} alt="Email" style={{ width: '16px', height: '16px' }} /></div>
-                    <span>Email: <strong className="text-orange-custom">hello@dundermuffilin.com</strong></span>
+                    <span>Email: <a href={`mailto:${profile.email}`} className="text-orange-custom text-decoration-none fw-bold">{profile.email}</a></span>
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={linkIcon} alt="Website" style={{ width: '16px', height: '16px' }} /></div>
-                    <span className="text-orange-custom">www.larkon.co</span>
+                    <a href="https://www.larkon.co" target="_blank" rel="noopener noreferrer" className="text-orange-custom text-decoration-none">www.larkon.co</a>
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={websiteIcon} alt="Website" style={{ width: '16px', height: '16px' }} /></div>
@@ -303,7 +355,7 @@ const Profile = () => {
                     marginBottom: '12px' 
                   }}
                 >
-                  I'm the model of the new Project Head Manager. I've combined a deep background in brand management at blue chip CPG companies with eCommerce growth marketing at the world's biggest retailer. I've run SingleFire I've created world-class campaigns; I've built digital marketing organizations from the ground up. I have over 20 years' experience leading...{' '}
+                  {profile.bio}{' '}
                   <span className="text-orange-custom cursor-pointer" style={{ fontWeight: '400' }}>
                     See more
                   </span>
@@ -320,7 +372,7 @@ const Profile = () => {
                       marginBottom: '12px' 
                     }}
                   >
-                    When it comes to Project Head Manager, I believe in a holistic approach that combines creativity with technical expertise. I start by understanding your unique vision and goals, then work tirelessly to bring that vision to life. Whether you need a sleek portfolio site, an engaging e-commerce platform, or anything in between, I've got you covered.
+                    When it comes to {profile.designation}, I believe in a holistic approach that combines creativity with technical expertise. I start by understanding your unique vision and goals, then work tirelessly to bring that vision to life. Whether you need a sleek portfolio site, an engaging e-commerce platform, or anything in between, I've got you covered.
                   </p>
                 </div>
 
@@ -531,19 +583,56 @@ const Profile = () => {
                   </div>
 
                   <div className="d-flex align-items-center justify-content-center gap-2 my-3">
-                    <a href="#fb" className="d-flex align-items-center justify-content-center rounded-circle" style={{ width: '32px', height: '32px', backgroundColor: '#FFF5F3' }}>
-                      <i className="bi bi-facebook" style={{ color: 'var(--primary-orange)', fontSize: '14px' }}></i>
+                    <a 
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      title="Share on Facebook"
+                      className="social-share-btn d-flex align-items-center justify-content-center rounded-circle" 
+                      style={{ width: '32px', height: '32px', backgroundColor: '#FFF5F3' }}
+                    >
+                      <i className="bi bi-facebook" style={{ color: 'var(--primary-orange, #ff5e29)', fontSize: '14px' }}></i>
                     </a>
-                    <a href="#insta" className="d-flex align-items-center justify-content-center rounded-circle" style={{ width: '32px', height: '32px', backgroundColor: '#FFF0F5' }}>
+
+                    <a 
+                      href="https://www.instagram.com/" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      title="Visit Instagram"
+                      className="social-share-btn d-flex align-items-center justify-content-center rounded-circle" 
+                      style={{ width: '32px', height: '32px', backgroundColor: '#FFF0F5' }}
+                    >
                       <i className="bi bi-instagram" style={{ color: '#E1306C', fontSize: '14px' }}></i>
                     </a>
-                    <a href="#twitter" className="d-flex align-items-center justify-content-center rounded-circle" style={{ width: '32px', height: '32px', backgroundColor: '#E0F7FA' }}>
+
+                    <a 
+                      href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      title="Share on X"
+                      className="social-share-btn d-flex align-items-center justify-content-center rounded-circle" 
+                      style={{ width: '32px', height: '32px', backgroundColor: '#E0F7FA' }}
+                    >
                       <i className="bi bi-twitter" style={{ color: '#00BCD4', fontSize: '14px' }}></i>
                     </a>
-                    <a href="#whatsapp" className="d-flex align-items-center justify-content-center rounded-circle" style={{ width: '32px', height: '32px', backgroundColor: '#E8F5E9' }}>
+
+                    <a 
+                      href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`${shareTitle} - ${shareUrl}`)}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      title="Share on WhatsApp"
+                      className="social-share-btn d-flex align-items-center justify-content-center rounded-circle" 
+                      style={{ width: '32px', height: '32px', backgroundColor: '#E8F5E9' }}
+                    >
                       <i className="bi bi-whatsapp" style={{ color: '#4CAF50', fontSize: '14px' }}></i>
                     </a>
-                    <a href="#mail" className="d-flex align-items-center justify-content-center rounded-circle" style={{ width: '32px', height: '32px', backgroundColor: '#FFFDE7' }}>
+
+                    <a 
+                      href={`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`Check out this profile:\n${shareUrl}`)}`} 
+                      title="Share via Email"
+                      className="social-share-btn d-flex align-items-center justify-content-center rounded-circle" 
+                      style={{ width: '32px', height: '32px', backgroundColor: '#FFFDE7' }}
+                    >
                       <i className="bi bi-envelope" style={{ color: '#FFC107', fontSize: '14px' }}></i>
                     </a>
                   </div>
@@ -560,7 +649,7 @@ const Profile = () => {
                     style={{ 
                       backgroundColor: '#F8F9FA', 
                       borderRadius: '6px', 
-                      border: '1px solid var(--border-color)',
+                      border: '1px solid var(--border-color, #e2e8f0)',
                       height: '38px' 
                     }}
                   >
@@ -573,21 +662,25 @@ const Profile = () => {
                         whiteSpace: 'nowrap' 
                       }}
                     >
-                      https://larkon-mileage.com
+                      {shareUrl}
                     </span>
 
                     <button 
                       type="button" 
                       className="btn p-0 border-0 d-flex align-items-center justify-content-center ms-1"
                       style={{ background: 'transparent', cursor: 'pointer' }}
-                      onClick={() => navigator.clipboard.writeText('https://larkon-mileage.com')}
+                      onClick={handleCopy}
                       title="Copy Link"
                     >
-                      <img 
-                        src={copyIcon} 
-                        alt="Copy" 
-                        style={{ width: '18px', height: '18px', objectFit: 'contain' }} 
-                      />
+                      {copied ? (
+                        <span className="text-success fw-bold" style={{ fontSize: '11px' }}>Copied!</span>
+                      ) : (
+                        <img 
+                          src={copyIcon} 
+                          alt="Copy" 
+                          style={{ width: '18px', height: '18px', objectFit: 'contain' }} 
+                        />
+                      )}
                     </button>
                   </div>
 
@@ -641,7 +734,7 @@ const Profile = () => {
 
                     <div>
                       <h6 className="fw-bold text-dark mb-0 font-heading" style={{ fontSize: '0.825rem' }}>
-                        Gaston Lapierre <span className="fw-normal text-muted small">, Project Head Manager . Nov 16</span>
+                        {profile.full_name} <span className="fw-normal text-muted small">, {profile.designation} . Nov 16</span>
                       </h6>
                       <small className="text-muted" style={{ fontSize: '11px' }}>
                         Asked a question <span className="text-orange-custom" style={{ fontWeight: '500' }}>#Inbound #SaaS</span>
@@ -687,7 +780,7 @@ const Profile = () => {
 
                     <div>
                       <h6 className="fw-bold text-dark mb-0 font-heading" style={{ fontSize: '0.825rem' }}>
-                        Gaston Lapierre <span className="fw-normal text-muted small">, Project Head Manager . Nov 11</span>
+                        {profile.full_name} <span className="fw-normal text-muted small">, {profile.designation} . Nov 11</span>
                       </h6>
                       <small className="text-muted" style={{ fontSize: '11px' }}>
                         Asked a question <span className="text-orange-custom" style={{ fontWeight: '500' }}>#LatAm #Europe</span>
@@ -733,7 +826,7 @@ const Profile = () => {
 
                     <div>
                       <h6 className="fw-bold text-dark mb-0 font-heading" style={{ fontSize: '0.825rem' }}>
-                        Gaston Lapierre <span className="fw-normal text-muted small">, Project Head Manager . Nov 08</span>
+                        {profile.full_name} <span className="fw-normal text-muted small">, {profile.designation} . Nov 08</span>
                       </h6>
                       <small className="text-muted" style={{ fontSize: '11px' }}>
                         Asked a question <span className="text-orange-custom" style={{ fontWeight: '500' }}>#Performance-marketing #CRM</span>

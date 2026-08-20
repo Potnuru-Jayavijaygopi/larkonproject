@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { roleAPI } from '../../services/api';
+import { toast } from 'react-toastify';
 
 const RoleCreate = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     rolesName: '',
-    workspace: '',
+    workspace: 'Facebook',
     userName: '',
     status: 'Active',
   });
 
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(['Manager', 'Product']);
   const [tagInput, setTagInput] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,15 +39,40 @@ const RoleCreate = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Created New Role:', { ...formData, tags });
-    alert('New Role created successfully!');
-    navigate('/roles/list');
+    if (!formData.rolesName.trim()) {
+      setError('Please enter a role name.');
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      const descriptionPayload = JSON.stringify({
+        workspace: formData.workspace,
+        tags: tags,
+        users: formData.userName ? [formData.userName] : ['Admin'],
+      });
+
+      await roleAPI.create({
+        role_name: formData.rolesName.trim(),
+        description: descriptionPayload,
+        status: formData.status,
+      });
+
+      toast.success('New Role created successfully!');
+      navigate('/roles');
+    } catch (err) {
+      console.error('Failed to create role:', err);
+      setError(err.message || 'Failed to create role on the server.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div className="role-create-wrapper w-100">
+    <div className="role-create-wrapper page-container w-100">
       <style>{`
         .role-create-wrapper {
           font-family: 'Public Sans', sans-serif !important;
@@ -64,6 +93,7 @@ const RoleCreate = () => {
           font-size: 0.95rem !important;
           color: #1e293b !important;
           line-height: 100% !important;
+          border-bottom: 1px solid var(--border-color, #e2e8f0);
         }
 
         .form-label-custom {
@@ -166,39 +196,18 @@ const RoleCreate = () => {
           background-color: var(--primary-orange-hover, #e04d1c);
           color: #ffffff;
         }
-
-        .btn-cancel-custom {
-          background-color: #f1f5f9;
-          color: #64748b;
-          border: 1px solid var(--border-color, #e2e8f0);
-          border-radius: 6px;
-          padding: 8px 20px;
-          font-size: 0.825rem;
-          font-weight: 600;
-          cursor: pointer;
-        }
-
-        .btn-cancel-custom:hover {
-          background-color: #e2e8f0;
-          color: #334155;
-        }
       `}</style>
 
       <div className="container-fluid p-0">
         <form onSubmit={handleSubmit}>
           <div className="figma-card-container shadow-sm p-3 p-md-4">
-            <div className="d-flex align-items-center justify-content-between pb-3 mb-4 border-bottom" style={{ borderColor: 'var(--border-color, #e2e8f0)' }}>
-              <h6 className="card-header-title mb-0">
-                Roles Information
-              </h6>
-              <button 
-                type="button" 
-                className="btn-cancel-custom"
-                onClick={() => navigate('/roles/list')}
-              >
-                ← Back to Roles List
-              </button>
-            </div>
+            <h6 className="card-header-title pb-3 mb-4">
+              Roles Information
+            </h6>
+
+            {error && (
+              <div className="alert alert-danger py-2 small mb-3">{error}</div>
+            )}
 
             <div className="row g-3 g-md-4 mb-3">
               <div className="col-md-6">
@@ -209,7 +218,7 @@ const RoleCreate = () => {
                   className="form-control form-control-custom w-100"
                   value={formData.rolesName}
                   onChange={handleInputChange}
-                  placeholder="Role name"
+                  placeholder="Role name (e.g. Workspace Manager)"
                   required
                 />
               </div>
@@ -218,11 +227,10 @@ const RoleCreate = () => {
                 <label className="form-label-custom">Add Workspace</label>
                 <select
                   name="workspace"
-                  className="form-select form-select-custom w-100"
+                  className="form-select form-select-custom w-100 cursor-pointer"
                   value={formData.workspace}
                   onChange={handleInputChange}
                 >
-                  <option value="" disabled hidden>Select Workspace</option>
                   <option value="Facebook">Facebook</option>
                   <option value="Slack">Slack</option>
                   <option value="Zoom">Zoom</option>
@@ -266,7 +274,7 @@ const RoleCreate = () => {
                   className="form-control form-control-custom w-100"
                   value={formData.userName}
                   onChange={handleInputChange}
-                  placeholder="Enter name"
+                  placeholder="Enter user name (e.g. Gaston Lapierre)"
                 />
               </div>
 
@@ -306,16 +314,9 @@ const RoleCreate = () => {
               </div>
             </div>
 
-            <div className="pt-3 border-top mt-3 d-flex align-items-center gap-2" style={{ borderColor: 'var(--border-color, #e2e8f0)' }}>
-              <button type="submit" className="btn btn-create-custom">
-                Create Roles
-              </button>
-              <button 
-                type="button" 
-                className="btn btn-cancel-custom"
-                onClick={() => navigate('/roles/list')}
-              >
-                Cancel
+            <div className="pt-3 border-top mt-3" style={{ borderColor: 'var(--border-color)' }}>
+              <button type="submit" disabled={submitting} className="btn btn-create-custom">
+                {submitting ? 'Creating...' : 'Create Roles'}
               </button>
             </div>
           </div>

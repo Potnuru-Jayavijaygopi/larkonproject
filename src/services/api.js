@@ -365,6 +365,54 @@ export const authAPI = {
   },
 };
 
+// Profile API
+export const profileAPI = {
+  getProfile: async (userId = 1) => {
+    try {
+      const res = await request(`/user-profiles/${userId}`, { method: 'GET' });
+      return res.data || res;
+    } catch (e) {
+      console.warn('Profile fetch fallback to /auth/me:', e.message);
+      const res = await request('/auth/me', { method: 'GET' });
+      return res.data || res;
+    }
+  },
+  updateProfile: async (userId = 1, profileData) => {
+    const res = await request(`/user-profiles/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(profileData),
+    });
+    return res.data || res;
+  },
+};
+
+// Role API
+export const roleAPI = {
+  getAll: async () => (await request('/roles', { method: 'GET' })).data || [],
+  getById: async (id) => (await request(`/roles/${id}`, { method: 'GET' })).data || {},
+  create: async (roleData) => (await request('/roles', { method: 'POST', body: JSON.stringify(roleData) })).data || {},
+  update: async (id, roleData) => (await request(`/roles/${id}`, { method: 'PUT', body: JSON.stringify(roleData) })).data || {},
+  delete: async (id) => (await request(`/roles/${id}`, { method: 'DELETE' })).data || {},
+};
+
+// Permission API
+export const permissionAPI = {
+  getAll: async () => (await request('/permissions', { method: 'GET' })).data || [],
+  getById: async (id) => (await request(`/permissions/${id}`, { method: 'GET' })).data || {},
+  create: async (data) => (await request('/permissions', { method: 'POST', body: JSON.stringify(data) })).data || {},
+  update: async (id, data) => (await request(`/permissions/${id}`, { method: 'PUT', body: JSON.stringify(data) })).data || {},
+  delete: async (id) => (await request(`/permissions/${id}`, { method: 'DELETE' })).data || {},
+};
+
+// Customer API
+export const customerAPI = {
+  getAll: async () => (await request('/customers', { method: 'GET' })).data || [],
+  getById: async (id) => (await request(`/customers/${id}`, { method: 'GET' })).data || {},
+  create: async (data) => (await request('/customers', { method: 'POST', body: JSON.stringify(data) })).data || {},
+  update: async (id, data) => (await request(`/customers/${id}`, { method: 'PUT', body: JSON.stringify(data) })).data || {},
+  delete: async (id) => (await request(`/customers/${id}`, { method: 'DELETE' })).data || {},
+};
+
 // Coupon API
 export const couponAPI = {
   getAll: async () => (await request('/coupons', { method: 'GET' })).data || [],

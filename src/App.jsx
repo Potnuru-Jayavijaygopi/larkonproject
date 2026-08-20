@@ -42,6 +42,13 @@ import Reviews from './Pages/Reviews';
 import Chat from './Pages/Chat';
 import Email from './Pages/Email';
 
+import Profile from './Pages/Profile';
+import RolesList from './Pages/Roles/RolesList';
+import RoleCreate from './Pages/Roles/RoleCreate';
+import Roleedit from './Pages/Roles/Roleedit';
+import Permissions from './Pages/Permissions/Permissions';
+import Permissions2 from './Pages/Permissions/Permissions2';
+
 import Calendar from './Pages/Support/Calendar';
 import Faqs from './Pages/Support/Faqs';
 import HelpCenter from './Pages/Support/HelpCenter';
@@ -131,6 +138,19 @@ const router = createBrowserRouter([
       { path: 'coupon-add', element: <CouponAdd /> },
       { path: 'coupons/edit', element: <CouponAdd /> },
       { path: 'coupons/edit/:id', element: <CouponAdd /> },
+
+      // Profile, Roles, Permissions routes
+      { path: 'profile', element: <Profile /> },
+      { path: 'roles', element: <RolesList /> },
+      { path: 'roles/list', element: <RolesList /> },
+      { path: 'roles/create', element: <RoleCreate /> },
+      { path: 'roles/add', element: <RoleCreate /> },
+      { path: 'roles/edit', element: <Roleedit /> },
+      { path: 'roles/edit/:id', element: <Roleedit /> },
+      { path: 'permissions', element: <Permissions /> },
+      { path: 'permissions/list', element: <Permissions /> },
+      { path: 'permissions2', element: <Permissions2 /> },
+      { path: 'permissions/2', element: <Permissions2 /> },
 
       // Reviews, Chat, Email routes
       { path: 'reviews', element: <Reviews /> },
