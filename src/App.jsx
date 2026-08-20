@@ -93,13 +93,16 @@ const router = createBrowserRouter([
 
       // Purchases routes
       { path: 'purchases/list', element: <PurchaseList /> },
+      { path: 'purchases/orders', element: <OrdersList /> },
       { path: 'purchases/order-list', element: <OrdersList /> },
       { path: 'purchases/returns', element: <ReturnOrders /> },
 
       // Attributes routes
       { path: 'attributes/list', element: <AttributeList /> },
-      { path: 'attributes/add', element: <AddAttribute /> },
+      { path: 'attributes/edit', element: <AddAttribute /> },
       { path: 'attributes/edit/:id', element: <AddAttribute /> },
+      { path: 'attributes/add', element: <AddAttribute /> },
+      { path: 'attributes/add/:id', element: <AddAttribute /> },
       { path: 'attributes/create', element: <CreateAttribute /> },
 
       // Base-UI routes
