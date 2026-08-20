@@ -357,6 +357,12 @@ export const authAPI = {
   },
 };
 
+// Review API
+export const reviewAPI = {
+  getAll: async () => (await request('/reviews', { method: 'GET' })).data || [],
+  getById: async (id) => (await request(`/reviews/${id}`, { method: 'GET' })).data || {},
+};
+
 // Image helpers
 export const formatImageUrl = (imgUrl) => {
   if (!imgUrl) return '';

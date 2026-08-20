@@ -253,18 +253,9 @@ function AddCategory({ onNavigate }) {
                 className="display-6 mb-2"
                 style={{ color: "#ff6026" }}
               />
-<<<<<<< HEAD
               <h6 className="fw-bold text-dark mb-1" style={{ fontSize: "0.85rem" }}>
                 Drop your images here, or{" "}
                 <span className="cursor-pointer" style={{ color: "#ff6026" }}>
-=======
-              <h6 className="fw-bold mb-1" style={{ fontSize: "0.85rem" }}>
-                Drop your images here, or{" "}
-                <span
-                  className="cursor-pointer"
-                  style={{ color: "#ea580c", textDecoration: "underline" }}
-                >
->>>>>>> category
                   click to browse
                 </span>
               </h6>
