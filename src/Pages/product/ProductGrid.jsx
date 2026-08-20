@@ -255,24 +255,35 @@ function ProductGrid({ onNavigate }) {
     <div className="row g-4">
       {/* Left Filter Sidebar */}
       <div className="col-lg-3 col-md-4">
-        {/* Search Filter Box */}
-        <div className="content-card p-3 mb-3">
-          <div className="position-relative">
-            <BsSearch className="position-absolute top-50 start-0 translate-middle-y ms-2 text-muted small" />
-            <input
-              type="text"
-              className="form-control form-control-sm ps-4 border-light bg-light"
-              placeholder="Search ..."
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-            />
+        <div
+          className="sticky-top"
+          style={{
+            top: "80px",
+            maxHeight: "calc(100vh - 100px)",
+            overflowY: "auto",
+            overflowX: "hidden",
+            scrollbarWidth: "thin",
+            paddingRight: "6px",
+          }}
+        >
+          {/* Search Filter Box */}
+          <div className="content-card p-3 mb-3">
+            <div className="position-relative">
+              <BsSearch className="position-absolute top-50 start-0 translate-middle-y ms-2 text-muted small" />
+              <input
+                type="text"
+                className="form-control form-control-sm ps-4 border-light bg-light"
+                placeholder="Search ..."
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Filters Card */}
-        <div className="content-card p-3">
-          {/* 1. Categories Accordion */}
-          <div className="mb-3">
+          {/* Filters Card */}
+          <div className="content-card p-3">
+            {/* 1. Categories Accordion */}
+            <div className="mb-3">
             <div
               className="filter-header-box"
               onClick={() => toggleSection("categories")}
@@ -720,6 +731,7 @@ function ProductGrid({ onNavigate }) {
           >
             Apply
           </button>
+        </div>
         </div>
       </div>
 
