@@ -11,7 +11,6 @@ function PrivacyPolicy() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
-
     useEffect(() => {
         const updateScale = () => {
             if (!containerRef.current) return;
@@ -30,7 +29,6 @@ function PrivacyPolicy() {
             window.removeEventListener("resize", updateScale);
         };
     }, []);
-
     const fetchPrivacyPolicyData = useCallback(async () => {
         try {
             setLoading(true);
@@ -52,11 +50,9 @@ function PrivacyPolicy() {
             setLoading(false);
         }
     }, []);
-
     useEffect(() => {
         fetchPrivacyPolicyData();
     }, [fetchPrivacyPolicyData]);
-
     const filteredPolicies = useMemo(() => {
         if (!searchTerm.trim()) return policies;
         const term = searchTerm.toLowerCase();
@@ -74,15 +70,13 @@ function PrivacyPolicy() {
                 className="w-full min-w-0"
                 style={{
                     height: `${2010 * scale}px`,
-                }}
-            >
+                }}>
                 <div
                     className="w-[1634px] min-h-[2010px] px-[50px]"
                     style={{
                         transform: `scale(${scale})`,
                         transformOrigin: "top left",
-                    }}
-                >
+                    }}>
                     <div className="w-[1534px] h-[158px] rounded-[12px] bg-[#D9D9D9] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center">
                         <h1 className="!text-[24px] font-[Hanken Grotesk] font-[600] leading-[100%] tracking-[0%] !text-[#FFFFFF]">Privacy Policy</h1>
                         <p className="!text-[14px] font-[Play] font-[400] leading-[100%] tracking-[0%] !text-[#FFFFFF]/50 mt-[5px]">
@@ -99,34 +93,22 @@ function PrivacyPolicy() {
                             />
                         </div>
                     </div>
-
                     {loading && policies.length === 0 ? (
-                        <div className="flex items-center justify-center h-[300px] text-[#5D7186] font-[Play]">
-                            Loading Privacy Policy...
-                        </div>
+                        <div className="flex items-center justify-center h-[300px] text-[#5D7186] font-[Play]">Loading Privacy Policy...</div>
                     ) : error && policies.length === 0 ? (
-                        <div className="flex items-center justify-center h-[300px] text-red-500 font-[Play]">
-                            Failed to load privacy policy: {error}
-                        </div>
+                        <div className="flex items-center justify-center h-[300px] text-red-500 font-[Play]">Failed to load privacy policy:{error} </div>
                     ) : filteredPolicies.length === 0 ? (
-                        <div className="flex items-center justify-center h-[300px] text-[#5D7186] font-[Play]">
-                            No policy sections found matching your search.
-                        </div>
+                        <div className="flex items-center justify-center h-[300px] text-[#5D7186] font-[Play]">No policy sections found matching your search.</div>
                     ) : (
                         filteredPolicies.map((policy, index) => (
                             <div
                                 key={policy.id || index}
-                                className="w-[1534px] min-h-[163px] rounded-[12px] bg-[#FFFFFF] shadow-[0_3px_4px_0_rgba(0,0,0,0.03)] p-[25px] mt-[30px]"
-                            >
+                                className="w-[1534px] min-h-[163px] rounded-[12px] bg-[#FFFFFF] shadow-[0_3px_4px_0_rgba(0,0,0,0.03)] p-[25px] mt-[30px]">
                                 <div className="flex gap-[12px] items-center">
                                     <img src={PrivacyIcon1} className="w-[28px] h-[28px]" alt="Privacy Icon" />
-                                    <h2 className="font-[600] !text-[24px] leading-[100%] text-[#313B5E] font-[Hanken Grotesk] font-semibold">
-                                        {policy.title}
-                                    </h2>
+                                    <h2 className="font-[600] !text-[24px] leading-[100%] text-[#313B5E] font-[Hanken Grotesk] font-semibold">{policy.title}</h2>
                                 </div>
-                                <p className="font-[400] text-[14px] leading-[20px] text-[#5D7186] mt-[20px]">
-                                    {policy.description}
-                                </p>
+                                <p className="font-[400] text-[14px] leading-[20px] text-[#5D7186] mt-[20px]">{policy.description}</p>
                             </div>
                         ))
                     )}

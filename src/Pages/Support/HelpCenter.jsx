@@ -30,7 +30,6 @@ function HelpCenter() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
-
     useEffect(() => {
         const updateScale = () => {
             if (!containerRef.current) return;
@@ -49,7 +48,6 @@ function HelpCenter() {
             window.removeEventListener("resize", updateScale);
         };
     }, []);
-
     const fetchHelpCenterData = useCallback(async () => {
         try {
             setLoading(true);
@@ -71,11 +69,9 @@ function HelpCenter() {
             setLoading(false);
         }
     }, []);
-
     useEffect(() => {
         fetchHelpCenterData();
     }, [fetchHelpCenterData]);
-
     const filteredItems = useMemo(() => {
         if (!searchTerm.trim()) return helpItems;
         const term = searchTerm.toLowerCase();
@@ -95,15 +91,13 @@ function HelpCenter() {
                 className="w-full min-w-0"
                 style={{
                     height: `${2010 * scale}px`,
-                }}
-            >
+                }}>
                 <div
                     className="w-[1534px] min-h-[2010px]"
                     style={{
                         transform: `scale(${scale})`,
                         transformOrigin: "top left",
-                    }}
-                >
+                    }}>
                     <div className="w-[1534px] h-[158px] rounded-[12px] bg-[#D9D9D9] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center">
                         <h1 className="!text-[24px] font-[Hanken Grotesk] font-[600] leading-[100%] tracking-[0%] !text-[#FFFFFF]"> Help Center </h1>
                         <h1 className="!text-[14px] font-[Play] font-[400] leading-[100%] tracking-[0%] !text-[#FFFFFF]/50 mt-[5px]"> How can we help you ? </h1>
@@ -118,19 +112,12 @@ function HelpCenter() {
                             />
                         </div>
                     </div>
-
                     {loading && helpItems.length === 0 ? (
-                        <div className="flex items-center justify-center h-[300px] text-[#5D7186] font-[Play]">
-                            Loading Help Center items...
-                        </div>
+                        <div className="flex items-center justify-center h-[300px] text-[#5D7186] font-[Play]">Loading Help Center items...</div>
                     ) : error && helpItems.length === 0 ? (
-                        <div className="flex items-center justify-center h-[300px] text-red-500 font-[Play]">
-                            Failed to load help center items: {error}
-                        </div>
+                        <div className="flex items-center justify-center h-[300px] text-red-500 font-[Play]">Failed to load help center items: {error}</div>
                     ) : filteredItems.length === 0 ? (
-                        <div className="flex items-center justify-center h-[300px] text-[#5D7186] font-[Play]">
-                            No help topics found matching your search.
-                        </div>
+                        <div className="flex items-center justify-center h-[300px] text-[#5D7186] font-[Play]">No help topics found matching your search.</div>
                     ) : (
                         <div className="flex flex-wrap gap-[20px] mt-[15px]">
                             {filteredItems.map((item, index) => {
@@ -139,22 +126,17 @@ function HelpCenter() {
                                 const videoCount = isNaN(rawCount)
                                     ? "00"
                                     : rawCount < 10
-                                    ? `0${rawCount}`
-                                    : `${rawCount}`;
+                                        ? `0${rawCount}`
+                                        : `${rawCount}`;
 
                                 return (
                                     <div
                                         key={item.id || index}
-                                        className="w-[495px] h-[223px] bg-[#FFFFFF] rounded-[12px] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] p-[24px] flex flex-col justify-between"
-                                    >
+                                        className="w-[495px] h-[223px] bg-[#FFFFFF] rounded-[12px] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] p-[24px] flex flex-col justify-between">
                                         <div>
                                             <img src={icon} className="w-[40px] h-[40px]" alt="Help Icon" />
-                                            <h3 className="!mt-[20px] !text-[18px] font-[Hanken Grotesk] font-[700] text-[#313B5E] truncate">
-                                                {item.title}
-                                            </h3>
-                                            <p className="font-[Play] mt-[12px] w-[438px] text-[14px] font-normal text-[#5D7186] line-clamp-2">
-                                                {item.description}
-                                            </p>
+                                            <h3 className="!mt-[20px] !text-[18px] font-[Hanken Grotesk] font-[700] text-[#313B5E] truncate">{item.title}</h3>
+                                            <p className="font-[Play] mt-[12px] w-[438px] text-[14px] font-normal text-[#5D7186] line-clamp-2">{item.description}</p>
                                         </div>
                                         <div className="flex items-center gap-[16px]">
                                             <div className="w-[36px] h-[36px] rounded-full bg-[#D9D9D9] flex items-center justify-center shrink-0">
@@ -164,9 +146,7 @@ function HelpCenter() {
                                                 by {item.author_name || "Admin"}
                                             </span>
                                             <span className="h-[24px] w-[1px] bg-[#B8B8B8]"></span>
-                                            <span className="font-['Play'] font-normal text-[14px] leading-[100%] text-[#FF6C2F]">
-                                                {videoCount} Video
-                                            </span>
+                                            <span className="font-['Play'] font-normal text-[14px] leading-[100%] text-[#FF6C2F]">{videoCount} Video</span>
                                         </div>
                                     </div>
                                 );

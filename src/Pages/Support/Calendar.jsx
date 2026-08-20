@@ -7,7 +7,6 @@ import Dot3 from "../../assets/dot-3.png";
 import Dot4 from "../../assets/dot-4.png";
 
 const API_BASE = "http://localhost:3000/api/v1";
-
 const getAuthToken = async () => {
     let token = localStorage.getItem("token") || localStorage.getItem("accessToken");
     if (token) return token;
@@ -37,13 +36,11 @@ const eventColors = ["#FF6C2F", "#4ECAC2", "#22C55E", "#EF5F5F", "#F9B931", "#5D
 function Calendar() {
     const containerRef = useRef(null);
     const [scale, setScale] = useState(1);
-    const [currentDate, setCurrentDate] = useState(new Date(2026, 7, 1)); 
+    const [currentDate, setCurrentDate] = useState(new Date(2026, 7, 1));
     const [events, setEvents] = useState([]);
     const [categories, setCategories] = useState([]);
     const [viewMode, setViewMode] = useState("Month");
     const [loading, setLoading] = useState(false);
-
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [newEvent, setNewEvent] = useState({
@@ -56,7 +53,6 @@ function Calendar() {
         event_type: "meeting",
         color: "#FF6C2F"
     });
-
     useEffect(() => {
         const updateScale = () => {
             if (!containerRef.current) return;
@@ -75,8 +71,6 @@ function Calendar() {
             window.removeEventListener("resize", updateScale);
         };
     }, []);
-
-
     const fetchCalendarData = useCallback(async () => {
         try {
             setLoading(true);
@@ -85,8 +79,6 @@ function Calendar() {
                 "Content-Type": "application/json",
                 ...(token ? { Authorization: `Bearer ${token}` } : {})
             };
-
-
             const eventsRes = await fetch(`${API_BASE}/calendar/events`, { headers });
             if (eventsRes.ok) {
                 const eventsData = await eventsRes.json();
@@ -94,8 +86,6 @@ function Calendar() {
                     setEvents(eventsData.data);
                 }
             }
-
-
             const catRes = await fetch(`${API_BASE}/calendar/categories`, { headers });
             if (catRes.ok) {
                 const catData = await catRes.json();
@@ -109,43 +99,29 @@ function Calendar() {
             setLoading(false);
         }
     }, []);
-
     useEffect(() => {
         fetchCalendarData();
     }, [fetchCalendarData]);
-
-
     const handlePrevMonth = () => {
         setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
     };
-
     const handleNextMonth = () => {
         setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
     };
-
     const handleToday = () => {
         setCurrentDate(new Date(2026, 7, 18));
     };
-
-
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
-
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
     const monthYearTitle = `${monthNames[currentMonth]} ${currentYear}`;
-
-
     const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
     const totalDaysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const totalDaysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
-
-
     const calendarDays = [];
-
-
     for (let i = firstDayIndex - 1; i >= 0; i--) {
         calendarDays.push({
             day: totalDaysInPrevMonth - i,
@@ -153,8 +129,6 @@ function Calendar() {
             date: new Date(currentYear, currentMonth - 1, totalDaysInPrevMonth - i)
         });
     }
-
-
     for (let i = 1; i <= totalDaysInMonth; i++) {
         calendarDays.push({
             day: i,
@@ -162,8 +136,6 @@ function Calendar() {
             date: new Date(currentYear, currentMonth, i)
         });
     }
-
-
     const remainingCells = 35 - calendarDays.length > 0 ? 35 - calendarDays.length : (42 - calendarDays.length > 0 ? 42 - calendarDays.length : 0);
     for (let i = 1; i <= remainingCells; i++) {
         calendarDays.push({
@@ -172,14 +144,10 @@ function Calendar() {
             date: new Date(currentYear, currentMonth + 1, i)
         });
     }
-
-
     const weeks = [];
     for (let i = 0; i < calendarDays.length; i += 7) {
         weeks.push(calendarDays.slice(i, i + 7));
     }
-
-
     const getEventsForDate = (date) => {
         return events.filter(event => {
             if (!event.start_time) return false;
@@ -191,8 +159,6 @@ function Calendar() {
             );
         });
     };
-
-
     const formatEventTime = (isoString) => {
         if (!isoString) return "";
         try {
@@ -207,8 +173,6 @@ function Calendar() {
             return "";
         }
     };
-
-
     const handleCreateEvent = async (e) => {
         e.preventDefault();
         try {
@@ -231,7 +195,6 @@ function Calendar() {
                     event_type: newEvent.event_type
                 })
             });
-
             if (res.ok) {
                 setIsModalOpen(false);
                 setNewEvent({
@@ -250,8 +213,6 @@ function Calendar() {
             console.error("Error creating event:", error);
         }
     };
-
-
     const handleDeleteEvent = async (id) => {
         try {
             const token = await getAuthToken();
@@ -270,8 +231,6 @@ function Calendar() {
             console.error("Error deleting event:", error);
         }
     };
-
-
     const displayCategories = categories.length > 0 ? categories : [
         { id: 1, name: "Team Building Retreat Meeting", color: "#FF6C2F" },
         { id: 2, name: "Product Launch Strategy Meeting", color: "#4ECAC2" },
@@ -279,7 +238,6 @@ function Calendar() {
         { id: 4, name: "Team Lunch Celebration", color: "#EF5F5F" },
         { id: 5, name: "Marketing Campaign Kickoff", color: "#F9B931" }
     ];
-
     return (
         <div className="w-full h-[2010px] px-[20px]">
             <div
@@ -294,7 +252,6 @@ function Calendar() {
                         transform: `scale(${scale})`,
                         transformOrigin: "top left",
                     }}>
-
                     <div className="flex items-center gap-[14px]">
                         <button
                             onClick={() => setIsModalOpen(true)}
@@ -350,7 +307,6 @@ function Calendar() {
 
 
                     <div className="flex gap-[32px] mt-[16px]">
-
                         <div className="w-[354px]">
                             <p className="w-[315px] h-[16px] text-[14px] font-normal leading-[100%] tracking-[0px] text-[#5D7186] !mt-[23px]">
                                 Drag and drop your event or click in the calendar
@@ -364,9 +320,7 @@ function Calendar() {
                                         key={cat.id || idx}
                                         className={`!mt-[15px] w-[354px] h-[37px] ${bgClass} rounded-[4px] flex items-center px-[10px] gap-[12px] transition-all hover:scale-[1.01]`}>
                                         <img src={dotIcon} alt="dot" className="w-[14px] h-[14px]" />
-                                        <span className={`text-[12px] font-normal leading-[100%] ${textClass} truncate`}>
-                                            {cat.name}
-                                        </span>
+                                        <span className={`text-[12px] font-normal leading-[100%] ${textClass} truncate`}>{cat.name}</span>
                                     </div>
                                 );
                             })}
@@ -374,7 +328,6 @@ function Calendar() {
 
 
                         <div className="w-[1108px] h-[655px] border border-[#EAEDF1] rounded-[4px] bg-white overflow-hidden flex flex-col">
-
                             <div className="grid grid-cols-7 h-[22px] mt-[8px]">
                                 <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Sun</div>
                                 <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Mon</div>
@@ -385,8 +338,6 @@ function Calendar() {
                                 <div className="flex items-center justify-center text-[12px] font-normal text-[#5D7186]">Sat</div>
                             </div>
                             <div className="border-t border-[#EAEDF1] mt-[8px]"></div>
-
-
                             <div className="flex-1 flex flex-col">
                                 {weeks.map((week, weekIdx) => (
                                     <div
@@ -405,8 +356,6 @@ function Calendar() {
                                                             }`}>
                                                         {cell.day}
                                                     </span>
-
-
                                                     <div className="mt-[18px] flex flex-col gap-[3px]">
                                                         {cellEvents.map((evt, evtIdx) => {
                                                             const colorHex = evt.color || eventColors[evtIdx % eventColors.length];
@@ -435,8 +384,6 @@ function Calendar() {
                     </div>
                 </div>
             </div>
-
-
             {selectedEvent && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                     <div className="bg-white rounded-[12px] p-[24px] w-[420px] shadow-xl border border-[#EAEDF1]">
@@ -491,8 +438,6 @@ function Calendar() {
                     </div>
                 </div>
             )}
-
-
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                     <div className="bg-white rounded-[12px] p-[24px] w-[460px] shadow-xl border border-[#EAEDF1]">
