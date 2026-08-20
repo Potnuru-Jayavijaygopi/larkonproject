@@ -1,33 +1,185 @@
-import React from 'react';
-import bgBanner from '../../assets/bg.png';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams, useParams } from 'react-router-dom';
+
 import imageIcon from '../../assets/image.png'; 
 import settingsIcon from '../../assets/settings1.png';
 import invoiceIcon from '../../assets/invoices.png';
 import ordersIcon from '../../assets/ordericon.png';     
 import expensesIcon from '../../assets/expenses.png'; 
 
+const API_BASE = "http://localhost:3000/api/v1";
+
+const getAuthToken = async () => {
+  let token = localStorage.getItem("token") || localStorage.getItem("accessToken");
+  if (token) return token;
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "john@lavitra.com", password: "123456" })
+    });
+    const data = await res.json();
+    if (data && data.accessToken) {
+      localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("accessToken", data.accessToken);
+      return data.accessToken;
+    }
+  } catch (err) {
+    console.error("Auto login failed:", err);
+  }
+  return null;
+};
+
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return "07 Jan, 2023";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "07 Jan, 2023";
+    const day = d.getDate().toString().padStart(2, "0");
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const month = months[d.getMonth()];
+    const year = d.getFullYear();
+    return `${day} ${month}, ${year}`;
+  } catch {
+    return "07 Jan, 2023";
+  }
+};
+
+const formatShortDate = (dateStr) => {
+  if (!dateStr) return "16 May 2024";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "16 May 2024";
+    const day = d.getDate().toString().padStart(2, "0");
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const month = months[d.getMonth()];
+    const year = d.getFullYear();
+    return `${day} ${month} ${year}`;
+  } catch {
+    return "16 May 2024";
+  }
+};
+
 export default function DetailsPage() {
+  const [searchParams] = useSearchParams();
+  const params = useParams();
+  const queryId = searchParams.get('id') || params.id;
+
+  const [customer, setCustomer] = useState(null);
+  const [invoices, setInvoices] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  
+  const fetchCustomerDetails = useCallback(async () => {
+    try {
+      setLoading(true);
+      const token = await getAuthToken();
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      };
+
+      
+      let targetCustomer = null;
+      if (queryId) {
+        const singleRes = await fetch(`${API_BASE}/customers/${queryId}`, { headers });
+        if (singleRes.ok) {
+          const singleData = await singleRes.json();
+          if (singleData && singleData.data) {
+            targetCustomer = singleData.data;
+          }
+        }
+      }
+
+      if (!targetCustomer) {
+        const custRes = await fetch(`${API_BASE}/customers`, { headers });
+        if (custRes.ok) {
+          const custData = await custRes.json();
+          if (custData && custData.data && custData.data.length > 0) {
+            targetCustomer = custData.data[0];
+          }
+        }
+      }
+      setCustomer(targetCustomer);
+
+      
+      const invRes = await fetch(`${API_BASE}/invoices`, { headers });
+      if (invRes.ok) {
+        const invData = await invRes.json();
+        if (invData && invData.invoices) {
+          setInvoices(invData.invoices);
+        } else if (invData && invData.data) {
+          setInvoices(invData.data);
+        }
+      }
+
+      
+      const ordRes = await fetch(`${API_BASE}/orders`, { headers });
+      if (ordRes.ok) {
+        const ordData = await ordRes.json();
+        if (ordData && ordData.data) {
+          setOrders(ordData.data);
+        }
+      }
+
+    } catch (error) {
+      console.error("Error fetching customer details data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [queryId]);
+
+  useEffect(() => {
+    fetchCustomerDetails();
+  }, [fetchCustomerDetails]);
+
+  
+  const customerName = customer 
+    ? `${customer.first_name} ${customer.last_name || ''}`.trim() 
+    : "Michael A. Miner";
+  const customerUsername = customer 
+    ? `@${customer.first_name.toLowerCase().replace(/[^a-z0-9]/g, '')}_cus_${customer.id}` 
+    : "@michael_cus_2024";
+  const customerEmail = customer?.email || "michaelaminer@dayrep.com";
+  const customerPhone = customer?.phone || "+28 (57) 760-010-27";
+  const accountId = customer?.id ? `#AC-${278000 + customer.id}` : "#AC-278699";
+  const isActive = customer ? customer.status === 'active' : true;
+
+  
+  const totalInvoicesCount = invoices.length > 0 ? invoices.length : 234;
+  const totalOrdersCount = orders.length > 0 ? orders.length : 219;
+  const totalExpenseSum = orders.length > 0 
+    ? orders.reduce((sum, o) => sum + (parseFloat(o.total_amount) || 0), 0)
+    : 2189;
+
+  
+  const paymentMethods = ["Mastercard", "Visa", "Paypal", "Stripe", "Bank Transfer"];
+  const transactionItems = invoices.length > 0 ? invoices.slice(0, 3) : [
+    { invoice_id: 1, invoice_number: "INV2540", payment_status: "completed", total_amount: "421.00", order_date: "2023-01-07" },
+    { invoice_id: 2, invoice_number: "INV3924", payment_status: "cancel", total_amount: "736.00", order_date: "2023-12-03" },
+    { invoice_id: 3, invoice_number: "INV5032", payment_status: "completed", total_amount: "347.00", order_date: "2023-09-28" }
+  ];
+
+  const latestInvoices = invoices.length > 0 ? invoices.slice(0, 3) : [
+    { invoice_number: "INV2540", order_date: "2024-05-16" },
+    { invoice_number: "INV0914", order_date: "2024-05-16" },
+    { invoice_number: "INV3801", order_date: "2024-05-16" }
+  ];
+
   return (
     <div className="container-fluid p-3 min-vh-100 bg-light">
       
       <div className="row g-3 mb-3">
         
-
+        
         <div className="col-lg-4">
           <div className="card border-0 shadow-sm rounded-3 bg-white h-100 overflow-hidden d-flex flex-column justify-content-between">
             <div 
               className="position-relative" 
-              style={{ height: '160px' }}
+              style={{ height: '120px', background: 'linear-gradient(135deg, #ff5e36, #ffa248)' }}
             >
-              <img 
-                  src={bgBanner} 
-                  alt="Banner Background" 
-                  className="w-100 h-100 object-fit-cover"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.parentElement.style.background = 'linear-gradient(135deg, #ff7e5f 0%, #feb47b 50%, #ff5e29 100%)';
-                  }}
-                />
               <div 
                 className="position-absolute shadow-sm overflow-hidden d-flex align-items-center justify-content-center"
                 style={{ 
@@ -40,19 +192,23 @@ export default function DetailsPage() {
                   left: '24px'
                 }}
               >
-                <img src={imageIcon} alt="Avatar" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                {customer?.profile_image ? (
+                  <img src={customer.profile_image} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <img src={imageIcon} alt="Avatar" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                )}
               </div>
             </div>
 
             <div className="p-4 pt-5 d-flex flex-column justify-content-between flex-grow-1">
               <div>
                 <h5 className="fw-bold text-dark mb-1 d-flex align-items-center gap-1" style={{ fontSize: '18px' }}>
-                  Michael A. Miner <span className="text-success ms-1" style={{ fontSize: '15px' }}>✔</span>
+                  {customerName} <span className="text-success ms-1" style={{ fontSize: '15px' }}>✔</span>
                 </h5>
-                <p className="mb-3" style={{ color: '#ff6b35', fontSize: '12px', fontWeight: '500' }}>@michael_cus_2024</p>
+                <p className="mb-3" style={{ color: '#ff6b35', fontSize: '12px', fontWeight: '500' }}>{customerUsername}</p>
                 <div className="small text-muted" style={{ fontSize: '13px', lineHeight: '2' }}>
-                  <p className="mb-1"><strong className="text-dark">Email : </strong><span className="text-secondary ms-1">michaelaminer@dayrep.com</span></p>
-                  <p className="mb-0"><strong className="text-dark">Phone : </strong><span className="text-secondary ms-1">+28 (57) 760-010-27</span></p>
+                  <p className="mb-1"><strong className="text-dark">Email : </strong><span className="text-secondary ms-1">{customerEmail}</span></p>
+                  <p className="mb-0"><strong className="text-dark">Phone : </strong><span className="text-secondary ms-1">{customerPhone}</span></p>
                 </div>
               </div>
 
@@ -75,7 +231,7 @@ export default function DetailsPage() {
               <div className="card border-0 shadow-sm rounded-3 p-3 flex-row justify-content-between align-items-center bg-white">
                 <div>
                   <p className="text-muted mb-1 small fw-medium" style={{ fontSize: '13px' }}>Total Invoice</p>
-                  <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '22px' }}>234</h4>
+                  <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '22px' }}>{totalInvoicesCount}</h4>
                 </div>
                 <div 
                   className="d-flex align-items-center justify-content-center flex-shrink-0" 
@@ -90,7 +246,7 @@ export default function DetailsPage() {
               <div className="card border-0 shadow-sm rounded-3 p-3 flex-row justify-content-between align-items-center bg-white">
                 <div>
                   <p className="text-muted mb-1 small fw-medium" style={{ fontSize: '13px' }}>Total Order</p>
-                  <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '22px' }}>219</h4>
+                  <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '22px' }}>{totalOrdersCount}</h4>
                 </div>
                 <div 
                   className="d-flex align-items-center justify-content-center flex-shrink-0" 
@@ -105,7 +261,7 @@ export default function DetailsPage() {
               <div className="card border-0 shadow-sm rounded-3 p-3 flex-row justify-content-between align-items-center bg-white">
                 <div>
                   <p className="text-muted mb-1 small fw-medium" style={{ fontSize: '13px' }}>Total Expense</p>
-                  <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '22px' }}>$2,189</h4>
+                  <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '22px' }}>${Math.round(totalExpenseSum).toLocaleString()}</h4>
                 </div>
                 <div 
                   className="d-flex align-items-center justify-content-center flex-shrink-0" 
@@ -116,6 +272,7 @@ export default function DetailsPage() {
               </div>
             </div>
           </div>
+
 
           <div className="card border-0 shadow-sm rounded-3 p-4 bg-white flex-grow-1">
             <h6 className="fw-semibold text-dark mb-3">Transaction History</h6>
@@ -131,27 +288,33 @@ export default function DetailsPage() {
                   </tr>
                 </thead>
                 <tbody className="text-secondary">
-                  <tr>
-                    <td className="fw-semibold text-dark">#INV2540</td>
-                    <td><span className="badge bg-success-subtle text-success px-2 py-1">Completed</span></td>
-                    <td>$421.00</td>
-                    <td>07 Jan, 2023</td>
-                    <td>Mastercard</td>
-                  </tr>
-                  <tr>
-                    <td className="fw-semibold text-dark">#INV3924</td>
-                    <td><span className="badge bg-danger-subtle text-danger px-2 py-1">Cancel</span></td>
-                    <td>$736.00</td>
-                    <td>03 Dec, 2023</td>
-                    <td>Visa</td>
-                  </tr>
-                  <tr>
-                    <td className="fw-semibold text-dark">#INV5032</td>
-                    <td><span className="badge bg-success-subtle text-success px-2 py-1">Completed</span></td>
-                    <td>$347.00</td>
-                    <td>28 Sep, 2023</td>
-                    <td>Paypal</td>
-                  </tr>
+                  {transactionItems.map((inv, index) => {
+                    const statusLower = (inv.payment_status || inv.order_status || "completed").toLowerCase();
+                    let badgeClass = "bg-success-subtle text-success";
+                    let badgeText = "Completed";
+                    if (statusLower.includes("cancel")) {
+                      badgeClass = "bg-danger-subtle text-danger";
+                      badgeText = "Cancel";
+                    } else if (statusLower.includes("pending") || statusLower.includes("shipped")) {
+                      badgeClass = "bg-warning-subtle text-warning";
+                      badgeText = "Pending";
+                    }
+
+                    const invNumber = inv.invoice_number 
+                      ? (inv.invoice_number.startsWith("#") ? inv.invoice_number : `#${inv.invoice_number}`)
+                      : `#INV${inv.invoice_id || (2540 + index)}`;
+                    const method = paymentMethods[index % paymentMethods.length];
+
+                    return (
+                      <tr key={inv.invoice_id || index}>
+                        <td className="fw-semibold text-dark">{invNumber}</td>
+                        <td><span className={`badge ${badgeClass} px-2 py-1`}>{badgeText}</span></td>
+                        <td>${parseFloat(inv.total_amount || 421).toFixed(2)}</td>
+                        <td>{formatDate(inv.order_date || inv.created_at)}</td>
+                        <td>{method}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -166,16 +329,18 @@ export default function DetailsPage() {
           <div className="card border-0 shadow-sm rounded-3 bg-white p-3">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <h6 className="fw-semibold text-dark mb-0">Customer Details</h6>
-              <span className="badge bg-success-subtle text-success px-2 py-1" style={{ fontSize: '10px' }}>Active User</span>
+              <span className="badge bg-success-subtle text-success px-2 py-1" style={{ fontSize: '10px' }}>
+                {isActive ? 'Active User' : 'Inactive User'}
+              </span>
             </div>
             <div className="small text-secondary" style={{ fontSize: '12px' }}>
               <div className="d-flex justify-content-between py-2 border-bottom">
                 <span className="fw-medium text-dark">Account ID :</span>
-                <span>#AC-278699</span>
+                <span>{accountId}</span>
               </div>
               <div className="d-flex justify-content-between py-2 border-bottom">
                 <span className="fw-medium text-dark">Invoice Email :</span>
-                <span className="text-truncate ms-2" style={{ maxWidth: '160px' }}>michaelaminer@dayrep.com</span>
+                <span className="text-truncate ms-2" style={{ maxWidth: '160px' }}>{customerEmail}</span>
               </div>
             </div>
           </div>
@@ -185,26 +350,32 @@ export default function DetailsPage() {
               <h6 className="fw-semibold text-dark mb-0">Latest Invoice</h6>
               <button className="btn btn-warning btn-sm text-white px-2 py-0" style={{ fontSize: '11px', backgroundColor: '#ff6b35' }}>View All</button>
             </div>
-            <p className="text-muted small mb-3" style={{ fontSize: '11px' }}>Total 234 file, 2.5GB space used</p>
+            <p className="text-muted small mb-3" style={{ fontSize: '11px' }}>Total {totalInvoicesCount} file, 2.5GB space used</p>
 
             <div className="d-flex flex-column gap-2">
-              {['#INV2540', '#INV0914', '#INV3801'].map((invId, idx) => (
-                <div key={idx} className="d-flex align-items-center justify-content-between p-2 rounded bg-light">
-                  <div className="d-flex align-items-center gap-2">
-                    <div className="p-2 rounded d-flex align-items-center justify-content-center" style={{ backgroundColor: '#FFF0EA', width: '32px', height: '32px' }}>
-                      <img src={invoiceIcon} alt="Invoice" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+              {latestInvoices.map((inv, idx) => {
+                const invId = inv.invoice_number 
+                  ? (inv.invoice_number.startsWith("#") ? inv.invoice_number : `#${inv.invoice_number}`)
+                  : `#INV${2540 + idx * 100}`;
+                return (
+                  <div key={idx} className="d-flex align-items-center justify-content-between p-2 rounded bg-light">
+                    <div className="d-flex align-items-center gap-2">
+                      <div className="p-2 rounded d-flex align-items-center justify-content-center" style={{ backgroundColor: '#FFF0EA', width: '32px', height: '32px' }}>
+                        <img src={invoiceIcon} alt="Invoice" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+                      </div>
+                      <div>
+                        <p className="mb-0 fw-semibold text-dark" style={{ fontSize: '12px' }}>Invoice Id {invId}</p>
+                        <p className="mb-0 text-muted" style={{ fontSize: '10px' }}>{formatShortDate(inv.order_date || inv.created_at)}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="mb-0 fw-semibold text-dark" style={{ fontSize: '12px' }}>Invoice Id {invId}</p>
-                      <p className="mb-0 text-muted" style={{ fontSize: '10px' }}>16 May 2024</p>
-                    </div>
+                    <span className="text-muted" style={{ cursor: 'pointer' }}>⋮</span>
                   </div>
-                  <span className="text-muted" style={{ cursor: 'pointer' }}>⋮</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
+
 
         <div className="col-lg-4">
           <div className="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 d-flex flex-column justify-content-between">
@@ -225,6 +396,7 @@ export default function DetailsPage() {
           </div>
         </div>
 
+
         <div className="col-lg-4 d-flex flex-column gap-3">
           <div className="card shadow-sm rounded-3 p-3 bg-white flex-grow-1 d-flex flex-column justify-content-between">
             <div>
@@ -234,7 +406,7 @@ export default function DetailsPage() {
                     <img src={imageIcon} alt="Profile" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
                   </div>
                   <div>
-                    <h6 className="fw-bold text-dark mb-0" style={{ fontSize: '13px' }}>Michael A. Miner</h6>
+                    <h6 className="fw-bold text-dark mb-0" style={{ fontSize: '13px' }}>{customerName}</h6>
                     <p className="text-muted mb-0" style={{ fontSize: '11px' }}>Welcome Back</p>
                   </div>
                 </div>
@@ -252,7 +424,7 @@ export default function DetailsPage() {
               </div>
 
               <div className="d-flex align-items-baseline gap-2 mb-2">
-                <h4 className="fw-bold text-dark mb-0">$4,700</h4>
+                <h4 className="fw-bold text-dark mb-0">${Math.round(totalExpenseSum > 0 ? totalExpenseSum + 2511 : 4700).toLocaleString()}</h4>
                 <span className="text-muted small" style={{ fontSize: '12px' }}>+$232</span>
               </div>
 

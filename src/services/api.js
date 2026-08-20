@@ -411,7 +411,25 @@ export const customerAPI = {
   create: async (data) => (await request('/customers', { method: 'POST', body: JSON.stringify(data) })).data || {},
   update: async (id, data) => (await request(`/customers/${id}`, { method: 'PUT', body: JSON.stringify(data) })).data || {},
   delete: async (id) => (await request(`/customers/${id}`, { method: 'DELETE' })).data || {},
+  updateStatus: async (id, status) => (await request(`/customers/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) })).data || {},
 };
+
+// Seller API
+export const sellerAPI = {
+  getAll: async () => (await request('/sellers', { method: 'GET' })).data || [],
+  getById: async (id) => (await request(`/sellers/${id}`, { method: 'GET' })).data || {},
+  create: async (data) => (await request('/sellers', { method: 'POST', body: JSON.stringify(data) })).data || {},
+  update: async (id, data) => (await request(`/sellers/${id}`, { method: 'PUT', body: JSON.stringify(data) })).data || {},
+  delete: async (id) => (await request(`/sellers/${id}`, { method: 'DELETE' })).data || {},
+  updateStatus: async (id, status) => (await request(`/sellers/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) })).data || {},
+};
+
+export const getCustomers = async () => (await request('/customers', { method: 'GET' })).data || [];
+export const getCustomerById = async (id) => (await request(`/customers/${id}`, { method: 'GET' })).data || {};
+export const updateCustomerStatus = async (id, status) => (await request(`/customers/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) })).data || {};
+export const getSellers = async () => (await request('/sellers', { method: 'GET' })).data || [];
+export const createSeller = async (data) => (await request('/sellers', { method: 'POST', body: JSON.stringify(data) })).data || {};
+export const updateSellerStatus = async (id, status) => (await request(`/sellers/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) })).data || {};
 
 // Coupon API
 export const couponAPI = {

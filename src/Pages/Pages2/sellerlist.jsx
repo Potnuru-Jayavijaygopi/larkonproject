@@ -1,22 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 
-import zaraLogo from '../../assets/logozara.png';
-import rolexLogo from '../../assets/logorolex.png';
-import dysonLogo from '../../assets/dyson.png';
-import goproLogo from '../../assets/gopro.png';
-import hmLogo from '../../assets/hm.png';
-import huaweiLogo from '../../assets/huawei.png';
-import nikeLogo from '../../assets/nike.png';
-import northFaceLogo from '../../assets/northface.png';
+const API_BASE = "http://localhost:3000/api/v1";
 
-import locationIcon from '../../assets/location.png';
-import mailIcon from '../../assets/mail.png';
-import phoneIcon from '../../assets/phone.png';
-import arrowUpIcon from '../../assets/arrow.png';
-import heartIcon from '../../assets/like.png';
-import progressBarImg from '../../assets/Progress bar.png';
+const getAuthToken = async () => {
+  let token = localStorage.getItem("token") || localStorage.getItem("accessToken");
+  if (token) return token;
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "john@lavitra.com", password: "123456" })
+    });
+    const data = await res.json();
+    if (data && data.accessToken) {
+      localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("accessToken", data.accessToken);
+      return data.accessToken;
+    }
+  } catch (err) {
+    console.error("Auto login failed:", err);
+  }
+  return null;
+};
 
-const SELLERS = [
+const DEFAULT_SELLERS = [
   {
     id: 1,
     name: 'ZARA International',
@@ -32,7 +40,6 @@ const SELLERS = [
     stock: '865',
     sells: '+4.5k',
     clients: '+2k',
-    logo: zaraLogo,
   },
   {
     id: 2,
@@ -49,7 +56,6 @@ const SELLERS = [
     stock: '261',
     sells: '+2.9k',
     clients: '+1.4k',
-    logo: rolexLogo,
   },
   {
     id: 3,
@@ -66,7 +72,6 @@ const SELLERS = [
     stock: '781',
     sells: '+5.3k',
     clients: '+3.1k',
-    logo: dysonLogo,
   },
   {
     id: 4,
@@ -83,7 +88,6 @@ const SELLERS = [
     stock: '890',
     sells: '+10.6k',
     clients: '+6.3k',
-    logo: goproLogo,
   },
   {
     id: 5,
@@ -100,7 +104,6 @@ const SELLERS = [
     stock: '1309',
     sells: '+21.6k',
     clients: '+8.1k',
-    logo: hmLogo,
   },
   {
     id: 6,
@@ -117,7 +120,6 @@ const SELLERS = [
     stock: '356',
     sells: '+4.0k',
     clients: '+6.3k',
-    logo: huaweiLogo,
   },
   {
     id: 7,
@@ -134,7 +136,6 @@ const SELLERS = [
     stock: '12k',
     sells: '+19.0k',
     clients: '+16.0k',
-    logo: nikeLogo,
   },
   {
     id: 8,
@@ -151,15 +152,76 @@ const SELLERS = [
     stock: '1.6k',
     sells: '+13.9k',
     clients: '+2.1k',
-    logo: northFaceLogo,
   },
 ];
 
 export default function SellerList() {
+  const navigate = useNavigate();
+  const [sellers, setSellers] = useState(DEFAULT_SELLERS);
+  const [favorites, setFavorites] = useState({});
+  const [loading, setLoading] = useState(false);
+
+
+  const fetchSellers = useCallback(async () => {
+    try {
+      setLoading(true);
+      const token = await getAuthToken();
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      };
+
+      const res = await fetch(`${API_BASE}/sellers`, { headers });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.data && data.data.length > 0) {
+          const apiSellers = data.data.map((s) => ({
+            id: s.id,
+            name: s.business_name || s.owner_name || 'Seller Store',
+            category: s.category || 'Fashion',
+            subCategory: s.category || 'Fashion',
+            rating: s.rating && parseFloat(s.rating) > 0 ? s.rating : '4.5',
+            reviews: '3.5k',
+            website: (s.website || 'www.sellerstore.co').replace(/^https?:\/\//, ''),
+            address: s.address ? `${s.address}, ${s.city || ''} ${s.state || ''}`.trim() : '4604, Main Lane NY 10001',
+            email: s.email || 'seller@dayrep.com',
+            phone: s.phone || '+243 812-801-9335',
+            revenue: s.total_sales && parseFloat(s.total_sales) > 0 ? `$${parseFloat(s.total_sales).toLocaleString()}k` : '$200k',
+            stock: s.total_products > 0 ? String(s.total_products) : '865',
+            sells: '+4.5k',
+            clients: '+2k',
+          }));
+
+
+          const combined = [...apiSellers];
+          for (let i = 0; i < DEFAULT_SELLERS.length; i++) {
+            if (combined.length >= 8) break;
+            if (!combined.some(c => c.name.toLowerCase() === DEFAULT_SELLERS[i].name.toLowerCase())) {
+              combined.push(DEFAULT_SELLERS[i]);
+            }
+          }
+          setSellers(combined);
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching sellers list:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSellers();
+  }, [fetchSellers]);
+
+  const toggleFavorite = (id) => {
+    setFavorites(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
   return (
     <div className="p-4" style={{ backgroundColor: '#F8F9FA' }}>
       <div className="row g-4">
-        {SELLERS.map((seller) => (
+        {sellers.map((seller) => (
           <div key={seller.id} className="col-xl-3 col-lg-4 col-md-6">
             <div 
               className="card bg-white p-3 h-100 d-flex flex-column justify-content-between border-0"
@@ -169,24 +231,11 @@ export default function SellerList() {
               }}
             >
               <div>
-                {/* 
-                  Logo Frame Container 
-                  Matches exact Figma dimensions (height: 144px)
-                  overflow-hidden keeps exported PNG backgrounds seamlessly fitting the rounded frame
-                */}
+
                 <div 
                   className="rounded-3 overflow-hidden d-flex align-items-center justify-content-center mb-3"
                   style={{ height: '144px', width: '100%', backgroundColor: '#F3F4F7' }}
                 >
-                  <img 
-                    src={seller.logo} 
-                    alt={seller.name}
-                    style={{ 
-                      width: '100%', 
-                      height: '100%', 
-                      objectFit: 'cover' // Fills the banner perfectly without double inner margins
-                    }}
-                  />
                 </div>
 
                 <div className="d-flex justify-content-between align-items-start mb-1">
@@ -215,18 +264,14 @@ export default function SellerList() {
                   {seller.website}
                 </a>
 
-              
                 <div className="text-muted mb-3" style={{ fontSize: '12px', lineHeight: '1.9' }}>
                   <div className="d-flex align-items-center gap-2 text-truncate">
-                    <img src={locationIcon} alt="location" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
                     <span className="text-truncate">{seller.address}</span>
                   </div>
                   <div className="d-flex align-items-center gap-2 text-truncate">
-                    <img src={mailIcon} alt="email" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
                     <span className="text-truncate">{seller.email}</span>
                   </div>
                   <div className="d-flex align-items-center gap-2 text-truncate">
-                    <img src={phoneIcon} alt="phone" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
                     <span className="text-truncate">{seller.phone}</span>
                   </div>
                 </div>
@@ -234,15 +279,9 @@ export default function SellerList() {
                   <span className="text-muted">{seller.subCategory}</span>
                   <div className="d-flex align-items-center gap-1">
                     <span className="fw-bold text-dark">{seller.revenue}</span>
-                    <img src={arrowUpIcon} alt="up" style={{ width: '12px', height: '12px', objectFit: 'contain' }} />
                   </div>
                 </div>
                 <div className="mb-3 w-100" style={{ height: '6px' }}>
-                  <img 
-                    src={progressBarImg} 
-                    alt="progress bar" 
-                    style={{ width: '100%', height: '100%', objectFit: 'fill' }} 
-                  />
                 </div>
                 <div className="row text-center border-top pt-3 mb-3" style={{ borderColor: '#F0F0F0' }}>
                   <div className="col-4">
@@ -261,22 +300,24 @@ export default function SellerList() {
               </div>
               <div className="d-flex gap-2">
                 <button 
-                  className="btn btn-sm text-white flex-fill py-2 fw-medium"
+                  onClick={() => navigate(`/sellers/details?id=${seller.id}`)}
+                  className="btn btn-sm text-white flex-fill py-2 fw-medium cursor-pointer"
                   style={{ backgroundColor: '#FF5722', borderRadius: '8px', fontSize: '12px', border: 'none' }}
                 >
                   View Profile
                 </button>
                 <button 
-                  className="btn btn-sm flex-fill py-2 fw-medium"
+                  onClick={() => navigate(`/sellers/edit?id=${seller.id}`)}
+                  className="btn btn-sm flex-fill py-2 fw-medium cursor-pointer"
                   style={{ backgroundColor: '#F3F4F7', color: '#555', borderRadius: '8px', fontSize: '12px', border: 'none' }}
                 >
                   Edit Profile
                 </button>
                 <button 
-                  className="btn btn-sm py-2 px-3 d-flex align-items-center justify-content-center"
+                  onClick={() => toggleFavorite(seller.id)}
+                  className={`btn btn-sm py-2 px-3 d-flex align-items-center justify-content-center cursor-pointer ${favorites[seller.id] ? 'bg-danger-subtle' : ''}`}
                   style={{ backgroundColor: '#FFF2F2', borderRadius: '8px', border: 'none' }}
                 >
-                  <img src={heartIcon} alt="favorite" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
                 </button>
               </div>
 

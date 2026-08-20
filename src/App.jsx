@@ -49,6 +49,12 @@ import Roleedit from './Pages/Roles/Roleedit';
 import Permissions from './Pages/Permissions/Permissions';
 import Permissions2 from './Pages/Permissions/Permissions2';
 
+import CustomerDetails from './Pages/Customerdetails/detailspage';
+import SellerList from './Pages/Pages2/sellerlist';
+import SellerDetails from './Pages/Pages2/sellerdetails';
+import SellerCreate from './Pages/Pages2/sellercreate';
+import SellerEdit from './Pages/Pages2/selleredit';
+
 import Calendar from './Pages/Support/Calendar';
 import Faqs from './Pages/Support/Faqs';
 import HelpCenter from './Pages/Support/HelpCenter';
@@ -151,6 +157,21 @@ const router = createBrowserRouter([
       { path: 'permissions/list', element: <Permissions /> },
       { path: 'permissions2', element: <Permissions2 /> },
       { path: 'permissions/2', element: <Permissions2 /> },
+
+      // Customers & Sellers routes
+      { path: 'customers', element: <CustomerDetails /> },
+      { path: 'customers/list', element: <CustomerDetails /> },
+      { path: 'customers/details', element: <CustomerDetails /> },
+      { path: 'customers/details/:id', element: <CustomerDetails /> },
+
+      { path: 'sellers', element: <SellerList /> },
+      { path: 'sellers/list', element: <SellerList /> },
+      { path: 'sellers/details', element: <SellerDetails /> },
+      { path: 'sellers/details/:id', element: <SellerDetails /> },
+      { path: 'sellers/create', element: <SellerCreate /> },
+      { path: 'sellers/add', element: <SellerCreate /> },
+      { path: 'sellers/edit', element: <SellerEdit /> },
+      { path: 'sellers/edit/:id', element: <SellerEdit /> },
 
       // Reviews, Chat, Email routes
       { path: 'reviews', element: <Reviews /> },
