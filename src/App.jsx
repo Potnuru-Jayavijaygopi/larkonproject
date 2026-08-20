@@ -24,6 +24,23 @@ import OrderCheckout from './Pages/orders/OrderCheckout';
 
 import Widgets from './Pages/widgets/Widgets';
 
+import Accordion from './Pages/base-ui/Accordion';
+import Alerts from './Pages/base-ui/Alerts';
+import Avatar from './Pages/base-ui/Avatar';
+import Badge from './Pages/base-ui/Badge';
+import Breadcrumb from './Pages/base-ui/Breadcrumb';
+import Buttons from './Pages/base-ui/Buttons';
+import Card from './Pages/base-ui/Card';
+import Carousel from './Pages/base-ui/Carousel';
+import Collapse from './Pages/base-ui/Collapse';
+import Dropdown from './Pages/base-ui/Dropdown';
+import ListGroup from './Pages/base-ui/ListGroup';
+import Modal from './Pages/base-ui/Modal';
+import Offcanvas from './Pages/base-ui/Offcanvas';
+import BasePagination from './Pages/base-ui/Pagination';
+import Placeholders from './Pages/base-ui/Placeholders';
+import Tabs from './Pages/base-ui/Tabs';
+
 import SignIn from './Pages/authentication/SignIn';
 import SignUp from './Pages/authentication/SignUp';
 import ResetPassword from './Pages/authentication/ResetPassword';
@@ -65,6 +82,24 @@ const router = createBrowserRouter([
       { path: 'orders/details', element: <OrderDetails /> },
       { path: 'orders/cart', element: <OrderCart /> },
       { path: 'orders/checkout', element: <OrderCheckout /> },
+
+      // Base-UI routes
+      { path: 'base-ui/accordion', element: <Accordion /> },
+      { path: 'base-ui/alerts', element: <Alerts /> },
+      { path: 'base-ui/avatar', element: <Avatar /> },
+      { path: 'base-ui/badge', element: <Badge /> },
+      { path: 'base-ui/breadcrumb', element: <Breadcrumb /> },
+      { path: 'base-ui/buttons', element: <Buttons /> },
+      { path: 'base-ui/card', element: <Card /> },
+      { path: 'base-ui/carousel', element: <Carousel /> },
+      { path: 'base-ui/collapse', element: <Collapse /> },
+      { path: 'base-ui/dropdown', element: <Dropdown /> },
+      { path: 'base-ui/list-group', element: <ListGroup /> },
+      { path: 'base-ui/modal', element: <Modal /> },
+      { path: 'base-ui/offcanvas', element: <Offcanvas /> },
+      { path: 'base-ui/pagination', element: <BasePagination /> },
+      { path: 'base-ui/placeholders', element: <Placeholders /> },
+      { path: 'base-ui/tabs', element: <Tabs /> },
 
       // Widgets route
       { path: 'widgets', element: <Widgets /> },
