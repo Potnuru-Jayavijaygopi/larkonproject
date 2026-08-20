@@ -41,17 +41,23 @@ const request = async (endpoint, options = {}) => {
 export const getPurchaseOrders = () => request('/purchases');
 export const getPurchaseOrderById = (id) => request(`/purchases/${id}`);
 export const createPurchaseOrder = (data) => request('/purchases', { method: 'POST', body: JSON.stringify(data) });
-export const deletePurchaseOrder = (id) =>request(`/purchases/${id}`, {method: 'DELETE',});
-
+export const updatePurchaseOrder = (id, data) => request(`/purchases/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const patchPurchaseOrder = (id, data) => request(`/purchases/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+export const deletePurchaseOrder = (id) => request(`/purchases/${id}`, { method: 'DELETE' });
 
 export const getPurchaseLists = () => request('/purchase-list');
 export const getPurchaseListById = (id) => request(`/purchase-list/${id}`);
-export const deletePurchase = (id) =>request(`/purchase-list/${id}`, {method: 'DELETE',});
+export const updatePurchaseList = (id, data) => request(`/purchase-list/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const patchPurchaseList = (id, data) => request(`/purchase-list/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+export const deletePurchase = (id) => request(`/purchase-list/${id}`, { method: 'DELETE' });
 
 export const getPurchaseReturns = () => request('/returns');
 export const getPurchaseReturnById = (id) => request(`/purchase-returns/${id}`);
 export const createPurchaseReturn = (purchaseOrderId, data) =>
   request(`/purchases/${purchaseOrderId}/return`, { method: 'POST', body: JSON.stringify(data) });
+export const updatePurchaseReturn = (id, data) => request(`/returns/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const patchPurchaseReturn = (id, data) => request(`/returns/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+export const deletePurchaseReturn = (id) => request(`/returns/${id}`, { method: 'DELETE' });
 
 
 export const getAttributes = () => request('/attributes');
