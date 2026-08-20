@@ -158,16 +158,16 @@ function ProductDetails() {
 
       <div className="row g-4 mb-4">
         <div className="col-lg-5">
-          <div className="content-card p-4 h-100">
+          <div className="content-card p-4">
             <div
-              className="bg-light rounded-3 d-flex align-items-center justify-content-center mb-3 overflow-hidden"
-              style={{ height: '260px' }}
+              className="bg-light rounded-3 d-flex align-items-center justify-content-center mb-3 overflow-hidden p-2"
+              style={{ height: '380px', width: '100%' }}
             >
               {currentImage ? (
                 <img
                   src={currentImage}
                   alt={product?.product_name || "Product"}
-                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                   onError={(e) => {
                     e.target.style.display = 'none';
                     e.target.parentNode.innerHTML =
@@ -179,14 +179,14 @@ function ProductDetails() {
               )}
             </div>
 
-            <div className="row g-2 mb-4">
+            <div className="row g-2 mb-3">
               {(images.length > 0 ? images.slice(0, 4) : [0, 1, 2, 3]).map((imgSrc, idx) => (
                 <div className="col-3" key={idx}>
                   <div
                     className={`bg-light rounded-2 d-flex align-items-center justify-content-center cursor-pointer border overflow-hidden ${
-                      selectedImg === idx ? 'border-primary border-2' : ''
+                      selectedImg === idx ? 'border-primary border-2 shadow-sm' : ''
                     }`}
-                    style={{ height: '58px' }}
+                    style={{ height: '64px' }}
                     onClick={() => setSelectedImg(idx)}
                   >
                     {typeof imgSrc === 'string' ? (
@@ -203,21 +203,23 @@ function ProductDetails() {
               ))}
             </div>
 
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2 mt-3 pt-2 border-top">
               <button
-                className="btn btn-add-product flex-grow-1 py-2 d-inline-flex align-items-center justify-content-center gap-1"
+                className="btn text-white flex-grow-1 py-2 rounded-2 fw-medium border-0 d-inline-flex align-items-center justify-content-center gap-1"
                 type="button"
+                style={{ backgroundColor: '#ff5e29', fontSize: '0.875rem' }}
               >
                 <BsCartPlus /> Add To Cart
               </button>
               <button
-                className="btn btn-light border flex-grow-1 py-2 fw-medium d-inline-flex align-items-center justify-content-center gap-1"
+                className="btn text-white flex-grow-1 py-2 rounded-2 fw-medium border-0 d-inline-flex align-items-center justify-content-center gap-1"
                 type="button"
+                style={{ backgroundColor: '#ff9066', fontSize: '0.875rem' }}
               >
                 <BsBag /> Buy Now
               </button>
               <button
-                className="btn btn-light border px-3 text-danger"
+                className="btn btn-light border px-3 text-danger rounded-2"
                 type="button"
               >
                 <BsHeart />
