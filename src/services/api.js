@@ -1,11 +1,6 @@
-/**
- * Centralized API Service for Larkon Frontend
- * Connects to Backend Larkon REST APIs (Express + PostgreSQL)
- */
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
-// Token Management
 export const getAuthToken = () => {
   try {
     const directToken = localStorage.getItem('token') || localStorage.getItem('accessToken');
@@ -40,10 +35,6 @@ export const clearAuthData = () => {
   localStorage.removeItem('user');
 };
 
-/**
- * Ensure the client has a valid session token.
- * Automatically authenticates with default admin credentials if no token is found.
- */
 export const ensureAuthenticated = async () => {
   let token = getAuthToken();
   if (token) return token;
@@ -72,9 +63,6 @@ export const ensureAuthenticated = async () => {
   return null;
 };
 
-/**
- * Standard fetch helper with headers and authentication
- */
 async function request(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
   const headers = {
@@ -82,12 +70,10 @@ async function request(endpoint, options = {}) {
     ...(options.headers || {}),
   };
 
-  // If payload is not FormData, ensure Content-Type is JSON
   if (!(options.body instanceof FormData) && !headers['Content-Type']) {
     headers['Content-Type'] = 'application/json';
   }
 
-  // Attach auth token if available
   let token = getAuthToken();
   if (!token && options.requiresAuth !== false) {
     token = await ensureAuthenticated();
@@ -102,7 +88,6 @@ async function request(endpoint, options = {}) {
       headers,
     });
 
-    // Handle unauthorized with a single auto-retry after re-authenticating
     if (response.status === 401 && !options._retry) {
       clearAuthData();
       const newToken = await ensureAuthenticated();
@@ -139,7 +124,6 @@ async function request(endpoint, options = {}) {
   }
 }
 
-// Categories Endpoints
 export const categoryAPI = {
   getAll: async () => {
     const res = await request('/categories', { method: 'GET', requiresAuth: false });
@@ -175,7 +159,6 @@ export const categoryAPI = {
   },
 };
 
-// Products Endpoints
 export const productAPI = {
   getAll: async () => {
     const res = await request('/products', { method: 'GET', requiresAuth: false });
@@ -188,7 +171,6 @@ export const productAPI = {
   },
 };
 
-// Inventory Endpoints
 export const inventoryAPI = {
   getWarehouses: async () => {
     const res = await request('/warehouses', { method: 'GET' });
@@ -229,7 +211,6 @@ export const inventoryAPI = {
   },
 };
 
-// Auth Endpoints
 export const authAPI = {
   login: async (email, password) => {
     const res = await request('/auth/login', {
@@ -291,7 +272,6 @@ export const authAPI = {
   },
 };
 
-// Formatting helpers
 export const formatDate = (dateStr) => {
   if (!dateStr) return 'N/A';
   try {

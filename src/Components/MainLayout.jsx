@@ -10,12 +10,10 @@ function MainLayout() {
      
       <Sidebar />
 
-   
       <div className="main-content">
        
         <Header title="ACCORDION" />
 
-        
         <main className="page-container">
           <Outlet />
         </main>

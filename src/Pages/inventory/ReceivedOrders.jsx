@@ -101,7 +101,6 @@ function ReceivedOrders() {
     }
   };
 
-  // Metrics calculations
   const pendingReviewsCount = 210;
   const pendingPaymentCount = orders.filter(
     (o) => (o.payment_status || "").toLowerCase() === "pending"

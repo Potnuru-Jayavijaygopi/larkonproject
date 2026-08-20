@@ -10,7 +10,6 @@ function LockScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
-  // Retrieve user name from storage if available
   let userName = "Admin";
   let userEmail = "admin@larkon.com";
   try {

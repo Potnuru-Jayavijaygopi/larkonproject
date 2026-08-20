@@ -100,7 +100,6 @@ function CategoryList({ onNavigate }) {
     }
   };
 
-  // Helper calculations per category
   const getCategoryStats = (catId) => {
     const catProducts = products.filter(
       (p) => String(p.category_id) === String(catId)
@@ -131,7 +130,6 @@ function CategoryList({ onNavigate }) {
     };
   };
 
-  // Top 4 categories banner
   const topCategories =
     categories.length >= 4
       ? categories.slice(0, 4)
@@ -143,7 +141,6 @@ function CategoryList({ onNavigate }) {
           { id: "def4", category_name: "Eye Ware & Sunglass" },
         ].slice(0, 4);
 
-  // Pagination logic
   const totalPages = Math.ceil(categories.length / itemsPerPage) || 1;
   const paginatedCategories = categories.slice(
     (currentPage - 1) * itemsPerPage,

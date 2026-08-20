@@ -25,7 +25,7 @@ function ResetPassword() {
       navigate("/authentication/signin");
     } catch (err) {
       console.error("Password reset request failed:", err);
-      // Even on demo failure, alert user gracefully
+      
       alert("If an account with that email exists, reset instructions have been sent.");
       navigate("/authentication/signin");
     } finally {
