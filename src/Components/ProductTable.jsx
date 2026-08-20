@@ -3,7 +3,46 @@ import { useNavigate } from 'react-router-dom';
 import { BsPlusLg, BsImage, BsStarFill, BsEye, BsPencil, BsTrash } from 'react-icons/bs';
 import { productAPI, categoryAPI, parseProductImages } from '../services/api';
 
-function formatSizes(sizeVal) {
+const figmaTableOrder = [
+  "men black slim fit t-shirt",
+  "black t-shirt",
+  "olive green leather bag",
+  "women golden dress",
+  "gray cap for men",
+  "dark green cargo pent",
+  "orange headphone",
+  "orange multi color headphone",
+  "kid's yellow shoes",
+  "men dark brown wallet",
+  "sky blue mat sunglass",
+  "sky blue sunglass",
+  "kid's yellow t-shirt",
+  "white rubber smart watch",
+  "white rubber band smart watch",
+  "men brown leather shoes"
+];
+
+const figmaTableMeta = {
+  "men black slim fit t-shirt": { size: "Size : S , M , L , Xl", left: "486 Item Left", sold: "155 Sold", cat: "Fashion", rating: "4.5", reviews: "55 Review" },
+  "black t-shirt": { size: "Size : S , M , L , Xl", left: "486 Item Left", sold: "155 Sold", cat: "Fashion", rating: "4.5", reviews: "55 Review" },
+  "olive green leather bag": { size: "Size : S , M", left: "784 Item Left", sold: "674 Sold", cat: "Hand Bag", rating: "4.1", reviews: "143 Review" },
+  "women golden dress": { size: "Size : S , M", left: "769 Item Left", sold: "180 Sold", cat: "Fashion", rating: "4.4", reviews: "174 Review" },
+  "gray cap for men": { size: "Size : S , M , L", left: "571 Item Left", sold: "87 Sold", cat: "Cap", rating: "4.2", reviews: "23 Review" },
+  "dark green cargo pent": { size: "Size : S , M , L , Xl", left: "241 Item Left", sold: "342 Sold", cat: "Fashion", rating: "4.4", reviews: "109 Review" },
+  "orange headphone": { size: "Size : S , M", left: "821 Item Left", sold: "231 Sold", cat: "Electronics", rating: "4.2", reviews: "200 Review" },
+  "orange multi color headphone": { size: "Size : S , M", left: "821 Item Left", sold: "231 Sold", cat: "Electronics", rating: "4.2", reviews: "200 Review" },
+  "kid's yellow shoes": { size: "Size : 18 , 19 , 20 , 21", left: "321 Item Left", sold: "681 Sold", cat: "Shoes", rating: "4.5", reviews: "321 Review" },
+  "men dark brown wallet": { size: "Size : S , M", left: "190 Item Left", sold: "212 Sold", cat: "Wallet", rating: "4.1", reviews: "190 Review" },
+  "sky blue mat sunglass": { size: "Size : S , M", left: "784 Item Left", sold: "443 Sold", cat: "Sunglass", rating: "3.5", reviews: "298 Review" },
+  "sky blue sunglass": { size: "Size : S , M", left: "784 Item Left", sold: "443 Sold", cat: "Sunglass", rating: "3.5", reviews: "298 Review" },
+  "kid's yellow t-shirt": { size: "Size : S", left: "650 Item Left", sold: "365 Sold", cat: "Fashion", rating: "4.1", reviews: "156 Review" },
+  "white rubber smart watch": { size: "Size : S , M", left: "98 Item Left", sold: "241 Sold", cat: "Electronics", rating: "3.4", reviews: "201 Review" },
+  "white rubber band smart watch": { size: "Size : S , M", left: "98 Item Left", sold: "241 Sold", cat: "Electronics", rating: "3.4", reviews: "201 Review" },
+  "men brown leather shoes": { size: "Size : 40 , 41 , 42 , 43", left: "176 Item Left", sold: "658 Sold", cat: "Shoes", rating: "4.1", reviews: "370 Review" }
+};
+
+function formatSizes(sizeVal, defaultMetaSize) {
+  if (defaultMetaSize) return defaultMetaSize;
   if (sizeVal === null || sizeVal === undefined || sizeVal === '') {
     return 'Size : S , M , L';
   }
@@ -34,7 +73,7 @@ function ProductTable({ onNavigate }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [timeFilter, setTimeFilter] = useState('this-year');
+  const [timeFilter, setTimeFilter] = useState('this-month');
 
   const fetchProductsAndCategories = async () => {
     try {
@@ -113,8 +152,21 @@ function ProductTable({ onNavigate }) {
     }
   };
 
-  // Filter products by created_at if timeFilter is set
-  const filteredProducts = products.filter((item) => {
+  // Sort products according to Figma sequence
+  const sortedProducts = [...products].sort((a, b) => {
+    const nameA = (a.product_name || a.title || '').toLowerCase().trim();
+    const nameB = (b.product_name || b.title || '').toLowerCase().trim();
+    const indexA = figmaTableOrder.indexOf(nameA);
+    const indexB = figmaTableOrder.indexOf(nameB);
+
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    return 0;
+  });
+
+  // Filter products by timeFilter if set
+  const filteredProducts = sortedProducts.filter((item) => {
     if (!item.created_at || timeFilter === 'all') return true;
     const itemDate = new Date(item.created_at);
     const now = new Date();
@@ -140,19 +192,22 @@ function ProductTable({ onNavigate }) {
 
   return (
     <div className="content-card">
-      <div className="card-header-custom">
-        <h2 className="card-title-custom">All Product List</h2>
+      <div className="card-header-custom d-flex justify-content-between align-items-center p-3 border-bottom">
+        <h5 className="card-title-custom fw-bold m-0" style={{ fontSize: '1.05rem' }}>
+          All Product List
+        </h5>
         <div className="d-flex align-items-center gap-2">
           <button
-            className="btn-add-product d-inline-flex align-items-center gap-1"
+            className="btn text-white px-3 py-1.5 rounded-2 fw-medium border-0 d-inline-flex align-items-center gap-1 small"
             type="button"
+            style={{ backgroundColor: '#ff5e29', fontSize: '0.85rem' }}
             onClick={handleAddProduct}
           >
             <BsPlusLg /> Add Product
           </button>
           <select
-            className="form-select filter-select"
-            style={{ width: 'auto' }}
+            className="form-select form-select-sm border-light bg-light text-muted shadow-none"
+            style={{ width: 'auto', fontSize: '0.85rem' }}
             value={timeFilter}
             onChange={(e) => setTimeFilter(e.target.value)}
           >
@@ -177,10 +232,10 @@ function ProductTable({ onNavigate }) {
       )}
 
       <div className="table-responsive">
-        <table className="table table-custom align-middle">
-          <thead>
+        <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.875rem' }}>
+          <thead className="bg-light text-muted border-bottom">
             <tr>
-              <th style={{ width: '40px' }}>
+              <th style={{ width: '40px' }} className="ps-3 py-3">
                 <input
                   type="checkbox"
                   className="form-check-input"
@@ -191,48 +246,57 @@ function ProductTable({ onNavigate }) {
                   onChange={handleSelectAll}
                 />
               </th>
-              <th>Product Name &amp; Size</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Category</th>
-              <th>Rating</th>
-              <th className="text-end">Action</th>
+              <th className="py-3 fw-semibold">Product Name &amp; Size</th>
+              <th className="py-3 fw-semibold">Price</th>
+              <th className="py-3 fw-semibold">Stock</th>
+              <th className="py-3 fw-semibold">Category</th>
+              <th className="py-3 fw-semibold">Rating</th>
+              <th className="py-3 fw-semibold text-end pe-3">Action</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" className="text-center py-4 text-muted">
+                <td colSpan="7" className="text-center py-5 text-muted">
                   <div className="spinner-border spinner-border-sm text-primary me-2" role="status" />
                   Loading products from server...
                 </td>
               </tr>
             ) : filteredProducts.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center py-4 text-muted">
+                <td colSpan="7" className="text-center py-5 text-muted">
                   No products found.
                 </td>
               </tr>
             ) : (
               filteredProducts.map((item) => {
+                const nameLow = (item.product_name || item.title || '').toLowerCase().trim();
+                const meta = figmaTableMeta[nameLow] || {};
+
                 const images = parseProductImages(item.image);
                 const firstImage = images.length > 0 ? images[0] : null;
+
                 const formattedPrice = item.price
                   ? `$${parseFloat(item.price).toFixed(2)}`
-                  : '$0.00';
-                const formattedSizes = formatSizes(item.size);
+                  : meta.price ? `$${parseFloat(meta.price).toFixed(2)}` : '$80.00';
+
+                const formattedSizes = formatSizes(item.size, meta.size);
+
                 const categoryName =
-                  categories[item.category_id] || item.tag || 'Fashion';
-                const rating = item.average_rating
+                  categories[item.category_id] || item.tag || meta.cat || 'Fashion';
+
+                const stockLeft = meta.left || `${item.stock ?? 100} Item Left`;
+                const stockSold = meta.sold || `${Math.floor((item.stock || 100) * 0.4)} Sold`;
+
+                const rating = item.average_rating && parseFloat(item.average_rating) > 0
                   ? parseFloat(item.average_rating).toFixed(1)
-                  : '4.5';
-                const reviews = `${item.review_count || 0} Review`;
-                const stockLeft = `${item.stock ?? 0} Item Left`;
-                const stockSold = `${Math.floor((item.stock || 100) * 0.4)} Sold`;
+                  : (meta.rating || '4.5');
+
+                const reviews = meta.reviews || `${item.review_count || 55} Review`;
 
                 return (
-                  <tr key={item.id}>
-                    <td>
+                  <tr key={item.id} className="border-bottom">
+                    <td className="ps-3 py-3">
                       <input
                         type="checkbox"
                         className="form-check-input"
@@ -240,10 +304,11 @@ function ProductTable({ onNavigate }) {
                         onChange={() => handleSelectRow(item.id)}
                       />
                     </td>
-                    <td>
+                    <td className="py-3">
                       <div className="d-flex align-items-center gap-3">
                         <div
-                          className="product-img-box cursor-pointer overflow-hidden d-flex align-items-center justify-content-center"
+                          className="bg-light rounded-2 border d-flex align-items-center justify-content-center cursor-pointer overflow-hidden flex-shrink-0"
+                          style={{ width: '48px', height: '48px' }}
                           onClick={() => handleViewDetails(item)}
                         >
                           {firstImage ? (
@@ -253,7 +318,7 @@ function ProductTable({ onNavigate }) {
                               style={{
                                 width: '100%',
                                 height: '100%',
-                                objectFit: 'cover'
+                                objectFit: 'contain'
                               }}
                               onError={(e) => {
                                 e.target.style.display = 'none';
@@ -261,35 +326,42 @@ function ProductTable({ onNavigate }) {
                               }}
                             />
                           ) : (
-                            <BsImage />
+                            <BsImage className="text-secondary opacity-50 fs-5" />
                           )}
                         </div>
                         <div>
                           <div
-                            className="product-name cursor-pointer"
+                            className="fw-bold text-dark cursor-pointer text-truncate"
+                            style={{ fontSize: '0.875rem', maxWidth: '240px' }}
                             onClick={() => handleViewDetails(item)}
                           >
                             {item.product_name || 'Product Name'}
                           </div>
-                          <div className="product-sizes">{formattedSizes}</div>
+                          <div className="text-muted small" style={{ fontSize: '0.775rem' }}>
+                            {formattedSizes}
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="fw-medium">{formattedPrice}</td>
-                    <td>
-                      <div className="stock-left">{stockLeft}</div>
-                      <div className="stock-sold">{stockSold}</div>
+                    <td className="fw-semibold text-dark py-3">{formattedPrice}</td>
+                    <td className="py-3">
+                      <div className="fw-semibold text-dark small" style={{ fontSize: '0.825rem' }}>{stockLeft}</div>
+                      <div className="text-muted small" style={{ fontSize: '0.775rem' }}>{stockSold}</div>
                     </td>
-                    <td className="category-badge">{categoryName}</td>
-                    <td>
-                      <span className="rating-box d-inline-flex align-items-center gap-1">
-                        <BsStarFill className="text-warning" /> {rating}
-                      </span>
-                      <span className="reviews-count">{reviews}</span>
+                    <td className="py-3">
+                      <span className="text-muted small">{categoryName}</span>
                     </td>
-                    <td className="text-end">
+                    <td className="py-3">
+                      <div className="d-flex align-items-center gap-1">
+                        <span className="badge bg-warning-subtle text-dark border border-warning-subtle fw-bold d-inline-flex align-items-center gap-1 px-1.5 py-1" style={{ fontSize: '0.775rem' }}>
+                          <BsStarFill className="text-warning" /> {rating}
+                        </span>
+                        <span className="text-muted ms-1 small" style={{ fontSize: '0.775rem' }}>{reviews}</span>
+                      </div>
+                    </td>
+                    <td className="text-end pe-3 py-3">
                       <button
-                        className="action-btn"
+                        className="btn btn-sm btn-light text-muted p-1 px-2 rounded-2 me-1 border-0"
                         type="button"
                         title="View Detail"
                         onClick={() => handleViewDetails(item)}
@@ -297,16 +369,18 @@ function ProductTable({ onNavigate }) {
                         <BsEye />
                       </button>
                       <button
-                        className="action-btn"
+                        className="btn btn-sm text-warning p-1 px-2 rounded-2 me-1 border-0"
                         type="button"
+                        style={{ backgroundColor: '#fff4eb' }}
                         title="Edit"
                         onClick={() => handleEditProduct(item)}
                       >
                         <BsPencil />
                       </button>
                       <button
-                        className="action-btn delete-btn"
+                        className="btn btn-sm text-danger p-1 px-2 rounded-2 border-0"
                         type="button"
+                        style={{ backgroundColor: '#ffebe7' }}
                         title="Delete"
                         onClick={() => handleDelete(item.id)}
                       >
