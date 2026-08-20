@@ -161,7 +161,7 @@ export default function SellerList() {
   const [favorites, setFavorites] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Fetch Sellers from Backend API
+
   const fetchSellers = useCallback(async () => {
     try {
       setLoading(true);
@@ -192,7 +192,7 @@ export default function SellerList() {
             clients: '+2k',
           }));
 
-          // Merge backend sellers with defaults if fewer than 8 cards
+
           const combined = [...apiSellers];
           for (let i = 0; i < DEFAULT_SELLERS.length; i++) {
             if (combined.length >= 8) break;
@@ -231,7 +231,7 @@ export default function SellerList() {
               }}
             >
               <div>
-                {/* Logo Frame Container */}
+
                 <div 
                   className="rounded-3 overflow-hidden d-flex align-items-center justify-content-center mb-3"
                   style={{ height: '144px', width: '100%', backgroundColor: '#F3F4F7' }}

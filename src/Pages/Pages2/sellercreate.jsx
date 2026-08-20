@@ -135,7 +135,7 @@ export default function SellerCreate() {
 
       <div className="d-flex flex-column flex-lg-row gap-4 align-items-start">
         
-        {/* Left Live Preview Card */}
+        
         <div 
           className="bg-white p-3 rounded-4 shadow-sm d-flex flex-column justify-content-between flex-shrink-0"
           style={{ 
@@ -221,7 +221,7 @@ export default function SellerCreate() {
 
         </div>
 
-        {/* Right Form Panels */}
+        
         <div className="flex-grow-1 d-flex flex-column gap-4 w-100">
 
           <div className="card border-0 p-4 rounded-4 shadow-sm bg-white">

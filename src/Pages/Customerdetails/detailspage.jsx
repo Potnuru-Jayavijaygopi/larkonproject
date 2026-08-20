@@ -30,7 +30,7 @@ const getAuthToken = async () => {
   return null;
 };
 
-// Date Format Helpers
+
 const formatDate = (dateStr) => {
   if (!dateStr) return "07 Jan, 2023";
   try {
@@ -71,7 +71,7 @@ export default function DetailsPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch Customer Details, Invoices, and Orders from Backend
+  
   const fetchCustomerDetails = useCallback(async () => {
     try {
       setLoading(true);
@@ -81,7 +81,7 @@ export default function DetailsPage() {
         ...(token ? { Authorization: `Bearer ${token}` } : {})
       };
 
-      // 1. Fetch Customers List
+      
       let targetCustomer = null;
       if (queryId) {
         const singleRes = await fetch(`${API_BASE}/customers/${queryId}`, { headers });
@@ -104,7 +104,7 @@ export default function DetailsPage() {
       }
       setCustomer(targetCustomer);
 
-      // 2. Fetch Invoices
+      
       const invRes = await fetch(`${API_BASE}/invoices`, { headers });
       if (invRes.ok) {
         const invData = await invRes.json();
@@ -115,7 +115,7 @@ export default function DetailsPage() {
         }
       }
 
-      // 3. Fetch Orders
+      
       const ordRes = await fetch(`${API_BASE}/orders`, { headers });
       if (ordRes.ok) {
         const ordData = await ordRes.json();
@@ -135,7 +135,7 @@ export default function DetailsPage() {
     fetchCustomerDetails();
   }, [fetchCustomerDetails]);
 
-  // Derived Values
+  
   const customerName = customer 
     ? `${customer.first_name} ${customer.last_name || ''}`.trim() 
     : "Michael A. Miner";
@@ -147,14 +147,14 @@ export default function DetailsPage() {
   const accountId = customer?.id ? `#AC-${278000 + customer.id}` : "#AC-278699";
   const isActive = customer ? customer.status === 'active' : true;
 
-  // Filter or calculate stats
+  
   const totalInvoicesCount = invoices.length > 0 ? invoices.length : 234;
   const totalOrdersCount = orders.length > 0 ? orders.length : 219;
   const totalExpenseSum = orders.length > 0 
     ? orders.reduce((sum, o) => sum + (parseFloat(o.total_amount) || 0), 0)
     : 2189;
 
-  // Transaction history items (take top 3-5 invoices)
+  
   const paymentMethods = ["Mastercard", "Visa", "Paypal", "Stripe", "Bank Transfer"];
   const transactionItems = invoices.length > 0 ? invoices.slice(0, 3) : [
     { invoice_id: 1, invoice_number: "INV2540", payment_status: "completed", total_amount: "421.00", order_date: "2023-01-07" },
@@ -162,7 +162,6 @@ export default function DetailsPage() {
     { invoice_id: 3, invoice_number: "INV5032", payment_status: "completed", total_amount: "347.00", order_date: "2023-09-28" }
   ];
 
-  // Latest invoices items
   const latestInvoices = invoices.length > 0 ? invoices.slice(0, 3) : [
     { invoice_number: "INV2540", order_date: "2024-05-16" },
     { invoice_number: "INV0914", order_date: "2024-05-16" },
@@ -174,7 +173,7 @@ export default function DetailsPage() {
       
       <div className="row g-3 mb-3">
         
-        {/* Customer Profile Card */}
+        
         <div className="col-lg-4">
           <div className="card border-0 shadow-sm rounded-3 bg-white h-100 overflow-hidden d-flex flex-column justify-content-between">
             <div 
@@ -222,10 +221,10 @@ export default function DetailsPage() {
           </div>
         </div>
 
-        {/* Right Section: Stats & Transaction History */}
+
         <div className="col-lg-8 d-flex flex-column gap-3">
           
-          {/* Stat Summary Cards */}
+
           <div className="row g-3">
 
             <div className="col-md-4">
@@ -274,7 +273,7 @@ export default function DetailsPage() {
             </div>
           </div>
 
-          {/* Transaction History Table */}
+
           <div className="card border-0 shadow-sm rounded-3 p-4 bg-white flex-grow-1">
             <h6 className="fw-semibold text-dark mb-3">Transaction History</h6>
             <div className="table-responsive">
@@ -325,7 +324,7 @@ export default function DetailsPage() {
 
       <div className="row g-3">
         
-        {/* Bottom Left: Customer Details & Latest Invoice */}
+
         <div className="col-lg-4 d-flex flex-column gap-3">
           <div className="card border-0 shadow-sm rounded-3 bg-white p-3">
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -377,7 +376,7 @@ export default function DetailsPage() {
           </div>
         </div>
 
-        {/* Bottom Middle: Rewards Banner */}
+
         <div className="col-lg-4">
           <div className="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 d-flex flex-column justify-content-between">
             <div className="rounded-3 d-flex align-items-center justify-content-center w-100 bg-light" style={{ minHeight: '300px' }}>
@@ -397,7 +396,7 @@ export default function DetailsPage() {
           </div>
         </div>
 
-        {/* Bottom Right: Total Balance & SVG Chart */}
+
         <div className="col-lg-4 d-flex flex-column gap-3">
           <div className="card shadow-sm rounded-3 p-3 bg-white flex-grow-1 d-flex flex-column justify-content-between">
             <div>

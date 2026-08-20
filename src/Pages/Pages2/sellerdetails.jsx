@@ -243,7 +243,7 @@ export default function SellerDetails() {
   const [products, setProducts] = useState(DEFAULT_PRODUCTS);
   const [loading, setLoading] = useState(false);
 
-  // Fetch Seller & Products Data from Backend
+  
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -255,7 +255,7 @@ export default function SellerDetails() {
 
       let found = null;
 
-      // 1. Fetch Sellers from API
+      
       try {
         const sellersRes = await fetch(`${API_BASE}/sellers`, { headers });
         if (sellersRes.ok) {
@@ -270,19 +270,19 @@ export default function SellerDetails() {
         console.error("Failed to fetch API sellers:", e);
       }
 
-      // 2. If not found in API, check DEFAULT_SELLERS
+      
       if (!found && sellerId) {
         found = DEFAULT_SELLERS.find(s => String(s.id) === String(sellerId));
       }
 
-      // 3. If still not found, fallback to first DEFAULT_SELLER or null
+      
       if (!found) {
         found = DEFAULT_SELLERS.find(s => String(s.id) === String(sellerId)) || DEFAULT_SELLERS[0];
       }
 
       setSeller(found);
 
-      // 4. Fetch Products
+      
       try {
         const prodRes = await fetch(`${API_BASE}/products`, { headers });
         if (prodRes.ok) {
@@ -315,7 +315,7 @@ export default function SellerDetails() {
     fetchData();
   }, [fetchData]);
 
-  // Derived Info
+  
   const sellerName = seller?.business_name || seller?.name || "Rolex Watches";
   const sellerCategory = seller?.category || "Watch";
   const sellerWebsite = (seller?.website || "www.rolexwatch.co").replace(/^https?:\/\//, '');

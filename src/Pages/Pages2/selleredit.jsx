@@ -50,7 +50,7 @@ export default function SellerEdit() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
 
-  // Fetch Seller from Backend
+  
   const fetchSeller = useCallback(async () => {
     try {
       const token = await getAuthToken();
@@ -166,7 +166,7 @@ export default function SellerEdit() {
 
       <div className="d-flex flex-column flex-lg-row gap-4 align-items-start">
         
-        {/* Left Preview Card */}
+        
         <div 
           className="bg-white p-3 rounded-4 shadow-sm d-flex flex-column justify-content-between flex-shrink-0"
           style={{ 
@@ -252,7 +252,7 @@ export default function SellerEdit() {
 
         </div>
 
-        {/* Right Form Panels */}
+        
         <div className="flex-grow-1 d-flex flex-column gap-4 w-100">
           <div className="card border-0 p-4 rounded-4 shadow-sm bg-white">
             <h6 className="fw-bold text-dark mb-3" style={{ fontSize: '13px' }}>Add Brand Logo</h6>
