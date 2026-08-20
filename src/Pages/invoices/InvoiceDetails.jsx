@@ -308,7 +308,7 @@ function InvoiceDetails() {
               </button>
 
               <button
-                className="btn text-white px-4 py-1 small rounded-2 border-0"
+                className="btn text-white px-4 py-1 small rounded-2  border-0"
                 type="button"
                 style={{ backgroundColor: '#2dd4bf', fontSize: '0.78rem', fontWeight: '500' }}
                 onClick={handlePrint}

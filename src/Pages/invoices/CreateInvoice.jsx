@@ -528,7 +528,7 @@ function CreateInvoice({ onNavigate }) {
             </div>
 
             <div
-              className="p-3 rounded-3 d-flex align-items-start gap-2"
+              className="p-3 rounded-3 d-flex align-items-start   gap-2"
               style={{ backgroundColor: '#fff5f5', color: '#d9534f', fontSize: '0.75rem', lineHeight: '1.5' }}
             >
               <BsExclamationCircleFill className="mt-1 flex-shrink-0" style={{ fontSize: '14px' }} />

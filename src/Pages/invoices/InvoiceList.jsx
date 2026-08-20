@@ -351,7 +351,7 @@ function InvoiceList({ onNavigate }) {
           </table>
         </div>
 
-        <div className="d-flex justify-content-end align-items-center mt-3 gap-1">
+        <div className="d-flex justify-content-end align-items-center mt-3  gap-1">
           <button
             className="btn btn-sm btn-light border text-muted px-2 py-1"
             type="button"
