@@ -152,7 +152,7 @@ function ProductTable({ onNavigate }) {
     }
   };
 
-  // Sort products so newly created products appear at the VERY TOP
+
   const sortedProducts = [...products].sort((a, b) => {
     const nameA = (a.product_name || a.title || '').toLowerCase().trim();
     const nameB = (b.product_name || b.title || '').toLowerCase().trim();
@@ -165,7 +165,7 @@ function ProductTable({ onNavigate }) {
     return (b.id || 0) - (a.id || 0);
   });
 
-  // Filter products by timeFilter if set
+
   const filteredProducts = sortedProducts.filter((item) => {
     if (!item.created_at || timeFilter === 'all') return true;
     const itemDate = new Date(item.created_at);
