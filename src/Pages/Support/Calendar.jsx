@@ -37,7 +37,7 @@ const eventColors = ["#FF6C2F", "#4ECAC2", "#22C55E", "#EF5F5F", "#F9B931", "#5D
 function Calendar() {
     const containerRef = useRef(null);
     const [scale, setScale] = useState(1);
-    const [currentDate, setCurrentDate] = useState(new Date(2026, 7, 1)); // Default to Aug 2026 where seed data exists
+    const [currentDate, setCurrentDate] = useState(new Date(2026, 7, 1)); 
     const [events, setEvents] = useState([]);
     const [categories, setCategories] = useState([]);
     const [viewMode, setViewMode] = useState("Month");

@@ -82,13 +82,13 @@ function Faqs() {
 
     return (
         <div className="w-full">
-            <div className="w-full bg-white rounded-[12px] shadow-[0px_3px_4px_rgba(0,0,0,0.03)] p-[20px] lg:p-[28px] border border-[#EAEDF1]/60">
-                {/* Header Banner */}
+            <div className="w-full p-[20px] lg:p-[28px] ">
+               
                 <div className="w-full rounded-[10px] bg-[#D9D9D9] py-[24px] px-[20px] flex flex-col items-center justify-center">
-                    <h1 className="text-[19px] lg:text-[20px] font-semibold leading-tight text-white">
+                    <h1 className="!text-[24px] font-[Hanken Grotesk] font-[600] leading-[100%] tracking-[0%] !text-[#FFFFFF]">
                         Frequently Added Questions
                     </h1>
-                    <p className="text-[12px] font-normal text-white/70 mt-[4px] text-center">
+                    <p className="!text-[14px] font-[Play] font-[400] leading-[100%] tracking-[0%] !text-[#FFFFFF]/50 m-[5px]">
                         We are here to help with any questions you have about plans procing and support features
                     </p>
                     <div className="w-full max-w-[620px] h-[34px] bg-white rounded-full flex items-center px-[14px] gap-[8px] mt-[12px] shadow-sm">
@@ -103,7 +103,7 @@ function Faqs() {
                     </div>
                 </div>
 
-                {/* FAQ 2-Column Grid */}
+              
                 <div className="w-full mt-[22px]">
                     {loading && faqs.length === 0 ? (
                         <div className="flex items-center justify-center h-[200px] text-[#5D7186] text-[13px]">
