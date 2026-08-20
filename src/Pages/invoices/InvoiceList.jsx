@@ -22,6 +22,7 @@ function InvoiceList({ onNavigate }) {
     inactiveInvoice: 0,
   });
   const [selectedIds, setSelectedIds] = useState([]);
+  const [filterTime, setFilterTime] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -64,7 +65,7 @@ function InvoiceList({ onNavigate }) {
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedIds(invoices.map((i) => i.invoice_id));
+      setSelectedIds(filteredInvoices.map((i) => i.invoice_id));
     } else {
       setSelectedIds([]);
     }
@@ -120,6 +121,45 @@ function InvoiceList({ onNavigate }) {
     return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
+  const filteredInvoices = invoices.filter((item) => {
+    if (filterTime === 'all') return true;
+    if (!item.order_date) return true;
+
+    const date = new Date(item.order_date);
+    if (isNaN(date.getTime())) return true;
+
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+
+    if (filterTime === 'this-month') {
+      return date.getFullYear() === currentYear && date.getMonth() === currentMonth;
+    }
+    if (filterTime === 'last-month') {
+      const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+      const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+      return date.getFullYear() === lastMonthYear && date.getMonth() === lastMonth;
+    }
+    if (filterTime === 'this-year') {
+      return date.getFullYear() === currentYear;
+    }
+    return true;
+  });
+
+ 
+  const displaySummary = {
+    totalInvoice: filterTime === 'all' ? summary.totalInvoice : filteredInvoices.length,
+    pendingInvoice: filterTime === 'all' ? summary.pendingInvoice : filteredInvoices.filter(i => mapStatus(i.payment_status) === 'Pending').length,
+    paidInvoice: filterTime === 'all' ? summary.paidInvoice : filteredInvoices.filter(i => mapStatus(i.payment_status) === 'Completed').length,
+    inactiveInvoice: filterTime === 'all' ? summary.inactiveInvoice : filteredInvoices.filter(i => mapStatus(i.payment_status) === 'Cancel').length,
+  };
+
+  const handleFilterChange = (e) => {
+    setFilterTime(e.target.value);
+    setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
   return (
     <>
       <div className="row g-3 mb-4">
@@ -127,7 +167,7 @@ function InvoiceList({ onNavigate }) {
           <div className="content-card p-3 d-flex align-items-center justify-content-between">
             <div>
               <span className="text-muted small d-block mb-1">Total Invoice</span>
-              <h4 className="fw-bold text-dark mb-0">{loading ? '...' : summary.totalInvoice}</h4>
+              <h4 className="fw-bold text-dark mb-0">{loading ? '...' : displaySummary.totalInvoice}</h4>
             </div>
             <div
               className="rounded-3 d-flex align-items-center justify-content-center p-3"
@@ -142,7 +182,7 @@ function InvoiceList({ onNavigate }) {
           <div className="content-card p-3 d-flex align-items-center justify-content-between">
             <div>
               <span className="text-muted small d-block mb-1">Pending Invoice</span>
-              <h4 className="fw-bold text-dark mb-0">{loading ? '...' : summary.pendingInvoice}</h4>
+              <h4 className="fw-bold text-dark mb-0">{loading ? '...' : displaySummary.pendingInvoice}</h4>
             </div>
             <div
               className="rounded-3 d-flex align-items-center justify-content-center p-3"
@@ -157,7 +197,7 @@ function InvoiceList({ onNavigate }) {
           <div className="content-card p-3 d-flex align-items-center justify-content-between">
             <div>
               <span className="text-muted small d-block mb-1">Paid Invoice</span>
-              <h4 className="fw-bold text-dark mb-0">{loading ? '...' : summary.paidInvoice}</h4>
+              <h4 className="fw-bold text-dark mb-0">{loading ? '...' : displaySummary.paidInvoice}</h4>
             </div>
             <div
               className="rounded-3 d-flex align-items-center justify-content-center p-3"
@@ -172,7 +212,7 @@ function InvoiceList({ onNavigate }) {
           <div className="content-card p-3 d-flex align-items-center justify-content-between">
             <div>
               <span className="text-muted small d-block mb-1">Inactive Invoice</span>
-              <h4 className="fw-bold text-dark mb-0">{loading ? '...' : summary.inactiveInvoice}</h4>
+              <h4 className="fw-bold text-dark mb-0">{loading ? '...' : displaySummary.inactiveInvoice}</h4>
             </div>
             <div
               className="rounded-3 d-flex align-items-center justify-content-center p-3"
@@ -187,7 +227,13 @@ function InvoiceList({ onNavigate }) {
       <div className="content-card p-3 mb-4">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h6 className="fw-bold text-dark mb-0">All Invoices List</h6>
-          <select className="form-select form-select-sm" style={{ width: 'auto', fontSize: '0.8rem' }}>
+          <select
+            className="form-select form-select-sm"
+            style={{ width: 'auto', fontSize: '0.8rem' }}
+            value={filterTime}
+            onChange={handleFilterChange}
+          >
+            <option value="all">All Invoices</option>
             <option value="this-month">This Month</option>
             <option value="last-month">Last Month</option>
             <option value="this-year">This Year</option>
@@ -208,7 +254,7 @@ function InvoiceList({ onNavigate }) {
                   <input
                     type="checkbox"
                     className="form-check-input"
-                    checked={selectedIds.length === invoices.length && invoices.length > 0}
+                    checked={selectedIds.length === filteredInvoices.length && filteredInvoices.length > 0}
                     onChange={handleSelectAll}
                   />
                 </th>
@@ -229,14 +275,14 @@ function InvoiceList({ onNavigate }) {
                     Loading invoices...
                   </td>
                 </tr>
-              ) : invoices.length === 0 ? (
+              ) : filteredInvoices.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center py-4 text-muted">
-                    No invoices found.
+                    No invoices found for the selected period.
                   </td>
                 </tr>
               ) : (
-                invoices.map((item) => (
+                filteredInvoices.map((item) => (
                   <tr key={item.invoice_id}>
                     <td>
                       <input
@@ -306,7 +352,13 @@ function InvoiceList({ onNavigate }) {
         </div>
 
         <div className="d-flex justify-content-end align-items-center mt-3 gap-1">
-          <button className="btn btn-sm btn-light border text-muted px-2 py-1" type="button" style={{ fontSize: '0.78rem' }}>
+          <button
+            className="btn btn-sm btn-light border text-muted px-2 py-1"
+            type="button"
+            style={{ fontSize: '0.78rem' }}
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(1)}
+          >
             Previous
           </button>
           <button
@@ -317,22 +369,11 @@ function InvoiceList({ onNavigate }) {
             1
           </button>
           <button
-            className={`btn btn-sm ${currentPage === 2 ? 'btn-add-product' : 'btn-light border'} px-2 py-1`}
+            className="btn btn-sm btn-light border text-muted px-2 py-1"
             type="button"
             style={{ fontSize: '0.78rem' }}
-            onClick={() => setCurrentPage(2)}
+            disabled={currentPage === 1}
           >
-            2
-          </button>
-          <button
-            className={`btn btn-sm ${currentPage === 3 ? 'btn-add-product' : 'btn-light border'} px-2 py-1`}
-            type="button"
-            style={{ fontSize: '0.78rem' }}
-            onClick={() => setCurrentPage(3)}
-          >
-            3
-          </button>
-          <button className="btn btn-sm btn-light border text-muted px-2 py-1" type="button" style={{ fontSize: '0.78rem' }}>
             Next
           </button>
         </div>

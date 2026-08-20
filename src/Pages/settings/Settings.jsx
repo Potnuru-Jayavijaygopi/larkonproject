@@ -29,7 +29,9 @@ function Settings({ onNavigate }) {
   const [ownerFullName, setOwnerFullName] = useState('');
   const [ownerPhone, setOwnerPhone] = useState('');
   const [ownerEmail, setOwnerEmail] = useState('');
+  const [username, setUsername] = useState('johndoe');
   const [fullAddress, setFullAddress] = useState('');
+
   const [zipCode, setZipCode] = useState('');
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('');
@@ -84,6 +86,9 @@ function Settings({ onNavigate }) {
         setOwnerFullName(profData.full_name || `${profData.first_name || ''} ${profData.last_name || ''}`.trim());
         setOwnerPhone(profData.phone || '');
         setOwnerEmail(profData.email || '');
+        if (profData.username) {
+          setUsername(profData.username);
+        }
       }
 
       setLoading(false);
@@ -100,7 +105,7 @@ function Settings({ onNavigate }) {
     setStatusMessage(null);
 
     try {
-      // 1. Update General Settings
+      
       await updateGeneralSettings({
         meta_title: metaTitle,
         meta_keywords: metaTagKeyword,
@@ -109,7 +114,7 @@ function Settings({ onNavigate }) {
         meta_description: description,
       });
 
-      // 2. Update Admin Profile
+      
       const parts = ownerFullName.trim().split(' ');
       const first_name = parts[0] || '';
       const last_name = parts.slice(1).join(' ') || '';
@@ -118,6 +123,7 @@ function Settings({ onNavigate }) {
         first_name,
         last_name,
         full_name: ownerFullName,
+        username: username || 'johndoe',
         phone: ownerPhone,
         email: ownerEmail,
       });
