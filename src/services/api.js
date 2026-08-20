@@ -402,6 +402,38 @@ export const parseProductImages = (imageField) => {
   return [];
 };
 
+// Invoice API
+export const invoiceAPI = {
+  getAll: async () => (await request('/invoices', { method: 'GET' })).data || [],
+  getById: async (id) => (await request(`/invoices/${id}`, { method: 'GET' })).data || {},
+  create: async (data) => (await request('/invoices', { method: 'POST', body: JSON.stringify(data) })).data || {},
+};
+
+export const getInvoices = async () => (await request('/invoices', { method: 'GET' })).data || [];
+export const getInvoiceById = async (id) => (await request(`/invoices/${id}`, { method: 'GET' })).data || {};
+export const sendInvoiceEmail = async (id) => (await request(`/invoices/${id}/send`, { method: 'POST' }));
+export const downloadInvoicePDF = async (id, invoiceNumber) => {
+  const token = getAuthToken();
+  const response = await fetch(`${API_BASE_URL}/invoices/${id}/download`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!response.ok) throw new Error('Failed to download invoice PDF');
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `invoice-${invoiceNumber || id}.pdf`);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+};
+
+export const getGeneralSettings = async () => (await request('/settings/general', { method: 'GET' })).data || {};
+export const updateGeneralSettings = async (data) => (await request('/settings/general', { method: 'PUT', body: JSON.stringify(data) })).data || {};
+export const getAdminProfile = async () => (await request('/auth/me', { method: 'GET' })).data || {};
+export const updateAdminProfile = async (data) => (await request('/auth/profile', { method: 'PUT', body: JSON.stringify(data) })).data || {};
+
 // Formatting helpers
 export const formatDate = (dateStr) => {
   if (!dateStr) return 'N/A';

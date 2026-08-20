@@ -30,6 +30,12 @@ import AttributeList from './Pages/attributes/AttributeList';
 import AddAttribute from './Pages/attributes/AddAttribute';
 import CreateAttribute from './Pages/attributes/CreateAttribute';
 
+import InvoiceList from './Pages/invoices/InvoiceList';
+import InvoiceDetails from './Pages/invoices/InvoiceDetails';
+import CreateInvoice from './Pages/invoices/CreateInvoice';
+
+import Settings from './Pages/settings/Settings';
+
 import Widgets from './Pages/widgets/Widgets';
 
 import Accordion from './Pages/base-ui/Accordion';
@@ -104,6 +110,16 @@ const router = createBrowserRouter([
       { path: 'attributes/add', element: <AddAttribute /> },
       { path: 'attributes/add/:id', element: <AddAttribute /> },
       { path: 'attributes/create', element: <CreateAttribute /> },
+
+      // Invoices routes
+      { path: 'invoices/list', element: <InvoiceList /> },
+      { path: 'invoices/details', element: <InvoiceDetails /> },
+      { path: 'invoices/details/:id', element: <InvoiceDetails /> },
+      { path: 'invoices/create', element: <CreateInvoice /> },
+      { path: 'invoices/add', element: <CreateInvoice /> },
+
+      // Settings route
+      { path: 'settings', element: <Settings /> },
 
       // Base-UI routes
       { path: 'base-ui/accordion', element: <Accordion /> },
