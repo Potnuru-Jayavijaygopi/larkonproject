@@ -179,7 +179,7 @@ function ProductGrid({ onNavigate }) {
     );
   };
 
-  // Sort products so newly created products appear at the VERY TOP
+
   const sortedProducts = [...products].sort((a, b) => {
     const nameA = (a.product_name || a.title || "").toLowerCase().trim();
     const nameB = (b.product_name || b.title || "").toLowerCase().trim();
@@ -192,13 +192,12 @@ function ProductGrid({ onNavigate }) {
     return (b.id || 0) - (a.id || 0);
   });
 
-  // Dynamic Filtering Logic
   const filteredProducts = sortedProducts.filter((item) => {
-    // 1. Search Filter
+
     const name = (item.product_name || item.title || "").toLowerCase();
     const matchesSearch = !searchFilter || name.includes(searchFilter.toLowerCase());
 
-    // 2. Category Filter
+
     const itemCat = (categoryMap[item.category_id] || item.tag || "").toLowerCase();
     const matchesCat =
       selectedCategories.length === 0 ||
@@ -216,7 +215,6 @@ function ProductGrid({ onNavigate }) {
         );
       });
 
-    // 3. Price Preset Filter
     const priceVal = parseFloat(item.price || 0);
     let matchesPresetPrice = true;
     if (pricePreset === "below-200") {
@@ -231,7 +229,7 @@ function ProductGrid({ onNavigate }) {
       matchesPresetPrice = priceVal >= 1000 && priceVal <= 1100;
     }
 
-    // 4. Custom Price Range (Only applied if values are entered)
+
     let matchesCustomPrice = true;
     if (customMinPrice !== "" && !isNaN(parseFloat(customMinPrice))) {
       matchesCustomPrice = matchesCustomPrice && priceVal >= parseFloat(customMinPrice);
@@ -240,7 +238,7 @@ function ProductGrid({ onNavigate }) {
       matchesCustomPrice = matchesCustomPrice && priceVal <= parseFloat(customMaxPrice);
     }
 
-    // 5. Gender Filter
+
     let matchesGender = true;
     if (selectedGenders.length > 0) {
       const itemGender = (item.gender || "").toLowerCase();
@@ -259,7 +257,7 @@ function ProductGrid({ onNavigate }) {
       });
     }
 
-    // 6. Size & Fit Filter
+
     let matchesSize = true;
     if (selectedSizes.length > 0) {
       let itemSizes = [];
@@ -276,7 +274,7 @@ function ProductGrid({ onNavigate }) {
       );
     }
 
-    // 7. Rating Filter
+
     const ratingVal = parseFloat(item.average_rating || 0);
     const matchesRating = selectedRating ? ratingVal >= selectedRating : true;
 
@@ -296,10 +294,8 @@ function ProductGrid({ onNavigate }) {
 
   return (
     <div className="row g-4">
-      {/* Left Filter Sidebar */}
       <div className="col-lg-3 col-md-4">
         <div className="product-filter-sidebar">
-          {/* Search Filter Box */}
           <div className="content-card p-3 mb-3">
             <div className="position-relative">
               <BsSearch className="position-absolute top-50 start-0 translate-middle-y ms-2 text-muted small" />
@@ -313,9 +309,9 @@ function ProductGrid({ onNavigate }) {
             </div>
           </div>
 
-          {/* Filters Card */}
+
           <div className="content-card p-3">
-            {/* 1. Categories Accordion */}
+
             <div className="mb-3">
               <div
                 className="filter-header-box"
@@ -368,7 +364,6 @@ function ProductGrid({ onNavigate }) {
               )}
             </div>
 
-            {/* 2. Product Price Accordion */}
             <div className="mb-3">
               <div
                 className="filter-header-box"
@@ -465,12 +460,10 @@ function ProductGrid({ onNavigate }) {
               )}
             </div>
 
-            {/* 3. Custom Price Range */}
             <div className="mb-4 px-1">
               <div className="fw-bold small text-dark mb-2" style={{ fontSize: "0.85rem" }}>
                 Custom Price Range :
               </div>
-              {/* Range Slider Track */}
               <div className="position-relative my-3" style={{ height: "6px" }}>
                 <div
                   style={{
@@ -509,7 +502,7 @@ function ProductGrid({ onNavigate }) {
                   }}
                 />
               </div>
-              {/* Input range boxes */}
+
               <div className="d-flex align-items-center gap-2 mt-3">
                 <div className="input-group input-group-sm">
                   <span className="input-group-text bg-white border-end-0 text-muted" style={{ fontSize: '0.8rem' }}>$</span>
@@ -537,7 +530,6 @@ function ProductGrid({ onNavigate }) {
               </div>
             </div>
 
-            {/* 4. Gender Accordion */}
             <div className="mb-3">
               <div
                 className="filter-header-box"
@@ -592,7 +584,6 @@ function ProductGrid({ onNavigate }) {
               )}
             </div>
 
-            {/* 5. Size & Fit Accordion */}
             <div className="mb-3">
               <div
                 className="filter-header-box"
@@ -682,7 +673,6 @@ function ProductGrid({ onNavigate }) {
               )}
             </div>
 
-            {/* 6. Rating Accordion */}
             <div className="mb-3">
               <div
                 className="filter-header-box"
@@ -753,7 +743,6 @@ function ProductGrid({ onNavigate }) {
               )}
             </div>
 
-            {/* 7. Apply Button */}
             <button
               className="btn text-white w-100 mt-3 py-2 rounded-2 fw-medium border-0"
               type="button"
@@ -768,7 +757,6 @@ function ProductGrid({ onNavigate }) {
         </div>
       </div>
 
-      {/* Right Product Grid Column */}
       <div className="col-lg-9 col-md-8">
         <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
           <div>

@@ -1,8 +1,7 @@
-// API Service Layer for Larkon Project
 
 const API_BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:3000/api/v1';
 
-// Token Management
+
 export const getAuthToken = () => {
   return (
     localStorage.getItem('accessToken') ||
@@ -25,7 +24,7 @@ export const clearAuthData = () => {
   sessionStorage.removeItem('accessToken');
 };
 
-// Automatic fallback auth ensure
+
 export const ensureAuthenticated = async (forceRefresh = false) => {
   if (!forceRefresh) {
     const existingToken = getAuthToken();
@@ -53,7 +52,6 @@ export const ensureAuthenticated = async (forceRefresh = false) => {
   return '';
 };
 
-// Generic HTTP request helper with automatic 401 retry
 async function request(endpoint, options = {}, isRetry = false) {
   const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
   const headers = { ...options.headers };
@@ -78,7 +76,6 @@ async function request(endpoint, options = {}, isRetry = false) {
       headers
     });
 
-    // Handle JSON or text response
     const contentType = response.headers.get('content-type');
     let data;
     if (contentType && contentType.includes('application/json')) {
@@ -92,7 +89,7 @@ async function request(endpoint, options = {}, isRetry = false) {
       }
     }
 
-    // Auto-handle 401 Invalid / Expired Token
+
     if (response.status === 401 && !isRetry && options.requiresAuth !== false) {
       console.warn('Received 401 Unauthorized. Refreshing token and retrying request...');
       clearAuthData();
@@ -121,7 +118,6 @@ async function request(endpoint, options = {}, isRetry = false) {
   }
 }
 
-// Image URL Parser & Normalizer
 export function parseProductImages(imageField) {
   if (!imageField) return [];
 
@@ -133,17 +129,16 @@ export function parseProductImages(imageField) {
     const trimmed = imageField.trim();
     if (!trimmed) return [];
 
-    // Try parsing as JSON array
+  
     if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
       try {
         const parsed = JSON.parse(trimmed);
         if (Array.isArray(parsed)) return parsed.filter(Boolean);
       } catch {
-        // Continue to fallback
+  
       }
     }
 
-    // Try parsing Postgres array string format e.g. {"http...", "http..."}
     if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
       const inner = trimmed.slice(1, -1);
       const items = inner
@@ -153,7 +148,7 @@ export function parseProductImages(imageField) {
       if (items.length > 0) return items;
     }
 
-    // Single URL string
+
     if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('/')) {
       return [trimmed];
     }
@@ -162,21 +157,18 @@ export function parseProductImages(imageField) {
   return [];
 }
 
-// Product APIs
 export const productAPI = {
-  // Get all products
+
   getAll: async () => {
     const res = await request('/products', { method: 'GET', requiresAuth: false });
     return res.data || [];
   },
 
-  // Get product by ID
   getById: async (id) => {
     const res = await request(`/products/${id}`, { method: 'GET', requiresAuth: false });
     return res.data || null;
   },
 
-  // Create new product
   create: async (productData) => {
     const res = await request('/products', {
       method: 'POST',
@@ -185,7 +177,6 @@ export const productAPI = {
     return res.data || res;
   },
 
-  // Update product
   update: async (id, productData) => {
     const res = await request(`/products/${id}`, {
       method: 'PUT',
@@ -194,7 +185,6 @@ export const productAPI = {
     return res.data || res;
   },
 
-  // Delete product
   delete: async (id) => {
     const res = await request(`/products/${id}`, {
       method: 'DELETE'
@@ -202,7 +192,6 @@ export const productAPI = {
     return res.data || res;
   },
 
-  // Upload product images
   uploadImages: async (id, files) => {
     const formData = new FormData();
     if (Array.isArray(files)) {
@@ -220,7 +209,6 @@ export const productAPI = {
     return res.data || res;
   },
 
-  // Update product status (active, draft, archived)
   updateStatus: async (id, status) => {
     const res = await request(`/products/${id}/status`, {
       method: 'PATCH',
@@ -229,7 +217,6 @@ export const productAPI = {
     return res.data || res;
   },
 
-  // Import products CSV/Excel
   import: async (file) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -241,7 +228,6 @@ export const productAPI = {
   }
 };
 
-// Category APIs
 export const categoryAPI = {
   getAll: async () => {
     const res = await request('/categories', { method: 'GET', requiresAuth: false });
@@ -254,7 +240,7 @@ export const categoryAPI = {
   }
 };
 
-// Attribute APIs
+
 export const attributeAPI = {
   getAll: async () => {
     const res = await request('/attributes', { method: 'GET', requiresAuth: false });
@@ -262,7 +248,7 @@ export const attributeAPI = {
   }
 };
 
-// Review APIs
+
 export const reviewAPI = {
   getAll: async () => {
     const res = await request('/reviews', { method: 'GET', requiresAuth: false });
@@ -270,7 +256,7 @@ export const reviewAPI = {
   }
 };
 
-// Pricing APIs
+
 export const pricingAPI = {
   getPlans: async () => {
     const res = await request('/pricing-plans', { method: 'GET', requiresAuth: false });
@@ -278,7 +264,7 @@ export const pricingAPI = {
   }
 };
 
-// Auth APIs
+
 export const authAPI = {
   login: async (credentials) => {
     const res = await request('/auth/login', {

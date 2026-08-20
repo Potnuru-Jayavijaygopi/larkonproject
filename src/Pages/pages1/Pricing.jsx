@@ -87,12 +87,11 @@ function Pricing() {
   const getFeaturesList = (plan) => {
     const list = [];
     
-    // 1. Storage
+ 
     if (plan.storage) {
       list.push(`${plan.storage} Storage`);
     }
 
-    // 2. Bandwidth
     if (plan.bandwidth) {
       list.push(
         plan.bandwidth.toLowerCase().includes('bandwidth') || plan.bandwidth.toLowerCase().includes('storage')
@@ -101,26 +100,24 @@ function Pricing() {
       );
     }
 
-    // 3. Domains
+  
     if (plan.domains !== undefined && plan.domains !== null) {
       list.push(`${plan.domains} Domain${plan.domains === 1 ? '' : 's'}`);
     }
 
-    // 4. Email Support / Support Details
     if (plan.email_support) {
       list.push('Email Support');
     } else if (plan.support && plan.support.toLowerCase().includes('no support')) {
       list.push('No Support');
     }
 
-    // 5. 24x7 Support
     if (plan.support && !plan.support.toLowerCase().includes('no support')) {
       list.push(plan.support);
     } else if (!plan.email_support) {
       list.push('24x7 Support');
     }
 
-    // 6. Users
+  
     if (plan.users) {
       list.push(
         plan.users.toLowerCase().includes('user') ? plan.users : `${plan.users} Users`
