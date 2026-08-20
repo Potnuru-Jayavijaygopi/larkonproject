@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { BsImage, BsFacebook, BsGoogle } from "react-icons/bs";
 import logo1Img from "../../assets/logo 1.png";
-import { authAPI } from "../../services/api";
+import { authAPI, setAuthData } from "../../services/api";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -29,11 +30,17 @@ function SignIn() {
     setSubmitting(true);
     setError(null);
     try {
-      await authAPI.login(email.trim(), password);
+      const res = await authAPI.login(email.trim(), password);
+      const token = res.accessToken || res.data?.accessToken || res.token;
+      if (token) {
+        setAuthData(token, res.user || res.data?.user);
+      }
+      toast.success("Sign in successful!");
       navigate("/dashboard");
     } catch (err) {
       console.error("Sign in failed:", err);
       setError(err.message || "Invalid email or password.");
+      toast.error(err.message || "Invalid email or password.");
     } finally {
       setSubmitting(false);
     }

@@ -298,11 +298,17 @@ export const authAPI = {
       requiresAuth: false,
       body: JSON.stringify({ email, password }),
     });
-    const token = res.accessToken || res.data?.accessToken || res.token;
+    const token = res.accessToken || res.data?.accessToken || res.token || res.data?.token;
+    const refreshToken = res.refreshToken || res.data?.refreshToken;
+    const user = res.user || res.data?.user;
+
     if (token) {
-      setAuthData(token, res.user || res.data?.user);
+      setAuthData(token, user);
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken);
+      }
     }
-    return res;
+    return { ...res, accessToken: token, token };
   },
 
   register: async (userData) => {
