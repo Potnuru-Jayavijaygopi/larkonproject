@@ -327,6 +327,9 @@ export const authAPI = {
     const res = await request('/auth/register', {
       method: 'POST',
       requiresAuth: false,
+      body: JSON.stringify(payload),
+    });
+
     // Auto-login to generate JWT access token and save token to localStorage
     if (userData.email && userData.password) {
       try {
