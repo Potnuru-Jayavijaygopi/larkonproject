@@ -23,12 +23,18 @@ function SignUp() {
     setSubmitting(true);
     setError(null);
     try {
+      const parts = name.trim().split(" ");
+      const first_name = parts[0] || "User";
+      const last_name = parts.slice(1).join(" ") || "Admin";
+
       await authAPI.register({
+        first_name,
+        last_name,
         full_name: name.trim(),
+        username: email.trim().split("@")[0],
         email: email.trim(),
         password: password,
       });
-      alert("Registration successful! Welcome to Larkon.");
       navigate("/dashboard");
     } catch (err) {
       console.error("Sign up failed:", err);
