@@ -25,26 +25,23 @@ export const getAuthToken = () => {
 };
 
 export const setAuthData = (token, user = null) => {
+  const actualToken = typeof token === 'object' && token !== null ? (token.accessToken || token.token) : token;
+  if (actualToken) {
+    localStorage.setItem('accessToken', actualToken);
+    localStorage.setItem('token', actualToken);
+    console.log('\n================================================================================');
+    console.log('🔑 [SIGNIN AUTH TOKEN GENERATED]:');
+    console.log(actualToken);
+    console.log('================================================================================\n');
+  }
   if (typeof token === 'object' && token !== null) {
-    if (token.accessToken) {
-      localStorage.setItem('accessToken', token.accessToken);
-      localStorage.setItem('token', token.accessToken);
-      console.log('🔑 [Token Generated & Stored]:', token.accessToken);
-    }
     if (token.refreshToken) {
       localStorage.setItem('refreshToken', token.refreshToken);
     }
     if (token.user) {
       localStorage.setItem('user', JSON.stringify(token.user));
     }
-    return;
-  }
-  if (token) {
-    localStorage.setItem('accessToken', token);
-    localStorage.setItem('token', token);
-    console.log('🔑 [Token Generated & Stored]:', token);
-  }
-  if (user) {
+  } else if (user) {
     localStorage.setItem('user', JSON.stringify(user));
   }
 };
