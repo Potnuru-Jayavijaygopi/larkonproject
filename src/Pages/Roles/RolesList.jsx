@@ -39,6 +39,14 @@ const RolesList = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+  const [blurredRows, setBlurredRows] = useState({});
+
+  const toggleBlur = (id) => {
+    setBlurredRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   const fetchRoles = async () => {
     setLoading(true);
@@ -353,101 +361,106 @@ const RolesList = () => {
                     </td>
                   </tr>
                 ) : (
-                  paginatedRoles.map((item) => (
-                    <tr key={item.id}>
-                      <td className="fw-medium">{item.role}</td>
+                  paginatedRoles.map((item) => {
+                    const isBlurred = blurredRows[item.id];
+                    const blurStyle = isBlurred ? { filter: 'blur(4px)', transition: 'filter 0.2s' } : {};
 
-                      <td>
-                        {item.workspace ? (
-                          <div className="d-flex align-items-center gap-2">
-                            <img
-                              src={item.workspaceLogo}
-                              alt={item.workspace}
-                              style={{ width: '18px', height: '18px', objectFit: 'contain' }}
-                            />
-                            <span>{item.workspace}</span>
-                          </div>
-                        ) : (
-                          <button 
-                            className="add-link-btn"
-                            onClick={() => navigate(`/roles/edit/${item.id}`)}
-                          >
-                            + Add Workspace
-                          </button>
-                        )}
-                      </td>
+                    return (
+                      <tr key={item.id}>
+                        <td className="fw-medium" style={blurStyle}>{item.role}</td>
 
-                      <td>
-                        <div className="d-flex flex-wrap gap-1">
-                          {item.tags.map((tag, idx) => (
-                            <span key={idx} className="tag-badge">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
+                        <td style={blurStyle}>
+                          {item.workspace ? (
+                            <div className="d-flex align-items-center gap-2">
+                              <img
+                                src={item.workspaceLogo}
+                                alt={item.workspace}
+                                style={{ width: '18px', height: '18px', objectFit: 'contain' }}
+                              />
+                              <span>{item.workspace}</span>
+                            </div>
+                          ) : (
+                            <button 
+                              className="add-link-btn"
+                              onClick={() => navigate(`/roles/edit/${item.id}`)}
+                            >
+                              + Add Workspace
+                            </button>
+                          )}
+                        </td>
 
-                      <td>
-                        {item.users && item.users.length > 0 ? (
-                          <div className="avatar-group">
-                            {item.users.map((usr, i) => (
-                              <div key={i} className="avatar-circle">
-                                <img 
-                                  src={defaultAvatar} 
-                                  alt="User" 
-                                  style={{ width: '14px', height: '14px', objectFit: 'contain' }} 
-                                />
-                              </div>
+                        <td style={blurStyle}>
+                          <div className="d-flex flex-wrap gap-1">
+                            {item.tags.map((tag, idx) => (
+                              <span key={idx} className="tag-badge">
+                                {tag}
+                              </span>
                             ))}
                           </div>
-                        ) : (
-                          <button 
-                            className="add-link-btn"
-                            onClick={() => navigate(`/roles/edit/${item.id}`)}
-                          >
-                            + Add User
-                          </button>
-                        )}
-                      </td>
+                        </td>
 
-                      <td>
-                        <div className="form-check form-switch mb-0">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            checked={item.status}
-                            onChange={() => handleToggleStatus(item.id)}
-                          />
-                        </div>
-                      </td>
+                        <td style={blurStyle}>
+                          {item.users && item.users.length > 0 ? (
+                            <div className="avatar-group">
+                              {item.users.map((usr, i) => (
+                                <div key={i} className="avatar-circle">
+                                  <img 
+                                    src={defaultAvatar} 
+                                    alt="User" 
+                                    style={{ width: '14px', height: '14px', objectFit: 'contain' }} 
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <button 
+                              className="add-link-btn"
+                              onClick={() => navigate(`/roles/edit/${item.id}`)}
+                            >
+                              + Add User
+                            </button>
+                          )}
+                        </td>
 
-                      <td>
-                        <div className="d-flex align-items-center justify-content-end gap-1">
-                          <button 
-                            className="action-btn-custom btn-view-bg" 
-                            title="View"
-                            onClick={() => navigate(`/roles/edit/${item.id}`)}
-                          >
-                            <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
-                          </button>
-                          <button 
-                            className="action-btn-custom btn-edit-bg" 
-                            title="Edit"
-                            onClick={() => navigate(`/roles/edit/${item.id}`)}
-                          >
-                            <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
-                          </button>
-                          <button 
-                            className="action-btn-custom btn-delete-bg" 
-                            title="Delete"
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                        <td style={blurStyle}>
+                          <div className="form-check form-switch mb-0">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              checked={item.status}
+                              onChange={() => handleToggleStatus(item.id)}
+                            />
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="d-flex align-items-center justify-content-end gap-1">
+                            <button 
+                              className={`action-btn-custom btn-view-bg ${isBlurred ? 'border border-warning' : ''}`} 
+                              title={isBlurred ? 'Unblur Row' : 'View / Blur Row'}
+                              onClick={() => toggleBlur(item.id)}
+                            >
+                              <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
+                            </button>
+                            <button 
+                              className="action-btn-custom btn-edit-bg" 
+                              title="Edit"
+                              onClick={() => navigate(`/roles/edit/${item.id}`)}
+                            >
+                              <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
+                            </button>
+                            <button 
+                              className="action-btn-custom btn-delete-bg" 
+                              title="Delete"
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

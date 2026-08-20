@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
 import userIcon from '../../assets/solar_users-group-two-rounded-bold-duotone.svg';
@@ -22,6 +22,58 @@ const getTagColorClass = (role) => {
   }
 };
 
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return '';
+  const normalized = typeof dateStr === 'string' ? dateStr.replace(' ', 'T') : dateStr;
+  const d = new Date(normalized);
+  
+  if (isNaN(d.getTime())) {
+    return typeof formatDate === 'function' ? formatDate(dateStr) : String(dateStr);
+  }
+
+  const day = d.getDate();
+  const month = d.toLocaleString('en-US', { month: 'short' });
+  const year = d.getFullYear();
+
+  let hours = d.getHours();
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12;
+  const formattedHours = String(hours).padStart(2, '0');
+
+  return `${day} ${month} ${year}, ${formattedHours}:${minutes} ${ampm}`;
+};
+
+const formatRelativeUpdateDate = (dateStr) => {
+  if (!dateStr) return '';
+  const d = new Date(typeof dateStr === 'string' ? dateStr.replace(' ', 'T') : dateStr);
+  if (isNaN(d.getTime())) return String(dateStr);
+
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  const isToday = d.toDateString() === today.toDateString();
+  const isYesterday = d.toDateString() === yesterday.toDateString();
+
+  if (isToday) return 'Today';
+  if (isYesterday) return 'Yesterday';
+
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+
+  return `${day} ${d.toLocaleString('en-US', { month: 'short' })} ${year}`;
+};
+
+const toDateInputValue = (dateStr) => {
+  if (!dateStr) return '';
+  const normalized = typeof dateStr === 'string' ? dateStr.replace(' ', 'T') : dateStr;
+  const d = new Date(normalized);
+  if (isNaN(d.getTime())) return '';
+  return d.toISOString().split('T')[0];
+};
+
 const Permissions = () => {
   const [permissions, setPermissions] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -29,6 +81,10 @@ const Permissions = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+
+  const [editingId, setEditingId] = useState(null);
+  const [editFormData, setEditFormData] = useState({});
+  const [blurredRows, setBlurredRows] = useState({});
 
   const fetchPermissions = async () => {
     setLoading(true);
@@ -46,9 +102,9 @@ const Permissions = () => {
         return {
           id: p.id,
           name: p.permission_name || p.name,
-          assignedTo: assignedTo,
-          createdDate: formatDate(p.created_at || '2024-06-27'),
-          lastUpdate: formatDate(p.updated_at || '2024-08-14'),
+          assignedTo: p.assignedTo || assignedTo,
+          createdDate: formatDateTime(p.created_at || new Date()),
+          lastUpdate: formatRelativeUpdateDate(p.updated_at || new Date()),
           raw: p,
         };
       });
@@ -83,16 +139,78 @@ const Permissions = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this permission?')) {
+    if (window.confirm('Are you sure you want to delete this row?')) {
       setPermissions((prev) => prev.filter((p) => p.id !== id));
       setSelectedItems((prev) => prev.filter((itemId) => itemId !== id));
-      toast.success("Deleted Successfully")
+      toast.success('row deleted successfully');
       try {
         await permissionAPI.delete(id);
       } catch (err) {
         console.error('Failed to delete permission on server:', err);
       }
     }
+  };
+
+  const toggleBlur = (id) => {
+    setBlurredRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const handleEditClick = (row) => {
+    setEditingId(row.id);
+    setEditFormData({
+      name: row.name,
+      assignedTo: Array.isArray(row.assignedTo) ? row.assignedTo[0] : row.assignedTo || 'Manager',
+      createdDate: row.raw?.created_at || row.createdDate,
+      lastUpdate: row.raw?.updated_at || row.lastUpdate,
+    });
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditFormData({});
+  };
+
+  const handleSave = async (id) => {
+    const targetPerm = permissions.find((p) => p.id === id);
+    const payload = {
+      permission_name: editFormData.name || targetPerm?.name || '',
+      description: targetPerm?.raw?.description || 'Permission rule',
+      status: editFormData.status || targetPerm?.raw?.status || 'Active',
+    };
+
+    try {
+      await permissionAPI.update(id, payload);
+    } catch (err) {
+      console.warn('Backend update failed, updating local state:', err);
+    }
+
+    setPermissions((prev) =>
+      prev.map((p) => {
+        if (p.id === id) {
+          return {
+            ...p,
+            name: editFormData.name,
+            assignedTo: Array.isArray(editFormData.assignedTo) ? editFormData.assignedTo : [editFormData.assignedTo],
+            createdDate: editFormData.createdDate ? formatDateTime(editFormData.createdDate) : p.createdDate,
+            lastUpdate: editFormData.lastUpdate ? formatRelativeUpdateDate(editFormData.lastUpdate) : p.lastUpdate,
+            raw: {
+              ...p.raw,
+              permission_name: editFormData.name,
+              status: payload.status,
+              updated_at: editFormData.lastUpdate || p.raw?.updated_at,
+            },
+          };
+        }
+        return p;
+      })
+    );
+
+    setEditingId(null);
+    setEditFormData({});
+    toast.success('row update successfully');
   };
 
   const totalPages = Math.ceil(permissions.length / itemsPerPage) || 1;
@@ -165,7 +283,7 @@ const Permissions = () => {
           font-size: 0.75rem !important;
           font-weight: 700 !important;
           color: #64748b !important;
-          text-transform: uppercase;
+          text-transform: none;
           letter-spacing: 0.03em;
           border-bottom: 1px solid var(--border-color, #e2e8f0);
           padding: 0.75rem 1rem;
@@ -271,9 +389,7 @@ const Permissions = () => {
           <div className="col-md-3">
             <div className="metric-card shadow-sm d-flex align-items-center justify-content-between">
               <div>
-                <small className="metric-label d-block mb-1">
-                  Employees
-                </small>
+                <small className="metric-label d-block mb-1">Employees</small>
                 <div className="stat-number">54</div>
               </div>
               <div className="metric-icon-box">
@@ -285,9 +401,7 @@ const Permissions = () => {
           <div className="col-md-3">
             <div className="metric-card shadow-sm d-flex align-items-center justify-content-between">
               <div>
-                <small className="metric-label d-block mb-1">
-                  Assigned Manager
-                </small>
+                <small className="metric-label d-block mb-1">Assigned Manager</small>
                 <div className="stat-number">13</div>
               </div>
               <div className="metric-icon-box">
@@ -299,9 +413,7 @@ const Permissions = () => {
           <div className="col-md-3">
             <div className="metric-card shadow-sm d-flex align-items-center justify-content-between">
               <div>
-                <small className="metric-label d-block mb-1">
-                  Project
-                </small>
+                <small className="metric-label d-block mb-1">Project</small>
                 <div className="stat-number">19</div>
               </div>
               <div className="metric-icon-box">
@@ -313,9 +425,7 @@ const Permissions = () => {
           <div className="col-md-3">
             <div className="metric-card shadow-sm d-flex align-items-center justify-content-between">
               <div>
-                <small className="metric-label d-block mb-1">
-                  License Used
-                </small>
+                <small className="metric-label d-block mb-1">License Used</small>
                 <div className="stat-number">36/50</div>
               </div>
               <div className="metric-icon-box">
@@ -358,9 +468,9 @@ const Permissions = () => {
                     />
                   </th>
                   <th style={{ width: '22%' }}>Name</th>
-                  <th style={{ width: '30%' }}>Assigned To</th>
-                  <th style={{ width: '20%' }}>Created Date & Time</th>
-                  <th style={{ width: '14%' }}>Last Update</th>
+                  <th style={{ width: '26%' }}>Assigned To</th>
+                  <th style={{ width: '26%' }}>Created Date & Time</th>
+                  <th style={{ width: '12%' }}>Last Update</th>
                   <th className="text-start" style={{ width: '10%' }}>Action</th>
                 </tr>
               </thead>
@@ -379,49 +489,134 @@ const Permissions = () => {
                     </td>
                   </tr>
                 ) : (
-                  paginatedPermissions.map((row) => (
-                    <tr key={row.id}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          checked={selectedItems.includes(row.id)}
-                          onChange={() => handleSelectItem(row.id)}
-                        />
-                      </td>
+                  paginatedPermissions.map((row) => {
+                    const isEditing = editingId === row.id;
+                    const isBlurred = blurredRows[row.id];
+                    const blurStyle = isBlurred ? { filter: 'blur(4px)', transition: 'filter 0.2s' } : {};
 
-                      <td className="fw-medium text-dark">{row.name}</td>
+                    return (
+                      <tr key={row.id}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={selectedItems.includes(row.id)}
+                            onChange={() => handleSelectItem(row.id)}
+                          />
+                        </td>
 
-                      <td>
-                        <div className="d-flex flex-wrap gap-1">
-                          {row.assignedTo.map((role, idx) => (
-                            <span key={idx} className={`role-pill ${getTagColorClass(role)}`}>
-                              {role}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="text-secondary">{row.createdDate}</td>
-                      <td className="text-secondary">{row.lastUpdate}</td>
-                      <td>
-                        <div className="d-flex align-items-center justify-content-end gap-1">
-                          <button className="action-btn-custom btn-view-bg" title="View">
-                            <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
-                          </button>
-                          <button className="action-btn-custom btn-edit-bg" title="Edit">
-                            <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
-                          </button>
-                          <button 
-                            className="action-btn-custom btn-delete-bg" 
-                            title="Delete"
-                            onClick={() => handleDelete(row.id)}
-                          >
-                            <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                        <td style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={editFormData.name || ''}
+                              onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                            />
+                          ) : (
+                            <span className="fw-medium text-dark">{row.name}</span>
+                          )}
+                        </td>
+
+                        <td style={blurStyle}>
+                          {isEditing ? (
+                            <select
+                              className="form-select form-select-sm"
+                              value={editFormData.assignedTo || 'Manager'}
+                              onChange={(e) => setEditFormData({ ...editFormData, assignedTo: e.target.value })}
+                            >
+                              <option value="Manager">Manager</option>
+                              <option value="Administrator">Administrator</option>
+                              <option value="Developer">Developer</option>
+                              <option value="Analyst">Analyst</option>
+                              <option value="Trial">Trial</option>
+                            </select>
+                          ) : (
+                            <div className="d-flex flex-wrap gap-1">
+                              {row.assignedTo.map((role, idx) => (
+                                <span key={idx} className={`role-pill ${getTagColorClass(role)}`}>
+                                  {role}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </td>
+
+                        <td className="text-secondary" style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="date"
+                              className="form-control form-control-sm"
+                              value={toDateInputValue(editFormData.createdDate)}
+                              onChange={(e) => setEditFormData({ ...editFormData, createdDate: e.target.value })}
+                            />
+                          ) : (
+                            row.createdDate
+                          )}
+                        </td>
+
+                        <td className="text-secondary" style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="date"
+                              className="form-control form-control-sm"
+                              value={toDateInputValue(editFormData.lastUpdate)}
+                              onChange={(e) => setEditFormData({ ...editFormData, lastUpdate: e.target.value })}
+                            />
+                          ) : (
+                            row.lastUpdate
+                          )}
+                        </td>
+
+                        <td>
+                          <div className="d-flex align-items-center justify-content-end gap-1">
+                            {isEditing ? (
+                              <>
+                                <button
+                                  className="btn btn-sm btn-success me-1 px-2 py-1"
+                                  style={{ fontSize: '12px', fontWeight: '500' }}
+                                  onClick={() => handleSave(row.id)}
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-secondary px-2 py-1"
+                                  style={{ fontSize: '12px', fontWeight: '500' }}
+                                  onClick={handleCancel}
+                                >
+                                  Cancel
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  className={`action-btn-custom btn-view-bg ${isBlurred ? 'border border-warning' : ''}`}
+                                  title={isBlurred ? 'Unblur Row' : 'View / Blur Row'}
+                                  onClick={() => toggleBlur(row.id)}
+                                >
+                                  <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
+                                </button>
+                                <button
+                                  className="action-btn-custom btn-edit-bg"
+                                  title="Edit"
+                                  onClick={() => handleEditClick(row)}
+                                >
+                                  <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
+                                </button>
+                                <button
+                                  className="action-btn-custom btn-delete-bg"
+                                  title="Delete"
+                                  onClick={() => handleDelete(row.id)}
+                                >
+                                  <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

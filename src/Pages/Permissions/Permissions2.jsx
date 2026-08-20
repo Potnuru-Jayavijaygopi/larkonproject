@@ -21,6 +21,13 @@ const getStatusBadgeClass = (status) => {
   }
 };
 
+const toDateInputValue = (dateStr) => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '';
+  return d.toISOString().split('T')[0];
+};
+
 const Permissions2 = () => {
   const [customers, setCustomers] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -28,6 +35,10 @@ const Permissions2 = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+
+  const [editingId, setEditingId] = useState(null);
+  const [editFormData, setEditFormData] = useState({});
+  const [blurredRows, setBlurredRows] = useState({});
 
   const fetchCustomerData = async () => {
     setLoading(true);
@@ -103,12 +114,67 @@ const Permissions2 = () => {
     }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to remove this item?')) {
-      setCustomers(customers.filter((c) => c.id !== id));
-      setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
-      toast.success("Deleted Successfully")
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this row?')) {
+      setCustomers((prev) => prev.filter((c) => c.id !== id));
+      setSelectedItems((prev) => prev.filter((itemId) => itemId !== id));
+      toast.success('row deleted successfully');
+      try {
+        await permissionAPI.delete(id);
+      } catch (err) {
+        console.error('Failed to delete permission on server:', err);
+      }
     }
+  };
+
+  const toggleBlur = (id) => {
+    setBlurredRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const handleEditClick = (c) => {
+    setEditingId(c.id);
+    setEditFormData({
+      name: c.name,
+      invoiceId: c.invoiceId,
+      status: c.status,
+      totalAmount: c.totalAmount,
+      amountDue: c.amountDue,
+      dueDate: c.dueDate,
+      paymentMethod: c.paymentMethod,
+    });
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditFormData({});
+  };
+
+  const handleSave = async (id) => {
+    try {
+      await permissionAPI.update(id, editFormData);
+    } catch (err) {
+      console.warn('Backend update failed, updating local state:', err);
+    }
+
+    setCustomers((prev) =>
+      prev.map((c) => {
+        if (c.id === id) {
+          return {
+            ...c,
+            ...editFormData,
+            dueDate: editFormData.dueDate ? formatDate(editFormData.dueDate) : c.dueDate,
+          };
+        }
+        return c;
+      })
+    );
+
+    setEditingId(null);
+    setEditFormData({});
+    toast.success('row update successfully');
   };
 
   const totalPages = Math.ceil(customers.length / itemsPerPage) || 1;
@@ -433,58 +499,175 @@ const Permissions2 = () => {
                     </td>
                   </tr>
                 ) : (
-                  paginatedCustomers.map((c) => (
-                    <tr key={c.id}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          checked={selectedItems.includes(c.id)}
-                          onChange={() => handleSelectItem(c.id)}
-                        />
-                      </td>
+                  paginatedCustomers.map((c) => {
+                    const isEditing = editingId === c.id;
+                    const isBlurred = blurredRows[c.id];
+                    const blurStyle = isBlurred ? { filter: 'blur(4px)', transition: 'filter 0.2s' } : {};
 
-                      <td>
-                        <div className="d-flex align-items-center gap-2">
-                          <div className="avatar-circle-sm">
-                            <img src={avatarIcon} alt="Avatar" style={{ width: '14px', height: '14px' }} />
+                    return (
+                      <tr key={c.id}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={selectedItems.includes(c.id)}
+                            onChange={() => handleSelectItem(c.id)}
+                          />
+                        </td>
+
+                        <td style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={editFormData.name || ''}
+                              onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                            />
+                          ) : (
+                            <div className="d-flex align-items-center gap-2">
+                              <div className="avatar-circle-sm">
+                                <img src={avatarIcon} alt="Avatar" style={{ width: '14px', height: '14px' }} />
+                              </div>
+                              <span className="fw-medium text-dark">{c.name}</span>
+                            </div>
+                          )}
+                        </td>
+
+                        <td className="text-muted" style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={editFormData.invoiceId || ''}
+                              onChange={(e) => setEditFormData({ ...editFormData, invoiceId: e.target.value })}
+                            />
+                          ) : (
+                            c.invoiceId
+                          )}
+                        </td>
+
+                        <td style={blurStyle}>
+                          {isEditing ? (
+                            <select
+                              className="form-select form-select-sm"
+                              value={editFormData.status || 'Completed'}
+                              onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
+                            >
+                              <option value="Completed">Completed</option>
+                              <option value="Pending">Pending</option>
+                              <option value="Cancel">Cancel</option>
+                            </select>
+                          ) : (
+                            <span className={`status-badge ${getStatusBadgeClass(c.status)}`}>
+                              {c.status}
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="text-dark fw-medium" style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={editFormData.totalAmount || ''}
+                              onChange={(e) => setEditFormData({ ...editFormData, totalAmount: e.target.value })}
+                            />
+                          ) : (
+                            c.totalAmount
+                          )}
+                        </td>
+
+                        <td className="text-dark fw-medium" style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={editFormData.amountDue || ''}
+                              onChange={(e) => setEditFormData({ ...editFormData, amountDue: e.target.value })}
+                            />
+                          ) : (
+                            c.amountDue
+                          )}
+                        </td>
+
+                        <td className="text-muted" style={blurStyle}>
+                          {isEditing ? (
+                            <input
+                              type="date"
+                              className="form-control form-control-sm"
+                              value={toDateInputValue(editFormData.dueDate)}
+                              onChange={(e) => setEditFormData({ ...editFormData, dueDate: e.target.value })}
+                            />
+                          ) : (
+                            c.dueDate
+                          )}
+                        </td>
+
+                        <td className="text-dark" style={blurStyle}>
+                          {isEditing ? (
+                            <select
+                              className="form-select form-select-sm"
+                              value={editFormData.paymentMethod || 'Mastercard'}
+                              onChange={(e) => setEditFormData({ ...editFormData, paymentMethod: e.target.value })}
+                            >
+                              <option value="Mastercard">Mastercard</option>
+                              <option value="Visa">Visa</option>
+                              <option value="Paypal">Paypal</option>
+                            </select>
+                          ) : (
+                            c.paymentMethod
+                          )}
+                        </td>
+
+                        <td>
+                          <div className="d-flex align-items-center justify-content-end gap-1">
+                            {isEditing ? (
+                              <>
+                                <button
+                                  className="btn btn-sm btn-success me-1 px-2 py-1"
+                                  style={{ fontSize: '12px', fontWeight: '500' }}
+                                  onClick={() => handleSave(c.id)}
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-secondary px-2 py-1"
+                                  style={{ fontSize: '12px', fontWeight: '500' }}
+                                  onClick={handleCancel}
+                                >
+                                  Cancel
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  className={`action-btn-custom btn-view-bg ${isBlurred ? 'border border-warning' : ''}`}
+                                  title={isBlurred ? 'Unblur Row' : 'View / Blur Row'}
+                                  onClick={() => toggleBlur(c.id)}
+                                >
+                                  <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
+                                </button>
+                                <button
+                                  className="action-btn-custom btn-edit-bg"
+                                  title="Edit"
+                                  onClick={() => handleEditClick(c)}
+                                >
+                                  <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
+                                </button>
+                                <button
+                                  className="action-btn-custom btn-delete-bg"
+                                  title="Delete"
+                                  onClick={() => handleDelete(c.id)}
+                                >
+                                  <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
+                                </button>
+                              </>
+                            )}
                           </div>
-                          <span className="fw-medium text-dark">{c.name}</span>
-                        </div>
-                      </td>
-
-                      <td className="text-muted">{c.invoiceId}</td>
-
-                      <td>
-                        <span className={`status-badge ${getStatusBadgeClass(c.status)}`}>
-                          {c.status}
-                        </span>
-                      </td>
-
-                      <td className="text-dark fw-medium">{c.totalAmount}</td>
-                      <td className="text-dark fw-medium">{c.amountDue}</td>
-                      <td className="text-muted">{c.dueDate}</td>
-                      <td className="text-dark">{c.paymentMethod}</td>
-
-                      <td>
-                        <div className="d-flex align-items-center justify-content-end gap-1">
-                          <button className="action-btn-custom btn-view-bg" title="View">
-                            <img src={viewIcon} alt="View" style={{ width: '16px', height: '16px' }} />
-                          </button>
-                          <button className="action-btn-custom btn-edit-bg" title="Edit">
-                            <img src={editIcon} alt="Edit" style={{ width: '16px', height: '16px' }} />
-                          </button>
-                          <button 
-                            className="action-btn-custom btn-delete-bg" 
-                            title="Delete"
-                            onClick={() => handleDelete(c.id)}
-                          >
-                            <img src={deleteIcon} alt="Delete" style={{ width: '16px', height: '16px' }} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

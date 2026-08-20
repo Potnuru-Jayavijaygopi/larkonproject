@@ -34,6 +34,10 @@ const Profile = () => {
     profile_image: null,
   });
 
+  const [copied, setCopied] = useState(false);
+  const shareUrl = 'https://larkon-mileage.com';
+  const shareTitle = `Check out ${profile.full_name}'s Profile on Larkon`;
+
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -55,6 +59,12 @@ const Profile = () => {
     };
     loadProfile();
   }, []);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="profile-page-wrapper page-container w-100">
@@ -122,6 +132,16 @@ const Profile = () => {
 
         .stat-item-border {
           border-right: 1px solid var(--border-color, #e2e8f0);
+        }
+
+        .social-share-btn {
+          transition: transform 0.2s ease, opacity 0.2s ease;
+          text-decoration: none;
+        }
+
+        .social-share-btn:hover {
+          transform: translateY(-2px);
+          opacity: 0.85;
         }
 
         @media (max-width: 768px) {
@@ -284,11 +304,11 @@ const Profile = () => {
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={emailIcon} alt="Email" style={{ width: '16px', height: '16px' }} /></div>
-                    <span>Email: <strong className="text-orange-custom">{profile.email}</strong></span>
+                    <span>Email: <a href={`mailto:${profile.email}`} className="text-orange-custom text-decoration-none fw-bold">{profile.email}</a></span>
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={linkIcon} alt="Website" style={{ width: '16px', height: '16px' }} /></div>
-                    <span className="text-orange-custom">www.larkon.co</span>
+                    <a href="https://www.larkon.co" target="_blank" rel="noopener noreferrer" className="text-orange-custom text-decoration-none">www.larkon.co</a>
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div className="p-1 bg-light rounded-3"><img src={websiteIcon} alt="Website" style={{ width: '16px', height: '16px' }} /></div>
@@ -563,19 +583,56 @@ const Profile = () => {
                   </div>
 
                   <div className="d-flex align-items-center justify-content-center gap-2 my-3">
-                    <a href="#fb" className="d-flex align-items-center justify-content-center rounded-circle" style={{ width: '32px', height: '32px', backgroundColor: '#FFF5F3' }}>
-                      <i className="bi bi-facebook" style={{ color: 'var(--primary-orange)', fontSize: '14px' }}></i>
+                    <a 
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      title="Share on Facebook"
+                      className="social-share-btn d-flex align-items-center justify-content-center rounded-circle" 
+                      style={{ width: '32px', height: '32px', backgroundColor: '#FFF5F3' }}
+                    >
+                      <i className="bi bi-facebook" style={{ color: 'var(--primary-orange, #ff5e29)', fontSize: '14px' }}></i>
                     </a>
-                    <a href="#insta" className="d-flex align-items-center justify-content-center rounded-circle" style={{ width: '32px', height: '32px', backgroundColor: '#FFF0F5' }}>
+
+                    <a 
+                      href="https://www.instagram.com/" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      title="Visit Instagram"
+                      className="social-share-btn d-flex align-items-center justify-content-center rounded-circle" 
+                      style={{ width: '32px', height: '32px', backgroundColor: '#FFF0F5' }}
+                    >
                       <i className="bi bi-instagram" style={{ color: '#E1306C', fontSize: '14px' }}></i>
                     </a>
-                    <a href="#twitter" className="d-flex align-items-center justify-content-center rounded-circle" style={{ width: '32px', height: '32px', backgroundColor: '#E0F7FA' }}>
+
+                    <a 
+                      href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      title="Share on X"
+                      className="social-share-btn d-flex align-items-center justify-content-center rounded-circle" 
+                      style={{ width: '32px', height: '32px', backgroundColor: '#E0F7FA' }}
+                    >
                       <i className="bi bi-twitter" style={{ color: '#00BCD4', fontSize: '14px' }}></i>
                     </a>
-                    <a href="#whatsapp" className="d-flex align-items-center justify-content-center rounded-circle" style={{ width: '32px', height: '32px', backgroundColor: '#E8F5E9' }}>
+
+                    <a 
+                      href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`${shareTitle} - ${shareUrl}`)}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      title="Share on WhatsApp"
+                      className="social-share-btn d-flex align-items-center justify-content-center rounded-circle" 
+                      style={{ width: '32px', height: '32px', backgroundColor: '#E8F5E9' }}
+                    >
                       <i className="bi bi-whatsapp" style={{ color: '#4CAF50', fontSize: '14px' }}></i>
                     </a>
-                    <a href="#mail" className="d-flex align-items-center justify-content-center rounded-circle" style={{ width: '32px', height: '32px', backgroundColor: '#FFFDE7' }}>
+
+                    <a 
+                      href={`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`Check out this profile:\n${shareUrl}`)}`} 
+                      title="Share via Email"
+                      className="social-share-btn d-flex align-items-center justify-content-center rounded-circle" 
+                      style={{ width: '32px', height: '32px', backgroundColor: '#FFFDE7' }}
+                    >
                       <i className="bi bi-envelope" style={{ color: '#FFC107', fontSize: '14px' }}></i>
                     </a>
                   </div>
@@ -592,7 +649,7 @@ const Profile = () => {
                     style={{ 
                       backgroundColor: '#F8F9FA', 
                       borderRadius: '6px', 
-                      border: '1px solid var(--border-color)',
+                      border: '1px solid var(--border-color, #e2e8f0)',
                       height: '38px' 
                     }}
                   >
@@ -605,21 +662,25 @@ const Profile = () => {
                         whiteSpace: 'nowrap' 
                       }}
                     >
-                      https://larkon-mileage.com
+                      {shareUrl}
                     </span>
 
                     <button 
                       type="button" 
                       className="btn p-0 border-0 d-flex align-items-center justify-content-center ms-1"
                       style={{ background: 'transparent', cursor: 'pointer' }}
-                      onClick={() => navigator.clipboard.writeText('https://larkon-mileage.com')}
+                      onClick={handleCopy}
                       title="Copy Link"
                     >
-                      <img 
-                        src={copyIcon} 
-                        alt="Copy" 
-                        style={{ width: '18px', height: '18px', objectFit: 'contain' }} 
-                      />
+                      {copied ? (
+                        <span className="text-success fw-bold" style={{ fontSize: '11px' }}>Copied!</span>
+                      ) : (
+                        <img 
+                          src={copyIcon} 
+                          alt="Copy" 
+                          style={{ width: '18px', height: '18px', objectFit: 'contain' }} 
+                        />
+                      )}
                     </button>
                   </div>
 
