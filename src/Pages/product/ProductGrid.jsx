@@ -179,7 +179,7 @@ function ProductGrid({ onNavigate }) {
     );
   };
 
-  // Sort products according to Figma design order
+  // Sort products so newly created products appear at the VERY TOP
   const sortedProducts = [...products].sort((a, b) => {
     const nameA = (a.product_name || a.title || "").toLowerCase().trim();
     const nameB = (b.product_name || b.title || "").toLowerCase().trim();
@@ -187,9 +187,9 @@ function ProductGrid({ onNavigate }) {
     const indexB = figmaOrder.indexOf(nameB);
 
     if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-    if (indexA !== -1) return -1;
-    if (indexB !== -1) return 1;
-    return 0;
+    if (indexA === -1 && indexB !== -1) return -1;
+    if (indexB === -1 && indexA !== -1) return 1;
+    return (b.id || 0) - (a.id || 0);
   });
 
   // Dynamic Filtering Logic

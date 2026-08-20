@@ -597,14 +597,15 @@ function CreateProduct({ onNavigate }) {
 
           <div className="content-card p-3 d-flex justify-content-end gap-2">
             <button
-              className="btn btn-outline-secondary btn-sm px-4"
+              className="btn text-white btn-sm px-4 fw-medium border-0"
               type="submit"
+              style={{ backgroundColor: '#ff5e29' }}
               disabled={submitting}
             >
-              {submitting ? 'Creating...' : 'Create Product'}
+              {submitting ? 'Creating Product...' : 'Create Product'}
             </button>
             <button
-              className="btn btn-add-product btn-sm px-4"
+              className="btn btn-outline-secondary btn-sm px-4"
               type="button"
               onClick={handleCancel}
             >
