@@ -8,7 +8,7 @@ import {
 } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 import { getPurchaseReturns, updatePurchaseReturn, patchPurchaseReturn, deletePurchaseReturn } from '../../services/apiService';
-import frameIcon from '../../assets/Frame.png';
+import frameIcon from '../../assets/eye(2).png';
 import editIcon from '../../assets/solar_pen-2-broken.png';
 import trashIcon from '../../assets/solar_trash-bin-minimalistic-2-broken.png';
 

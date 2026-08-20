@@ -55,6 +55,12 @@ import SellerDetails from './Pages/Pages2/sellerdetails';
 import SellerCreate from './Pages/Pages2/sellercreate';
 import SellerEdit from './Pages/Pages2/selleredit';
 
+import Error404 from './Pages/pages1/Error404';
+import ComingSoon from './Pages/pages1/ComingSoon';
+import Maintenance from './Pages/pages1/Maintenance';
+import Pricing from './Pages/pages1/Pricing';
+import Timeline from './Pages/pages1/Timeline';
+
 import Calendar from './Pages/Support/Calendar';
 import Faqs from './Pages/Support/Faqs';
 import HelpCenter from './Pages/Support/HelpCenter';
@@ -172,6 +178,28 @@ const router = createBrowserRouter([
       { path: 'sellers/add', element: <SellerCreate /> },
       { path: 'sellers/edit', element: <SellerEdit /> },
       { path: 'sellers/edit/:id', element: <SellerEdit /> },
+
+      // Pages1 (Error 404, Coming Soon, Maintenance, Pricing, Timeline) routes
+      { path: 'pages/error-404', element: <Error404 /> },
+      { path: 'pages1/error-404', element: <Error404 /> },
+      { path: 'error-404', element: <Error404 /> },
+      { path: '404', element: <Error404 /> },
+
+      { path: 'pages/coming-soon', element: <ComingSoon /> },
+      { path: 'pages1/coming-soon', element: <ComingSoon /> },
+      { path: 'coming-soon', element: <ComingSoon /> },
+
+      { path: 'pages/maintenance', element: <Maintenance /> },
+      { path: 'pages1/maintenance', element: <Maintenance /> },
+      { path: 'maintenance', element: <Maintenance /> },
+
+      { path: 'pages/pricing', element: <Pricing /> },
+      { path: 'pages1/pricing', element: <Pricing /> },
+      { path: 'pricing', element: <Pricing /> },
+
+      { path: 'pages/timeline', element: <Timeline /> },
+      { path: 'pages1/timeline', element: <Timeline /> },
+      { path: 'timeline', element: <Timeline /> },
 
       // Reviews, Chat, Email routes
       { path: 'reviews', element: <Reviews /> },

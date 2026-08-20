@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAttributes, deleteAttribute, updateAttribute } from '../../services/apiService';
 import { toast } from 'react-toastify';
-import frameIcon from '../../assets/Frame.png';
+import frameIcon from '../../assets/eye(2).png';
 import editIcon from '../../assets/solar_pen-2-broken.png';
 import trashIcon from '../../assets/solar_trash-bin-minimalistic-2-broken.png';
 

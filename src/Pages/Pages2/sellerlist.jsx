@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import like from '../../assets/like.png';
 
 const API_BASE = "http://localhost:3000/api/v1";
 
@@ -318,6 +319,7 @@ export default function SellerList() {
                   className={`btn btn-sm py-2 px-3 d-flex align-items-center justify-content-center cursor-pointer ${favorites[seller.id] ? 'bg-danger-subtle' : ''}`}
                   style={{ backgroundColor: '#FFF2F2', borderRadius: '8px', border: 'none' }}
                 >
+                  <img src={like} alt="like" />
                 </button>
               </div>
 

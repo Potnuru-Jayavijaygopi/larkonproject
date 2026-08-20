@@ -457,6 +457,18 @@ export const getSellers = async () => (await request('/sellers', { method: 'GET'
 export const createSeller = async (data) => (await request('/sellers', { method: 'POST', body: JSON.stringify(data) })).data || {};
 export const updateSellerStatus = async (id, status) => (await request(`/sellers/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) })).data || {};
 
+// Pricing API
+export const pricingAPI = {
+  getPlans: async () => {
+    try {
+      const res = await request('/pricing-plans', { method: 'GET', requiresAuth: false });
+      return res.data || res || [];
+    } catch {
+      return [];
+    }
+  },
+};
+
 // Coupon API
 export const couponAPI = {
   getAll: async () => (await request('/coupons', { method: 'GET' })).data || [],

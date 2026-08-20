@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BsBoxSeam, BsListTask, BsBagCheck, BsBagDash } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 import { getPurchaseOrders, getPurchaseReturns, updatePurchaseOrder, patchPurchaseOrder, deletePurchaseOrder } from '../../services/apiService';
-import frameIcon from '../../assets/Frame.png';
+import frameIcon from '../../assets/eye(2).png';
 import editIcon from '../../assets/solar_pen-2-broken.png';
 import trashIcon from '../../assets/solar_trash-bin-minimalistic-2-broken.png';
 
