@@ -478,6 +478,21 @@ export const updateAdminProfile = async (data) => {
   }
 };
 
+export const getCalendarEvents = async () => (await request('/calendar/events', { method: 'GET' })).data || [];
+export const getCalendarCategories = async () => (await request('/calendar/categories', { method: 'GET' })).data || [];
+export const createCalendarEvent = async (eventData) => (await request('/calendar/events', { method: 'POST', body: JSON.stringify(eventData) })).data || {};
+export const updateCalendarEvent = async (id, eventData) => (await request(`/calendar/events/${id}`, { method: 'PUT', body: JSON.stringify(eventData) })).data || {};
+export const deleteCalendarEvent = async (id) => (await request(`/calendar/events/${id}`, { method: 'DELETE' })).data || {};
+
+export const getTodos = async (page = 1, limit = 10) => (await request(`/todos?page=${page}&limit=${limit}`, { method: 'GET' })).data || [];
+export const createTodo = async (taskData) => (await request('/todos', { method: 'POST', body: JSON.stringify(taskData) })).data || {};
+export const updateTodo = async (id, taskData) => (await request(`/todos/${id}`, { method: 'PUT', body: JSON.stringify(taskData) })).data || {};
+export const deleteTodo = async (id) => (await request(`/todos/${id}`, { method: 'DELETE' })).data || {};
+
+export const getFaqs = async () => (await request('/faqs', { method: 'GET', requiresAuth: false })).data || [];
+export const getHelpCenter = async () => (await request('/help-center', { method: 'GET', requiresAuth: false })).data || {};
+export const getPrivacyPolicy = async () => (await request('/privacy-policy', { method: 'GET', requiresAuth: false })).data || {};
+
 // Formatting helpers
 export const formatDate = (dateStr) => {
   if (!dateStr) return 'N/A';

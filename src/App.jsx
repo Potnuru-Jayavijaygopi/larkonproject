@@ -36,6 +36,12 @@ import CreateInvoice from './Pages/invoices/CreateInvoice';
 
 import Settings from './Pages/settings/Settings';
 
+import Calendar from './Pages/Support/Calendar';
+import Faqs from './Pages/Support/Faqs';
+import HelpCenter from './Pages/Support/HelpCenter';
+import PrivacyPolicy from './Pages/Support/PrivacyPolicy';
+import Todo from './Pages/Support/Todo';
+
 import Widgets from './Pages/widgets/Widgets';
 
 import Accordion from './Pages/base-ui/Accordion';
@@ -120,6 +126,13 @@ const router = createBrowserRouter([
 
       // Settings route
       { path: 'settings', element: <Settings /> },
+
+      // Calendar & Support routes
+      { path: 'calendar', element: <Calendar /> },
+      { path: 'todo', element: <Todo /> },
+      { path: 'faqs', element: <Faqs /> },
+      { path: 'help-center', element: <HelpCenter /> },
+      { path: 'privacy-policy', element: <PrivacyPolicy /> },
 
       // Base-UI routes
       { path: 'base-ui/accordion', element: <Accordion /> },
