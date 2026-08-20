@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   LuSettings,
   LuStore,
@@ -129,9 +130,11 @@ function Settings({ onNavigate }) {
       });
 
       setStatusMessage({ success: true, text: 'Settings Saved Successfully!' });
+      toast.success('Settings Saved Successfully!');
     } catch (err) {
       console.error('Failed to save settings:', err);
       setStatusMessage({ success: false, text: err.message || 'Failed to save settings' });
+      toast.error(err.message || 'Failed to save settings');
     } finally {
       setSaving(false);
     }
