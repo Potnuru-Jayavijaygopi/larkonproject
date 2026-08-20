@@ -2,16 +2,14 @@ const API_BASE_URL = 'http://localhost:3000/api/v1';
 
 const DEFAULT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBsYXJrb24uY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzg3MDU1NDM4LCJleHAiOjE4MTg1OTE0Mzh9.bP62SlKMH1DyvoIOIKh8wvh8MhWgXlGvwp6Ta8X23DE';
 
-// Function to retrieve valid token or fallback
 function getValidToken() {
   const stored = localStorage.getItem('token') || localStorage.getItem('authToken');
   if (stored) return stored;
   return DEFAULT_TOKEN;
 }
 
-/**
- * Helper to retrieve authorization headers
- */
+
+
 function getHeaders(customHeaders = {}) {
   const token = getValidToken();
   const headers = {
@@ -24,9 +22,7 @@ function getHeaders(customHeaders = {}) {
   return headers;
 }
 
-/**
- * Fetch all invoices and summary statistics from backend
- */
+
 export async function getInvoices() {
   const response = await fetch(`${API_BASE_URL}/invoices`, {
     method: 'GET',
@@ -36,12 +32,10 @@ export async function getInvoices() {
   if (!response.ok || !data.success) {
     throw new Error(data.message || 'Failed to fetch invoices');
   }
-  return data.data; // { summary: {...}, invoices: [...] }
+  return data.data;
 }
 
-/**
- * Fetch a single invoice by ID from backend
- */
+
 export async function getInvoiceById(id) {
   const response = await fetch(`${API_BASE_URL}/invoices/${id}`, {
     method: 'GET',
@@ -51,12 +45,10 @@ export async function getInvoiceById(id) {
   if (!response.ok || !data.success) {
     throw new Error(data.message || `Failed to fetch invoice #${id}`);
   }
-  return data.data; // { invoice: {...}, billing: {...}, items: [...], summary: {...} }
+  return data.data; 
 }
 
-/**
- * Send invoice email via backend API
- */
+
 export async function sendInvoiceEmail(id) {
   const response = await fetch(`${API_BASE_URL}/invoices/${id}/send`, {
     method: 'POST',
@@ -69,9 +61,7 @@ export async function sendInvoiceEmail(id) {
   return data;
 }
 
-/**
- * Download invoice PDF from backend API
- */
+
 export async function downloadInvoicePDF(id, invoiceNumber) {
   const response = await fetch(`${API_BASE_URL}/invoices/${id}/download`, {
     method: 'GET',
@@ -93,9 +83,7 @@ export async function downloadInvoicePDF(id, invoiceNumber) {
   window.URL.revokeObjectURL(url);
 }
 
-/**
- * Fetch General Settings from backend
- */
+
 export async function getGeneralSettings() {
   const response = await fetch(`${API_BASE_URL}/settings/general`, {
     method: 'GET',
@@ -108,9 +96,6 @@ export async function getGeneralSettings() {
   return data.data;
 }
 
-/**
- * Update General Settings on backend
- */
 export async function updateGeneralSettings(settingsData) {
   const response = await fetch(`${API_BASE_URL}/settings/general`, {
     method: 'PUT',
@@ -124,9 +109,6 @@ export async function updateGeneralSettings(settingsData) {
   return data.data;
 }
 
-/**
- * Fetch Admin Profile from backend
- */
 export async function getAdminProfile() {
   const response = await fetch(`${API_BASE_URL}/settings/profile`, {
     method: 'GET',
@@ -139,9 +121,7 @@ export async function getAdminProfile() {
   return data.data;
 }
 
-/**
- * Update Admin Profile on backend
- */
+
 export async function updateAdminProfile(profileData) {
   const response = await fetch(`${API_BASE_URL}/settings/profile`, {
     method: 'PUT',
@@ -155,9 +135,7 @@ export async function updateAdminProfile(profileData) {
   return data.data;
 }
 
-/**
- * Change Admin Password on backend
- */
+
 export async function changePassword(currentPassword, newPassword) {
   const response = await fetch(`${API_BASE_URL}/settings/profile/password`, {
     method: 'PUT',
