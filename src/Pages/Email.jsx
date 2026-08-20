@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { emailAPI, formatDate } from '../services/api';
 
 import inboxIcon from '../assets/inbox (1).png';
 import inboxActiveIcon from '../assets/inbox (2).png';
 import starIcon from '../assets/star (2).png';
-import starActiveIcon from '../assets/Star.png';
+import starActiveIcon from '../assets/star.png';
 import draftIcon from '../assets/file.png';
 import sendIcon from '../assets/send (1).png';
 import trashSidebarIcon from '../assets/trush.png';
@@ -17,9 +18,6 @@ import updatesIcon from '../assets/Vector (6).png';
 import trashIcon from '../assets/Frame (3).png';
 import folderIcon from '../assets/Frame (1).png';
 import bookmarkIcon from '../assets/bookmark.png';
-import pdfIcon from '../assets/pdf.png';
-import docIcon from '../assets/doc.png';
-import imageIcon from '../assets/image icon.png';
 
 import ellipseUpdates from '../assets/Ellipse (2).png';
 import ellipseSocial from '../assets/Ellipse (3).png';
@@ -30,163 +28,43 @@ export default function EmailDashboard() {
   const [activeTab, setActiveTab] = useState('Primary');
   const [activeSidebar, setActiveSidebar] = useState('Inbox');
   const [selectedEmails, setSelectedEmails] = useState([]);
+  const [emails, setEmails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const emails = [
-    {
-      id: 1,
-      sender: 'Daniel J. Olsen',
-      subject: 'Lucas Kriebel (@Daniel J. Olsen) has sent you a direct message on Twitter!',
-      preview: '@Daniel J. Olsen - Very cool :) Nicklas, You have a ...',
-      time: '11:49 am',
-      starred: false,
-      important: true,
-      isBold: true,
-    },
-    {
-      id: 2,
-      sender: 'Jack P. Roldan',
-      subject: 'Images',
-      preview: '',
-      attachments: [
-        { name: 'IMG_201', type: 'img' },
-        { name: 'IMG_202', type: 'img' },
-        { name: 'IMG_203', type: 'img' },
-      ],
-      badge: '+5',
-      time: 'Feb 21',
-      starred: true,
-      important: true,
-      isBold: false,
-    },
-    {
-      id: 3,
-      sender: 'Betty C. Cox (11)',
-      subject: 'Train/Bus',
-      preview: 'Yes ok, great! I’m not stuck in Stockholm anymore, we’re making progress.',
-      time: 'Feb 19',
-      starred: false,
-      important: false,
-      isBold: false, 
-    },
-    {
-      id: 4,
-      sender: 'Medium',
-      subject: 'This Week’s Top Stories',
-      preview: '— Our top pick for you on Medium this week The Man Who Destroyed America’s Ego',
-      time: 'Feb 28',
-      starred: false,
-      important: true,
-      isBold: true,
-    },
-    {
-      id: 5,
-      sender: 'Death to Stock',
-      subject: '(no subject)',
-      attachments: [
-        { name: 'dashboard.pdf', type: 'pdf' },
-        { name: 'pages-data.pdf', type: 'pdf' },
-      ],
-      time: 'Feb 28',
-      starred: true,
-      important: false,
-      isBold: false,
-    },
-    {
-      id: 6,
-      sender: 'Revibe',
-      subject: '(no subject)',
-      attachments: [
-        { name: 'doc1.doc', type: 'doc' },
-        { name: 'doc2.doc', type: 'doc' },
-        { name: 'doc3.doc', type: 'doc' },
-        { name: 'doc4.doc', type: 'doc' },
-      ],
-      time: 'Feb 27',
-      starred: false,
-      important: true,
-      isBold: false,
-    },
-    {
-      id: 7,
-      sender: 'Erik, me (5)',
-      subject: 'Regarding our meeting',
-      preview: '— That’s great, see you on Thursday!',
-      time: 'Feb 24',
-      starred: true,
-      important: false,
-      isBold: false,
-    },
-    {
-      id: 8,
-      sender: 'KanbanFlow',
-      subject: 'Task assigned: Clone ARP’s website',
-      preview: '— You have been assigned a task by Alex@Work on the board Web.',
-      time: 'Feb 24',
-      starred: true,
-      important: false,
-      isBold: false,
-    },
-    {
-      id: 9,
-      sender: 'Tobias Berggren',
-      subject: 'Let’s go fishing!',
-      preview: '— Hey, You wanna join me and Fred at the lake tomorrow? It’ll be awesome.',
-      time: 'Feb 23',
-      starred: false,
-      important: true,
-      isBold: false,
-    },
-    {
-      id: 10,
-      sender: 'Charukaw, me (7)',
-      subject: 'Hey man',
-      preview: '— Nah man sorry i don’t. Should i get it?',
-      time: 'Feb 23',
-      starred: true,
-      important: true,
-      isBold: false,
-    },
-    {
-      id: 11,
-      sender: 'Stack Exchange',
-      subject: '1 new items in your Stackexchange inbox',
-      preview: '— The following items were added to your Stack Exchange global inbox since you last check...',
-      time: 'Feb 21',
-      starred: true,
-      important: false,
-      isBold: false,
-    },
-    {
-      id: 12,
-      sender: 'Google Drive Team',
-      subject: 'You can now use your storage in Google Drive',
-      preview: '— Hey Nicklas Sandell! Thank you for purchasing extra storage space in Google Drive.',
-      time: 'Feb 20',
-      starred: true,
-      important: false,
-      isBold: false,
-    },
-    {
-      id: 13,
-      sender: 'Peter, me (3)',
-      subject: 'Hello',
-      preview: '— Trip home from Colombo has been arranged, then Jenna will come get me from Stockholm. :-)',
-      time: 'Mar 6',
-      starred: false,
-      important: true,
-      isBold: false,
-    },
-    {
-      id: 14,
-      sender: 'me, Susanna (7)',
-      subject: 'Since you asked... and i’m inconceivably bored of the train station',
-      preview: '— Alright thanks, I’ll have to re-book that somehow, i’ll get back to ...',
-      time: 'Mar 6',
-      starred: false,
-      important: false,
-      isBold: false,
-    },
-  ];
+  const [showCompose, setShowCompose] = useState(false);
+  const [composeTo, setComposeTo] = useState('');
+  const [composeSubject, setComposeSubject] = useState('');
+  const [composeBody, setComposeBody] = useState('');
+  const [sending, setSending] = useState(false);
+
+  
+  const [showFolderDropdown, setShowFolderDropdown] = useState(false);
+  const [showLabelDropdown, setShowLabelDropdown] = useState(false);
+
+  const fetchEmails = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await emailAPI.getAll();
+      if (Array.isArray(res.data)) {
+        setEmails(res.data);
+      } else if (Array.isArray(res)) {
+        setEmails(res);
+      } else {
+        setEmails([]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch emails:', err);
+      setError('Unable to load emails from server.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmails();
+  }, []);
 
   const handleSelectOne = (id) => {
     if (selectedEmails.includes(id)) {
@@ -195,6 +73,109 @@ export default function EmailDashboard() {
       setSelectedEmails([...selectedEmails, id]);
     }
   };
+
+  const handleToggleStar = async (email, e) => {
+    if (e) e.stopPropagation();
+    const newStarred = !email.is_starred;
+    setEmails((prev) =>
+      prev.map((item) =>
+        item.id === email.id ? { ...item, is_starred: newStarred } : item
+      )
+    );
+    try {
+      await emailAPI.update(email.id, { is_starred: newStarred });
+    } catch (err) {
+      console.error('Failed to toggle star:', err);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedEmails.length === 0) return;
+    if (!window.confirm(`Delete ${selectedEmails.length} selected email(s)?`)) return;
+
+    const idsToDelete = [...selectedEmails];
+    setEmails((prev) => prev.filter((e) => !idsToDelete.includes(e.id)));
+    setSelectedEmails([]);
+
+    for (const id of idsToDelete) {
+      try {
+        await emailAPI.delete(id);
+      } catch (err) {
+        console.error('Failed to delete email ID:', id, err);
+      }
+    }
+  };
+
+  const handleSendEmail = async (e) => {
+    e.preventDefault();
+    if (!composeTo.trim() || !composeSubject.trim() || !composeBody.trim()) {
+      alert('Please fill in recipient email, subject, and body.');
+      return;
+    }
+
+    setSending(true);
+    try {
+      await emailAPI.send({
+        sender_id: 1,
+        receiver_email: composeTo.trim(),
+        subject: composeSubject.trim(),
+        body: composeBody.trim(),
+        folder: 'Sent',
+        is_read: false,
+        is_starred: false,
+      });
+
+      setShowCompose(false);
+      setComposeTo('');
+      setComposeSubject('');
+      setComposeBody('');
+      alert('Email sent successfully!');
+      fetchEmails();
+    } catch (err) {
+      console.error('Failed to send email:', err);
+      alert(err.message || 'Failed to send email.');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const folderFilteredEmails = emails.filter((item) => {
+    const f = (item.folder || '').toLowerCase();
+    if (activeSidebar === 'Inbox') return f === 'inbox' || f === '';
+    if (activeSidebar === 'Starred') return Boolean(item.is_starred);
+    if (activeSidebar === 'Draft') return f === 'draft';
+    if (activeSidebar === 'Sent Mail') return f === 'sent';
+    if (activeSidebar === 'Trash Mail') return f === 'trash';
+    if (activeSidebar === 'Important') return Boolean(item.is_starred || !item.is_read);
+    return true;
+  });
+
+  const filteredEmails = folderFilteredEmails.filter((item) => {
+    const textSample = `${item.subject || ''} ${item.body || ''} ${item.receiver_email || ''}`.toLowerCase();
+    
+    if (activeTab === 'Social') {
+      return textSample.includes('twitter') || textSample.includes('linkedin') || textSample.includes('social') || textSample.includes('dribbble');
+    }
+    if (activeTab === 'Promotions') {
+      return textSample.includes('campaign') || textSample.includes('offer') || textSample.includes('discount') || textSample.includes('sale');
+    }
+    if (activeTab === 'Updates') {
+      return textSample.includes('alert') || textSample.includes('update') || textSample.includes('calendar') || textSample.includes('reminder');
+    }
+    if (activeTab === 'Forums') {
+      return textSample.includes('asana') || textSample.includes('task') || textSample.includes('forum') || textSample.includes('group');
+    }
+    
+    return true;
+  });
+
+  const inboxUnreadCount = emails.filter(
+    (e) => (e.folder || '').toLowerCase() === 'inbox' && !e.is_read
+  ).length;
+
+  const draftCount = emails.filter(
+    (e) => (e.folder || '').toLowerCase() === 'draft'
+  ).length;
 
   return (
     <div className="p-3 bg-light min-vh-100" style={{ fontFamily: 'sans-serif' }}>
@@ -205,6 +186,7 @@ export default function EmailDashboard() {
               <div>
                 <button
                   type="button"
+                  onClick={() => setShowCompose(true)}
                   className="btn w-100 text-white fw-semibold mb-4 py-2"
                   style={{ backgroundColor: '#FF6C58', borderRadius: '8px', fontSize: '0.9rem' }}
                 >
@@ -230,9 +212,11 @@ export default function EmailDashboard() {
                       />
                       <span>Inbox</span>
                     </div>
-                    <span className="badge bg-danger-subtle text-danger px-2 py-1" style={{ fontSize: '0.7rem', borderRadius: '4px' }}>
-                      7
-                    </span>
+                    {inboxUnreadCount > 0 && (
+                      <span className="badge bg-danger-subtle text-danger px-2 py-1" style={{ fontSize: '0.7rem', borderRadius: '4px' }}>
+                        {inboxUnreadCount}
+                      </span>
+                    )}
                   </div>
 
                   <div
@@ -263,9 +247,11 @@ export default function EmailDashboard() {
                       <img src={draftIcon} alt="Draft" style={{ width: '16px', height: '16px' }} />
                       <span>Draft</span>
                     </div>
-                    <span className="badge bg-info-subtle text-info px-2 py-1" style={{ fontSize: '0.7rem', borderRadius: '4px' }}>
-                      32
-                    </span>
+                    {draftCount > 0 && (
+                      <span className="badge bg-info-subtle text-info px-2 py-1" style={{ fontSize: '0.7rem', borderRadius: '4px' }}>
+                        {draftCount}
+                      </span>
+                    )}
                   </div>
 
                   <div
@@ -316,19 +302,19 @@ export default function EmailDashboard() {
                     Labels
                   </span>
                   <div className="d-flex flex-column gap-2" style={{ fontSize: '0.82rem', color: '#424E5A' }}>
-                    <div className="d-flex align-items-center gap-2 px-2 py-1">
+                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Updates')} style={{ cursor: 'pointer' }}>
                       <img src={ellipseUpdates} alt="Updates" style={{ width: '8px', height: '8px' }} />
                       <span>Updates</span>
                     </div>
-                    <div className="d-flex align-items-center gap-2 px-2 py-1">
+                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Social')} style={{ cursor: 'pointer' }}>
                       <img src={ellipseSocial} alt="Social" style={{ width: '8px', height: '8px' }} />
                       <span>Social</span>
                     </div>
-                    <div className="d-flex align-items-center gap-2 px-2 py-1">
+                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Promotions')} style={{ cursor: 'pointer' }}>
                       <img src={ellipsePromotions} alt="Promotions" style={{ width: '8px', height: '8px' }} />
                       <span>Promotions</span>
                     </div>
-                    <div className="d-flex align-items-center gap-2 px-2 py-1">
+                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Forums')} style={{ cursor: 'pointer' }}>
                       <img src={ellipseForums} alt="Forums" style={{ width: '8px', height: '8px' }} />
                       <span>Forums</span>
                     </div>
@@ -357,39 +343,75 @@ export default function EmailDashboard() {
 
           <div className="col-12 col-lg-10">
             <div className="card border-0 rounded-3 shadow-sm bg-white p-3">
-              <div className="d-flex align-items-center gap-2 mb-3 pb-2 flex-wrap">
-                <div className="btn-group bg-light rounded-2 border p-1">
-                  <button type="button" className="btn btn-sm btn-light border-0 px-2 py-1">
-                    <img src={inboxIcon} alt="inbox" style={{ width: '15px', height: '15px' }} />
-                  </button>
-                  <button type="button" className="btn btn-sm btn-light border-0 px-2 py-1">
-                    <img src={infoIcon} alt="info" style={{ width: '15px', height: '15px' }} />
-                  </button>
-                  <button type="button" className="btn btn-sm btn-light border-0 px-2 py-1">
-                    <img src={trashIcon} alt="trash" style={{ width: '15px', height: '15px' }} />
-                  </button>
+              <div className="d-flex align-items-center gap-2 mb-3 pb-2 flex-wrap justify-content-between">
+                <div className="d-flex align-items-center gap-2">
+                  <div className="d-flex align-items-center bg-white border rounded-2 px-2 py-1 shadow-sm gap-2">
+                    <button type="button" className="btn btn-sm btn-light border-0 p-1 bg-transparent" onClick={fetchEmails} title="Refresh">
+                      <img src={inboxIcon} alt="inbox" style={{ width: '14px', height: '14px' }} />
+                    </button>
+                    <button type="button" className="btn btn-sm btn-light border-0 p-1 bg-transparent" title="Info">
+                      <img src={infoIcon} alt="info" style={{ width: '14px', height: '14px' }} />
+                    </button>
+                    <button type="button" className="btn btn-sm btn-light border-0 p-1 bg-transparent" onClick={handleDeleteSelected} title="Delete selected">
+                      <img src={trashIcon} alt="trash" style={{ width: '14px', height: '14px' }} />
+                    </button>
+                  </div>
+                  <div className="position-relative">
+                    <div 
+                      className="d-flex align-items-center justify-content-between bg-white border rounded-2 px-2 py-1 shadow-sm gap-2" 
+                      style={{ cursor: 'pointer', minWidth: '65px' }}
+                      onClick={() => {
+                        setShowFolderDropdown(!showFolderDropdown);
+                        setShowLabelDropdown(false);
+                      }}
+                    >
+                      <div className="d-flex align-items-center gap-1">
+                        <img src={folderIcon} alt="folder" style={{ width: '14px', height: '14px' }} />
+                        <span style={{ fontSize: '0.75rem', color: '#424E5A' }}>Folder</span>
+                      </div>
+                      <span className="text-secondary" style={{ fontSize: '0.55rem' }}>▼</span>
+                    </div>
+
+                    {showFolderDropdown && (
+                      <div className="position-absolute start-0 mt-1 bg-white border rounded shadow-sm py-1" style={{ zIndex: 1000, minWidth: '130px', fontSize: '0.8rem' }}>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveSidebar('Inbox'); setShowFolderDropdown(false); }}>Inbox</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveSidebar('Sent Mail'); setShowFolderDropdown(false); }}>Sent Mail</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveSidebar('Draft'); setShowFolderDropdown(false); }}>Drafts</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveSidebar('Trash Mail'); setShowFolderDropdown(false); }}>Trash</div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="position-relative">
+                    <div 
+                      className="d-flex align-items-center justify-content-between bg-white border rounded-2 px-2 py-1 shadow-sm gap-2" 
+                      style={{ cursor: 'pointer', minWidth: '65px' }}
+                      onClick={() => {
+                        setShowLabelDropdown(!showLabelDropdown);
+                        setShowFolderDropdown(false);
+                      }}
+                    >
+                      <div className="d-flex align-items-center gap-1">
+                        <img src={bookmarkIcon} alt="bookmark" style={{ width: '14px', height: '14px' }} />
+                        <span style={{ fontSize: '0.75rem', color: '#424E5A' }}>Label</span>
+                      </div>
+                      <span className="text-secondary" style={{ fontSize: '0.55rem' }}>▼</span>
+                    </div>
+
+                    {showLabelDropdown && (
+                      <div className="position-absolute start-0 mt-1 bg-white border rounded shadow-sm py-1" style={{ zIndex: 1000, minWidth: '130px', fontSize: '0.8rem' }}>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveTab('Updates'); setShowLabelDropdown(false); }}>Updates</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveTab('Social'); setShowLabelDropdown(false); }}>Social</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveTab('Promotions'); setShowLabelDropdown(false); }}>Promotions</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveTab('Forums'); setShowLabelDropdown(false); }}>Forums</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <button type="button" className="btn btn-sm btn-light bg-light rounded-2 border px-3 py-1 d-flex align-items-center gap-1">
-                  <img src={folderIcon} alt="folder" style={{ width: '15px', height: '15px' }} />
-                  <span className="text-secondary" style={{ fontSize: '0.65rem' }}>▼</span>
-                </button>
-
-                <button type="button" className="btn btn-sm btn-light bg-light rounded-2 border px-3 py-1 d-flex align-items-center gap-1">
-                  <img src={bookmarkIcon} alt="bookmark" style={{ width: '15px', height: '15px' }} />
-                  <span className="text-secondary" style={{ fontSize: '0.65rem' }}>▼</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="btn btn-sm btn-light bg-light rounded-2 border px-3 py-1 d-flex align-items-center gap-1 fw-medium"
-                  style={{ fontSize: '0.85rem', color: '#8486A7' }}
-                >
-                  <span>More</span>
-                  <span style={{ fontSize: '0.65rem' }}>▼</span>
-                </button>
+                <span className="badge bg-light text-secondary border px-3 py-2 fw-medium" style={{ fontSize: '0.8rem' }}>
+                  Folder: {activeSidebar} ({filteredEmails.length})
+                </span>
               </div>
-
               <div className="d-flex border-bottom mb-2 align-items-center gap-4 px-2 overflow-x-auto">
                 <button
                   type="button"
@@ -461,109 +483,163 @@ export default function EmailDashboard() {
                   <span>Forums</span>
                 </button>
               </div>
-
               <div className="table-responsive">
                 <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.85rem' }}>
                   <tbody>
-                    {emails.map((email) => (
-                      <tr key={email.id} style={{ cursor: 'pointer' }}>
-                        <td style={{ width: '30px' }}>
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            checked={selectedEmails.includes(email.id)}
-                            onChange={() => handleSelectOne(email.id)}
-                          />
-                        </td>
-
-                        <td style={{ width: '28px' }}>
-                          <img
-                            src={email.starred ? starActiveIcon : starIcon}
-                            alt="star"
-                            style={{ width: '16px', height: '16px' }}
-                          />
-                        </td>
-
-                        <td style={{ width: '28px' }}>
-                          <img
-                            src={tagIcon}
-                            alt="tag"
-                            style={{
-                              width: '15px',
-                              height: '15px',
-                              filter: email.important ? 'none' : 'grayscale(100%) opacity(0.4)',
-                            }}
-                          />
-                        </td>
-
-                        <td className="text-nowrap" style={{ width: '150px', fontWeight: email.isBold ? '700' : '400', color: email.isBold ? '#424E5A' : '#8486A7' }}>
-                          {email.sender}
-                        </td>
-
-                        <td>
-                          <div className="d-flex align-items-center flex-wrap gap-1">
-                            <span className="me-1" style={{ fontWeight: email.isBold ? '700' : '400', color: email.isBold ? '#424E5A' : '#8486A7' }}>
-                              {email.subject}
-                            </span>
-                            {email.preview && (
-                              <span className="me-2" style={{ fontWeight: '400', color: '#8486A7' }}>
-                                {email.preview}
-                              </span>
-                            )}
-
-                            {email.attachments && (
-                              <span className="d-inline-flex gap-1 align-items-center">
-                                {email.attachments.map((att, idx) => (
-                                  <span
-                                    key={idx}
-                                    className="badge bg-light border fw-normal d-inline-flex align-items-center gap-1 px-2 py-1"
-                                    style={{ fontSize: '0.72rem', borderRadius: '4px', color: '#8486A7' }}
-                                  >
-                                    <img
-                                      src={att.type === 'pdf' ? pdfIcon : att.type === 'doc' ? docIcon : imageIcon}
-                                      alt="file"
-                                      style={{ width: '12px', height: '12px' }}
-                                    />
-                                    {att.name}
-                                  </span>
-                                ))}
-                                {email.badge && (
-                                  <span
-                                    className="badge bg-light border fw-normal px-2 py-1"
-                                    style={{ fontSize: '0.72rem', borderRadius: '4px', color: '#8486A7' }}
-                                  >
-                                    {email.badge}
-                                  </span>
-                                )}
-                              </span>
-                            )}
-                          </div>
-                        </td>
-
-                        <td className="text-end text-nowrap" style={{ width: '80px', fontSize: '0.8rem', color: '#8486A7' }}>
-                          {email.time}
+                    {loading ? (
+                      <tr>
+                        <td colSpan="6" className="text-center py-4 text-secondary">
+                          <div className="spinner-border spinner-border-sm text-primary me-2" role="status" />
+                          Loading emails...
                         </td>
                       </tr>
-                    ))}
+                    ) : filteredEmails.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="text-center py-4 text-secondary">
+                          No emails found in {activeTab} view.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredEmails.map((email) => {
+                        const senderDisplay = email.receiver_email || 'Larkon System';
+                        const timeDisplay = formatDate(email.sent_at);
+                        const isUnread = !email.is_read;
+
+                        return (
+                          <tr key={email.id} style={{ cursor: 'pointer' }}>
+                            <td style={{ width: '30px' }}>
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                                checked={selectedEmails.includes(email.id)}
+                                onChange={() => handleSelectOne(email.id)}
+                              />
+                            </td>
+
+                            <td style={{ width: '28px' }} onClick={(e) => handleToggleStar(email, e)}>
+                              <img
+                                src={email.is_starred ? starActiveIcon : starIcon}
+                                alt="star"
+                                style={{ width: '16px', height: '16px' }}
+                              />
+                            </td>
+
+                            <td style={{ width: '28px' }}>
+                              <img
+                                src={tagIcon}
+                                alt="tag"
+                                style={{
+                                  width: '15px',
+                                  height: '15px',
+                                  filter: isUnread ? 'none' : 'grayscale(100%) opacity(0.4)',
+                                }}
+                              />
+                            </td>
+
+                            <td className="text-nowrap" style={{ width: '150px', fontWeight: isUnread ? '700' : '400', color: isUnread ? '#424E5A' : '#8486A7' }}>
+                              {senderDisplay}
+                            </td>
+
+                            <td>
+                              <div className="d-flex align-items-center flex-wrap gap-1">
+                                <span className="me-1" style={{ fontWeight: isUnread ? '700' : '400', color: isUnread ? '#424E5A' : '#8486A7' }}>
+                                  {email.subject}
+                                </span>
+                                {email.body && (
+                                  <span className="me-2 text-truncate" style={{ maxWidth: '400px', fontWeight: '400', color: '#8486A7' }}>
+                                    — {email.body}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+
+                            <td className="text-end text-nowrap" style={{ width: '100px', fontSize: '0.8rem', color: '#8486A7' }}>
+                              {timeDisplay}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
 
               <div className="d-flex align-items-center justify-content-between pt-3 mt-2 border-top">
                 <small style={{ fontSize: '0.80rem', color: '#8486A7' }}>
-                  Showing 1 - 20 of 289
+                  Showing 1 - {filteredEmails.length} of {filteredEmails.length}
                 </small>
-                <div className="d-flex gap-1">
-                  <button type="button" className="btn btn-light btn-sm border px-2 py-1" style={{ color: '#8486A7' }}>‹</button>
-                  <button type="button" className="btn btn-sm px-2 py-1 text-white" style={{ backgroundColor: '#FF6C58', borderColor: '#FF6C58' }}>
-                    ›
-                  </button>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      {showCompose && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+          style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }}
+        >
+          <div className="card shadow-lg border-0 rounded-4" style={{ width: '90%', maxWidth: '540px' }}>
+            <div className="card-header bg-white border-bottom d-flex align-items-center justify-content-between py-3 px-4">
+              <h6 className="fw-bold mb-0" style={{ color: '#313B5E' }}>Compose New Email</h6>
+              <button type="button" className="btn-close shadow-none" onClick={() => setShowCompose(false)} />
+            </div>
+            <form onSubmit={handleSendEmail}>
+              <div className="card-body p-4">
+                <div className="mb-3">
+                  <label className="form-label small text-secondary">To (Recipient Email)</label>
+                  <input
+                    type="email"
+                    required
+                    className="form-control bg-light border-light-subtle"
+                    placeholder="e.g. client@example.com"
+                    value={composeTo}
+                    onChange={(e) => setComposeTo(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label small text-secondary">Subject</label>
+                  <input
+                    type="text"
+                    required
+                    className="form-control bg-light border-light-subtle"
+                    placeholder="Enter email subject"
+                    value={composeSubject}
+                    onChange={(e) => setComposeSubject(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label small text-secondary">Message</label>
+                  <textarea
+                    required
+                    rows="5"
+                    className="form-control bg-light border-light-subtle"
+                    placeholder="Type your message here..."
+                    value={composeBody}
+                    onChange={(e) => setComposeBody(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="card-footer bg-white border-top d-flex justify-content-end gap-2 py-3 px-4">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary btn-sm px-3"
+                  onClick={() => setShowCompose(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="btn btn-sm text-white px-4"
+                  style={{ backgroundColor: '#FF6C58' }}
+                >
+                  {sending ? 'Sending...' : 'Send Email'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

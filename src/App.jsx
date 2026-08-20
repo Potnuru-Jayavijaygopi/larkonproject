@@ -36,6 +36,12 @@ import CreateInvoice from './Pages/invoices/CreateInvoice';
 
 import Settings from './Pages/settings/Settings';
 
+import CouponsList from './Pages/Coupons-List';
+import CouponAdd from './Pages/Coupon-Add';
+import Reviews from './Pages/Reviews';
+import Chat from './Pages/Chat';
+import Email from './Pages/Email';
+
 import Calendar from './Pages/Support/Calendar';
 import Faqs from './Pages/Support/Faqs';
 import HelpCenter from './Pages/Support/HelpCenter';
@@ -116,6 +122,18 @@ const router = createBrowserRouter([
       { path: 'attributes/add', element: <AddAttribute /> },
       { path: 'attributes/add/:id', element: <AddAttribute /> },
       { path: 'attributes/create', element: <CreateAttribute /> },
+
+      // Coupons routes
+      { path: 'coupons', element: <CouponsList /> },
+      { path: 'coupons/list', element: <CouponsList /> },
+      { path: 'coupons/add', element: <CouponAdd /> },
+      { path: 'coupons/edit', element: <CouponAdd /> },
+      { path: 'coupons/edit/:id', element: <CouponAdd /> },
+
+      // Reviews, Chat, Email routes
+      { path: 'reviews', element: <Reviews /> },
+      { path: 'chat', element: <Chat /> },
+      { path: 'email', element: <Email /> },
 
       // Invoices routes
       { path: 'invoices/list', element: <InvoiceList /> },

@@ -365,10 +365,43 @@ export const authAPI = {
   },
 };
 
+// Coupon API
+export const couponAPI = {
+  getAll: async () => (await request('/coupons', { method: 'GET' })).data || [],
+  getById: async (id) => (await request(`/coupons/${id}`, { method: 'GET' })).data || {},
+  create: async (data) => (await request('/coupons', { method: 'POST', body: JSON.stringify(data) })).data || {},
+  update: async (id, data) => (await request(`/coupons/${id}`, { method: 'PUT', body: JSON.stringify(data) })).data || {},
+  delete: async (id) => (await request(`/coupons/${id}`, { method: 'DELETE' })).data || {},
+  validate: async (data) => (await request('/coupons/validate', { method: 'POST', body: JSON.stringify(data) })).data || {},
+};
+
 // Review API
 export const reviewAPI = {
   getAll: async () => (await request('/reviews', { method: 'GET' })).data || [],
   getById: async (id) => (await request(`/reviews/${id}`, { method: 'GET' })).data || {},
+  create: async (data) => (await request('/reviews', { method: 'POST', body: JSON.stringify(data) })).data || {},
+  updateStatus: async (id, status) => (await request(`/reviews/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) })).data || {},
+  delete: async (id) => (await request(`/reviews/${id}`, { method: 'DELETE' })).data || {},
+};
+
+// Email API
+export const emailAPI = {
+  getAll: async () => (await request('/emails', { method: 'GET' })).data || [],
+  getById: async (id) => (await request(`/emails/${id}`, { method: 'GET' })).data || {},
+  send: async (data) => (await request('/emails/send', { method: 'POST', body: JSON.stringify(data) })).data || {},
+  update: async (id, data) => (await request(`/emails/${id}`, { method: 'PUT', body: JSON.stringify(data) })).data || {},
+  delete: async (id) => (await request(`/emails/${id}`, { method: 'DELETE' })).data || {},
+  getLabels: async () => (await request('/email-labels', { method: 'GET' })).data || [],
+};
+
+// Chat API
+export const chatAPI = {
+  getConversations: async () => (await request('/chat/conversations', { method: 'GET' })).data || [],
+  getMessages: async (id) => (await request(`/chat/conversations/${id}/messages`, { method: 'GET' })).data || [],
+  sendMessage: async (id, text) => (await request(`/chat/conversations/${id}/messages`, { method: 'POST', body: JSON.stringify({ text }) })).data || {},
+  markRead: async (id) => (await request(`/chat/conversations/${id}/read`, { method: 'POST' })).data || {},
+  getActiveUsers: async () => (await request('/chat/users/active', { method: 'GET' })).data || [],
+  search: async (q) => (await request(`/chat/conversations/search?q=${encodeURIComponent(q)}`, { method: 'GET' })).data || [],
 };
 
 // Image helpers
@@ -494,6 +527,20 @@ export const getHelpCenter = async () => (await request('/help-center', { method
 export const getPrivacyPolicy = async () => (await request('/privacy-policy', { method: 'GET', requiresAuth: false })).data || {};
 
 // Formatting helpers
+export const formatToInputDate = (dateStr) => {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  } catch {
+    return dateStr;
+  }
+};
+
 export const formatDate = (dateStr) => {
   if (!dateStr) return 'N/A';
   try {
