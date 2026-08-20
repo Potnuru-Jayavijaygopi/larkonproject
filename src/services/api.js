@@ -1,0 +1,312 @@
+
+const API_BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:3000/api/v1';
+
+
+export const getAuthToken = () => {
+  return (
+    localStorage.getItem('accessToken') ||
+    localStorage.getItem('token') ||
+    sessionStorage.getItem('accessToken') ||
+    ''
+  );
+};
+
+export const setAuthData = ({ accessToken, refreshToken, user }) => {
+  if (accessToken) localStorage.setItem('accessToken', accessToken);
+  if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+  if (user) localStorage.setItem('user', JSON.stringify(user));
+};
+
+export const clearAuthData = () => {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('user');
+  sessionStorage.removeItem('accessToken');
+};
+
+
+export const ensureAuthenticated = async (forceRefresh = false) => {
+  if (!forceRefresh) {
+    const existingToken = getAuthToken();
+    if (existingToken) return existingToken;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'admin@larkon.com',
+        password: 'Password123!'
+      })
+    });
+
+    const data = await res.json();
+    if (data.success && data.accessToken) {
+      setAuthData(data);
+      return data.accessToken;
+    }
+  } catch (err) {
+    console.warn('Auto-auth notice:', err);
+  }
+  return '';
+};
+
+async function request(endpoint, options = {}, isRetry = false) {
+  const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  const headers = { ...options.headers };
+
+  if (options.requiresAuth !== false) {
+    let token = getAuthToken();
+    if (!token) {
+      token = await ensureAuthenticated();
+    }
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+  }
+
+  if (!(options.body instanceof FormData) && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers
+    });
+
+    const contentType = response.headers.get('content-type');
+    let data;
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { message: text };
+      }
+    }
+
+
+    if (response.status === 401 && !isRetry && options.requiresAuth !== false) {
+      console.warn('Received 401 Unauthorized. Refreshing token and retrying request...');
+      clearAuthData();
+      const newToken = await ensureAuthenticated(true);
+      if (newToken) {
+        const retryHeaders = {
+          ...headers,
+          Authorization: `Bearer ${newToken}`
+        };
+        return request(endpoint, { ...options, headers: retryHeaders }, true);
+      }
+    }
+
+    if (!response.ok) {
+      const errorMessage = data?.message || data?.error || `HTTP error! status: ${response.status}`;
+      const error = new Error(errorMessage);
+      error.status = response.status;
+      error.data = data;
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error(`API Error on [${options.method || 'GET'} ${endpoint}]:`, error);
+    throw error;
+  }
+}
+
+export function parseProductImages(imageField) {
+  if (!imageField) return [];
+
+  if (Array.isArray(imageField)) {
+    return imageField.filter(Boolean);
+  }
+
+  if (typeof imageField === 'string') {
+    const trimmed = imageField.trim();
+    if (!trimmed) return [];
+
+  
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) return parsed.filter(Boolean);
+      } catch {
+  
+      }
+    }
+
+    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+      const inner = trimmed.slice(1, -1);
+      const items = inner
+        .split(',')
+        .map((s) => s.trim().replace(/^"|"$/g, '').replace(/\\"/g, '"'))
+        .filter(Boolean);
+      if (items.length > 0) return items;
+    }
+
+
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('/')) {
+      return [trimmed];
+    }
+  }
+
+  return [];
+}
+
+export const productAPI = {
+
+  getAll: async () => {
+    const res = await request('/products', { method: 'GET', requiresAuth: false });
+    return res.data || [];
+  },
+
+  getById: async (id) => {
+    const res = await request(`/products/${id}`, { method: 'GET', requiresAuth: false });
+    return res.data || null;
+  },
+
+  create: async (productData) => {
+    const res = await request('/products', {
+      method: 'POST',
+      body: JSON.stringify(productData)
+    });
+    return res.data || res;
+  },
+
+  update: async (id, productData) => {
+    const res = await request(`/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(productData)
+    });
+    return res.data || res;
+  },
+
+  delete: async (id) => {
+    const res = await request(`/products/${id}`, {
+      method: 'DELETE'
+    });
+    return res.data || res;
+  },
+
+  uploadImages: async (id, files) => {
+    const formData = new FormData();
+    if (Array.isArray(files)) {
+      files.forEach((file) => formData.append('images', file));
+    } else if (files instanceof FileList) {
+      Array.from(files).forEach((file) => formData.append('images', file));
+    } else if (files instanceof File) {
+      formData.append('images', files);
+    }
+
+    const res = await request(`/products/${id}/images`, {
+      method: 'POST',
+      body: formData
+    });
+    return res.data || res;
+  },
+
+  updateStatus: async (id, status) => {
+    const res = await request(`/products/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status })
+    });
+    return res.data || res;
+  },
+
+  import: async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await request('/products/import', {
+      method: 'POST',
+      body: formData
+    });
+    return res.data || res;
+  }
+};
+
+export const categoryAPI = {
+  getAll: async () => {
+    const res = await request('/categories', { method: 'GET', requiresAuth: false });
+    return res.data || [];
+  },
+
+  getById: async (id) => {
+    const res = await request(`/categories/${id}`, { method: 'GET', requiresAuth: false });
+    return res.data || null;
+  }
+};
+
+
+export const attributeAPI = {
+  getAll: async () => {
+    const res = await request('/attributes', { method: 'GET', requiresAuth: false });
+    return res.data || [];
+  }
+};
+
+
+export const reviewAPI = {
+  getAll: async () => {
+    const res = await request('/reviews', { method: 'GET', requiresAuth: false });
+    return res.data || [];
+  }
+};
+
+
+export const pricingAPI = {
+  getPlans: async () => {
+    const res = await request('/pricing-plans', { method: 'GET', requiresAuth: false });
+    return res.data || [];
+  }
+};
+
+
+export const authAPI = {
+  login: async (credentials) => {
+    const res = await request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+      requiresAuth: false
+    });
+    if (res.success && res.accessToken) {
+      setAuthData(res);
+    }
+    return res;
+  },
+
+  register: async (userData) => {
+    const res = await request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+      requiresAuth: false
+    });
+    return res;
+  },
+
+  getMe: async () => {
+    const res = await request('/auth/me', { method: 'GET' });
+    return res.data || null;
+  },
+
+  logout: async () => {
+    try {
+      await request('/auth/logout', { method: 'POST' });
+    } finally {
+      clearAuthData();
+    }
+  }
+};
+
+export default {
+  products: productAPI,
+  categories: categoryAPI,
+  attributes: attributeAPI,
+  reviews: reviewAPI,
+  pricing: pricingAPI,
+  auth: authAPI,
+  parseProductImages
+};

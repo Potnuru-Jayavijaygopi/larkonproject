@@ -1,14 +1,28 @@
 import { useState } from "react";
 
-const Pagination = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 3;
+const Pagination = ({
+  currentPage: propCurrentPage,
+  totalPages: propTotalPages = 3,
+  onPageChange
+}) => {
+  const [internalPage, setInternalPage] = useState(1);
+
+  const isControlled = propCurrentPage !== undefined;
+  const currentPage = isControlled ? propCurrentPage : internalPage;
+  const totalPages = Math.max(1, propTotalPages);
 
   const handlePageClick = (page) => {
     if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+      if (!isControlled) {
+        setInternalPage(page);
+      }
+      if (onPageChange) {
+        onPageChange(page);
+      }
     }
   };
+
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
     <div className="d-flex justify-content-end mt-3">
@@ -19,12 +33,13 @@ const Pagination = () => {
               className="page-link"
               onClick={() => handlePageClick(currentPage - 1)}
               type="button"
+              disabled={currentPage === 1}
             >
               Previous
             </button>
           </li>
 
-          {[1, 2, 3].map((page) => (
+          {pages.map((page) => (
             <li
               key={page}
               className={`page-item ${currentPage === page ? 'active' : ''}`}
@@ -43,6 +58,7 @@ const Pagination = () => {
               className="page-link"
               onClick={() => handlePageClick(currentPage + 1)}
               type="button"
+              disabled={currentPage === totalPages}
             >
               Next
             </button>
