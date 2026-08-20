@@ -241,6 +241,14 @@ export const productAPI = {
   },
 };
 
+// Order API
+export const orderAPI = {
+  getAll: async () => (await request('/orders', { method: 'GET' })).data || [],
+  getById: async (id) => (await request(`/orders/${id}`, { method: 'GET' })).data || {},
+  create: async (data) => (await request('/orders', { method: 'POST', body: JSON.stringify(data) })).data || {},
+  update: async (id, data) => (await request(`/orders/${id}`, { method: 'PUT', body: JSON.stringify(data) })).data || {},
+};
+
 // Inventory Endpoints
 export const inventoryAPI = {
   getWarehouses: async () => {
@@ -412,10 +420,11 @@ export const formatDate = (dateStr) => {
 
 const api = {
   request,
-  get: (url, opts) => request(url, { ...opts, method: 'GET' }),
-  post: (url, data, opts) => request(url, { ...opts, method: 'POST', body: JSON.stringify(data) }),
-  put: (url, data, opts) => request(url, { ...opts, method: 'PUT', body: JSON.stringify(data) }),
-  delete: (url, opts) => request(url, { ...opts, method: 'DELETE' }),
+  get: (endpoint, opts) => request(endpoint, { ...opts, method: 'GET' }),
+  post: (endpoint, body, opts) => request(endpoint, { ...opts, method: 'POST', body: JSON.stringify(body) }),
+  put: (endpoint, body, opts) => request(endpoint, { ...opts, method: 'PUT', body: JSON.stringify(body) }),
+  patch: (endpoint, body, opts) => request(endpoint, { ...opts, method: 'PATCH', body: JSON.stringify(body) }),
+  delete: (endpoint, opts) => request(endpoint, { ...opts, method: 'DELETE' }),
 };
 
 export default api;

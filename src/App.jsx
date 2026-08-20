@@ -17,6 +17,11 @@ import CreateCategory from './Pages/category/CreateCategory';
 import InventoryList from './Pages/inventory/InventoryList';
 import ReceivedOrders from './Pages/inventory/ReceivedOrders';
 
+import OrderList from './Pages/orders/OrderList';
+import OrderDetails from './Pages/orders/OrderDetails';
+import OrderCart from './Pages/orders/OrderCart';
+import OrderCheckout from './Pages/orders/OrderCheckout';
+
 import Widgets from './Pages/widgets/Widgets';
 
 import SignIn from './Pages/authentication/SignIn';
@@ -54,6 +59,12 @@ const router = createBrowserRouter([
       // Inventory routes
       { path: 'inventory/warehouse', element: <InventoryList /> },
       { path: 'inventory/received', element: <ReceivedOrders /> },
+
+      // Orders routes
+      { path: 'orders/list', element: <OrderList /> },
+      { path: 'orders/details', element: <OrderDetails /> },
+      { path: 'orders/cart', element: <OrderCart /> },
+      { path: 'orders/checkout', element: <OrderCheckout /> },
 
       // Widgets route
       { path: 'widgets', element: <Widgets /> },
