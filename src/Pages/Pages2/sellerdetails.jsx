@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useParams } from 'react-router-dom';
 
-import zaraLogo from '../../assets/logozara.png';
-import rolexLogo from '../../assets/logorolex.png';
-import dysonLogo from '../../assets/dyson.png';
 import goproLogo from '../../assets/gopro.png';
 import hmLogo from '../../assets/hm.png';
 import huaweiLogo from '../../assets/huawei.png';
-import nikeLogo from '../../assets/nike.png';
 import northFaceLogo from '../../assets/northface.png';
 
 import locationIcon from '../../assets/location.png';
@@ -50,14 +46,10 @@ const getAuthToken = async () => {
 };
 
 const LOGO_MAP = {
-  zara: zaraLogo,
-  rolex: rolexLogo,
-  dyson: dysonLogo,
   gopro: goproLogo,
   'h&m': hmLogo,
   hm: hmLogo,
   huawei: huaweiLogo,
-  nike: nikeLogo,
   northface: northFaceLogo,
   'north face': northFaceLogo,
 };
@@ -68,8 +60,171 @@ const getLogoForSeller = (seller) => {
   for (const [key, logo] of Object.entries(LOGO_MAP)) {
     if (nameLower.includes(key)) return logo;
   }
-  return zaraLogo;
+  return null;
 };
+
+const DEFAULT_SELLERS = [
+  {
+    id: 1,
+    name: 'ZARA International',
+    business_name: 'ZARA International',
+    category: 'Fashion',
+    subCategory: 'Fashion',
+    rating: '4.5',
+    reviews: '3.5k',
+    website: 'www.zarafashion.co',
+    address: '4604 , Philli Lane Kiowa IN 47404',
+    email: 'zarafashionworld@dayrep.com',
+    phone: '+243 812-801-9335',
+    revenue: '$200k',
+    total_sales: '200',
+    stock: '865',
+    total_products: 865,
+    sells: '+4.5k',
+    clients: '+2k',
+    description: "At ZARA, we believe that fashion is more than just clothing—it's an expression of individuality and a celebration of diversity. Founded in 2003, our journey began with a simple yet powerful vision: to create high-quality, stylish, and comfortable apparel that resonates with people from all walks of life.",
+  },
+  {
+    id: 2,
+    name: 'Rolex Watches',
+    business_name: 'Rolex Watches',
+    category: 'Watch',
+    subCategory: 'Watches',
+    rating: '4.5',
+    reviews: '1.2k',
+    website: 'www.rolexwatch.co',
+    address: '1678 Avenue Milwaukee, WI 53202',
+    email: 'rolexwatches@dayrep.com',
+    phone: '+243 262-223-1464',
+    revenue: '$349k',
+    total_sales: '349',
+    stock: '261',
+    total_products: 261,
+    sells: '+2.9k',
+    clients: '+1.4k',
+    description: "At Rolex Watches, precision craftsmanship meets timeless luxury. Founded with a commitment to horological perfection, we design timepieces that stand as symbols of excellence, elegance, and prestige across generations.",
+  },
+  {
+    id: 3,
+    name: 'Dyson Machinery',
+    business_name: 'Dyson Machinery',
+    category: 'Electronics',
+    subCategory: 'Electronics',
+    rating: '4.1',
+    reviews: '3.7k',
+    website: 'www.dysonmachine.co',
+    address: '23 Cubbine Road GHOOLI WA 6426',
+    email: 'dysonmachine@dayrep.com',
+    phone: '+81(08) 9059 8047',
+    revenue: '$545k',
+    total_sales: '545',
+    stock: '781',
+    total_products: 781,
+    sells: '+5.3k',
+    clients: '+3.1k',
+    description: "Dyson Machinery pioneers cutting-edge engineering and consumer appliances. We solve problems others ignore with groundbreaking technology, high performance, and exceptional durability.",
+  },
+  {
+    id: 4,
+    name: 'GoPro Camera',
+    business_name: 'GoPro Camera',
+    category: 'Electronics',
+    subCategory: 'Electronics',
+    rating: '4.3',
+    reviews: '7.2k',
+    website: 'www.goprocamera.co',
+    address: '5 Gaffney Street MIDDLE PARK VIC 3206',
+    email: 'goprocamera@dayrep.com',
+    phone: '+81(08) 6727 4227',
+    revenue: '$465k',
+    total_sales: '465',
+    stock: '890',
+    total_products: 890,
+    sells: '+10.6k',
+    clients: '+6.3k',
+    description: "GoPro frees people to celebrate the moment, inspiring others to do the same. From cameras and drones to apps and accessories, everything we do is geared to help you capture life as you live it.",
+  },
+  {
+    id: 5,
+    name: 'H&M',
+    business_name: 'H&M',
+    category: 'Fashion',
+    subCategory: 'Fashion',
+    rating: '4.3',
+    reviews: '15.3k',
+    website: 'www.h&mfashion.co',
+    address: '1697 Bay Street Toronto, ON M5J 2R8',
+    email: 'h&mfashion@dayrep.com',
+    phone: '+81(07) 4049 2261',
+    revenue: '$800k',
+    total_sales: '800',
+    stock: '1309',
+    total_products: 1309,
+    sells: '+21.6k',
+    clients: '+8.1k',
+    description: "H&M offers fashion and quality at the best price in a sustainable way. We strive to inspire fashion lovers worldwide to explore their personal style with accessible, modern collections.",
+  },
+  {
+    id: 6,
+    name: 'Huawei Phone',
+    business_name: 'Huawei Phone',
+    category: 'Electronics',
+    subCategory: 'Phone',
+    rating: '4.1',
+    reviews: '8.2k',
+    website: 'www.huaweiphone.co',
+    address: '2182 Blanshard Victoria, BC V8W 2H9',
+    email: 'huaweiphone@dayrep.com',
+    phone: '+81(07) 250-356-8142',
+    revenue: '$379k',
+    total_sales: '379',
+    stock: '356',
+    total_products: 356,
+    sells: '+4.0k',
+    clients: '+6.3k',
+    description: "Huawei is a leading global provider of information and communications technology (ICT) infrastructure and smart devices, bringing digital to every person, home and organization.",
+  },
+  {
+    id: 7,
+    name: 'Nike Clothings',
+    business_name: 'Nike Clothings',
+    category: 'Fashion',
+    subCategory: 'Clothings',
+    rating: '4.5',
+    reviews: '18.9k',
+    website: 'www.nikebrand.co',
+    address: '2113 Eglinton Avenue Toronto 1A6',
+    email: 'nikefashion@dayrep.com',
+    phone: '+81(07) 647-405-3676',
+    revenue: '$890k',
+    total_sales: '890',
+    stock: '12k',
+    total_products: 12000,
+    sells: '+19.0k',
+    clients: '+16.0k',
+    description: "Nike champions athletes and athletic culture worldwide. Our mission is to bring inspiration and innovation to every athlete with superior performance apparel and footwear.",
+  },
+  {
+    id: 8,
+    name: 'The North Face',
+    business_name: 'The North Face',
+    category: 'Fashion',
+    subCategory: 'Clothings',
+    rating: '4.4',
+    reviews: '12.7k',
+    website: 'www.northface.co',
+    address: '1377 49th Avenue Clyde River,0E0',
+    email: 'thenorthface@dayrep.com',
+    phone: '+81(07) 867-924-6639',
+    revenue: '$457k',
+    total_sales: '457',
+    stock: '1.6k',
+    total_products: 1600,
+    sells: '+13.9k',
+    clients: '+2.1k',
+    description: "The North Face delivers an extensive line of performance apparel, equipment, and footwear. We push the boundaries of innovation so that you can push the boundaries of exploration.",
+  },
+];
 
 const DEFAULT_PRODUCTS = [
   { id: 'ID46765', name: 'Black T-shirt', variants: '4', category: 'Fashion', date: '08/05/2023', status: 'Published', statusBg: '#DCFCE7', statusColor: '#16A34A' },
@@ -98,36 +253,56 @@ export default function SellerDetails() {
         ...(token ? { Authorization: `Bearer ${token}` } : {})
       };
 
-      // 1. Fetch Sellers
-      const sellersRes = await fetch(`${API_BASE}/sellers`, { headers });
-      if (sellersRes.ok) {
-        const sellersData = await sellersRes.json();
-        if (sellersData && sellersData.data && sellersData.data.length > 0) {
-          let found = null;
-          if (sellerId) {
-            found = sellersData.data.find(s => String(s.id) === String(sellerId));
+      let found = null;
+
+      // 1. Fetch Sellers from API
+      try {
+        const sellersRes = await fetch(`${API_BASE}/sellers`, { headers });
+        if (sellersRes.ok) {
+          const sellersData = await sellersRes.json();
+          if (sellersData && sellersData.data && sellersData.data.length > 0) {
+            if (sellerId) {
+              found = sellersData.data.find(s => String(s.id) === String(sellerId));
+            }
           }
-          setSeller(found || sellersData.data[0]);
         }
+      } catch (e) {
+        console.error("Failed to fetch API sellers:", e);
       }
 
-      // 2. Fetch Products
-      const prodRes = await fetch(`${API_BASE}/products`, { headers });
-      if (prodRes.ok) {
-        const prodData = await prodRes.json();
-        if (prodData && prodData.data && prodData.data.length > 0) {
-          const mapped = prodData.data.slice(0, 5).map((p, idx) => ({
-            id: `ID${p.id || 46760 + idx}`,
-            name: p.title || p.name || 'Product Item',
-            variants: '4',
-            category: p.category_name || 'Fashion',
-            date: '08/05/2023',
-            status: p.status || 'Published',
-            statusBg: (p.status === 'Draft' || p.status === 'inactive') ? '#FEE2E2' : '#DCFCE7',
-            statusColor: (p.status === 'Draft' || p.status === 'inactive') ? '#EF4444' : '#16A34A',
-          }));
-          setProducts(mapped);
+      // 2. If not found in API, check DEFAULT_SELLERS
+      if (!found && sellerId) {
+        found = DEFAULT_SELLERS.find(s => String(s.id) === String(sellerId));
+      }
+
+      // 3. If still not found, fallback to first DEFAULT_SELLER or null
+      if (!found) {
+        found = DEFAULT_SELLERS.find(s => String(s.id) === String(sellerId)) || DEFAULT_SELLERS[0];
+      }
+
+      setSeller(found);
+
+      // 4. Fetch Products
+      try {
+        const prodRes = await fetch(`${API_BASE}/products`, { headers });
+        if (prodRes.ok) {
+          const prodData = await prodRes.json();
+          if (prodData && prodData.data && prodData.data.length > 0) {
+            const mapped = prodData.data.slice(0, 5).map((p, idx) => ({
+              id: `ID${p.id || 46760 + idx}`,
+              name: p.title || p.name || 'Product Item',
+              variants: '4',
+              category: p.category_name || 'Fashion',
+              date: '08/05/2023',
+              status: p.status || 'Published',
+              statusBg: (p.status === 'Draft' || p.status === 'inactive') ? '#FEE2E2' : '#DCFCE7',
+              statusColor: (p.status === 'Draft' || p.status === 'inactive') ? '#EF4444' : '#16A34A',
+            }));
+            setProducts(mapped);
+          }
         }
+      } catch (e) {
+        console.error("Failed to fetch products:", e);
       }
     } catch (err) {
       console.error("Error fetching seller details:", err);
@@ -141,16 +316,23 @@ export default function SellerDetails() {
   }, [fetchData]);
 
   // Derived Info
-  const sellerName = seller?.business_name || "ZARA International";
-  const sellerCategory = seller?.category || "Fashion";
-  const sellerWebsite = seller?.website || "www.zarafashion.co";
-  const sellerAddress = seller?.address ? `${seller.address}, ${seller.city || ''} ${seller.state || ''}`.trim() : "4604 , Philli Lane Kiowa IN 47404";
-  const sellerEmail = seller?.email || "zarafashionworld@dayrep.com";
-  const sellerPhone = seller?.phone || "+243 812-801-9335";
+  const sellerName = seller?.business_name || seller?.name || "Rolex Watches";
+  const sellerCategory = seller?.category || "Watch";
+  const sellerWebsite = (seller?.website || "www.rolexwatch.co").replace(/^https?:\/\//, '');
+  const sellerAddress = seller?.address 
+    ? (seller.city ? `${seller.address}, ${seller.city || ''} ${seller.state || ''}`.trim() : seller.address) 
+    : "1678 Avenue Milwaukee, WI 53202";
+  const sellerEmail = seller?.email || "rolexwatches@dayrep.com";
+  const sellerPhone = seller?.phone || "+243 262-223-1464";
   const sellerRating = seller?.rating && parseFloat(seller.rating) > 0 ? seller.rating : "4.5";
-  const sellerStock = seller?.total_products > 0 ? seller.total_products : 865;
-  const sellerRevenue = seller?.total_sales && parseFloat(seller.total_sales) > 0 ? `$${parseFloat(seller.total_sales).toLocaleString()}` : "$5,563.786";
+  const sellerStock = seller?.total_products || seller?.stock || "261";
+  const sellerRevenue = seller?.revenue || (seller?.total_sales && parseFloat(seller.total_sales) > 0 ? `$${parseFloat(seller.total_sales).toLocaleString()}k` : "$349k");
   const sellerLogo = getLogoForSeller(seller);
+  const sellerDescription = seller?.description || `At ${sellerName}, we believe in delivering quality, elegance, and superior customer satisfaction. Founded with a commitment to excellence, our journey began with a simple yet powerful vision.`;
+  const sellerMission = `Our mission is to redefine ${sellerCategory.toLowerCase()} by merging timeless elegance with contemporary design. We strive to offer products that not only look good but also perform exceptionally, making everyday wear an enjoyable experience.`;
+  const sellerReviews = seller?.reviews || "+23.3K";
+  const sellerSells = seller?.sells || "+4.5k";
+  const sellerClients = seller?.clients || "+2k";
 
   return (
     <div className="container-fluid p-4" style={{ backgroundColor: '#F8FAFC', minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
@@ -164,11 +346,13 @@ export default function SellerDetails() {
               className="rounded-4 d-flex align-items-center justify-content-center overflow-hidden"
               style={{ backgroundColor: '#F8FAFC', height: '180px', border: '1px solid #F1F5F9' }}
             >
-              <img 
-                src={sellerLogo} 
-                alt={`${sellerName} Logo`} 
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-              />
+              {sellerLogo && (
+                <img 
+                  src={sellerLogo} 
+                  alt={`${sellerName} Logo`} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                />
+              )}
             </div>
             <button 
               type="button" 
@@ -201,7 +385,7 @@ export default function SellerDetails() {
               <div className="d-flex align-items-center gap-1 mb-3" style={{ fontSize: '12px' }}>
                 <span style={{ color: '#FFB800' }}>★ ★ ★ ★ ★</span>
                 <span className="fw-bold text-dark ms-1">{sellerRating}/5</span>
-                <span className="text-muted" style={{ fontSize: '11px' }}>(+23.3K Review)</span>
+                <span className="text-muted" style={{ fontSize: '11px' }}>({sellerReviews} Review)</span>
               </div>
               
               <div className="d-flex flex-column gap-2" style={{ fontSize: '12px', color: '#64748B' }}>
@@ -314,12 +498,12 @@ export default function SellerDetails() {
         <div className="pt-2 pb-2">
           <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '13px' }}>Our Story :</h6>
           <p className="text-muted mb-3" style={{ fontSize: '12px', lineHeight: '1.6' }}>
-            {seller?.description || "At ZARA, we believe that fashion is more than just clothing—it's an expression of individuality and a celebration of diversity. Founded in 2003, our journey began with a simple yet powerful vision: to create high-quality, stylish, and comfortable apparel that resonates with people from all walks of life."}
+            {sellerDescription}
           </p>
 
           <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '13px' }}>Our Mission :</h6>
           <p className="text-muted mb-3" style={{ fontSize: '12px', lineHeight: '1.6' }}>
-            Our mission is to redefine fashion by merging timeless elegance with contemporary design. We strive to offer clothing that not only looks good but also feels good, making everyday wear an enjoyable experience. At the heart of our brand is a commitment to quality, sustainability, and customer satisfaction.
+            {sellerMission}
           </p>
         </div>
 
@@ -332,13 +516,13 @@ export default function SellerDetails() {
           </div>
           <div className="col-6 col-md-3">
             <div className="p-3 text-center rounded-3" style={{ backgroundColor: '#F8FAFC' }}>
-              <div className="fw-bold text-dark" style={{ fontSize: '15px' }}>+4.5k</div>
+              <div className="fw-bold text-dark" style={{ fontSize: '15px' }}>{sellerSells}</div>
               <div className="text-muted" style={{ fontSize: '11px' }}>Sells</div>
             </div>
           </div>
           <div className="col-6 col-md-3">
             <div className="p-3 text-center rounded-3" style={{ backgroundColor: '#F8FAFC' }}>
-              <div className="fw-bold text-dark" style={{ fontSize: '15px' }}>+2k</div>
+              <div className="fw-bold text-dark" style={{ fontSize: '15px' }}>{sellerClients}</div>
               <div className="text-muted" style={{ fontSize: '11px' }}>Happy Client</div>
             </div>
           </div>
@@ -396,7 +580,7 @@ export default function SellerDetails() {
               </div>
 
               <div className="text-center text-muted mb-3" style={{ fontSize: '11px' }}>
-                Based on <span className="fw-bold" style={{ color: '#FF5722' }}>+23.5k Review</span>
+                Based on <span className="fw-bold" style={{ color: '#FF5722' }}>{sellerReviews} Review</span>
               </div>
 
               <div className="d-flex flex-column gap-2" style={{ fontSize: '11px' }}>

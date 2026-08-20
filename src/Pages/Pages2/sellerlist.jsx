@@ -1,22 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-import zaraLogo from '../../assets/logozara.png';
-import rolexLogo from '../../assets/logorolex.png';
-import dysonLogo from '../../assets/dyson.png';
-import goproLogo from '../../assets/gopro.png';
-import hmLogo from '../../assets/hm.png';
-import huaweiLogo from '../../assets/huawei.png';
-import nikeLogo from '../../assets/nike.png';
-import northFaceLogo from '../../assets/northface.png';
-
-import locationIcon from '../../assets/location.png';
-import mailIcon from '../../assets/mail.png';
-import phoneIcon from '../../assets/phone.png';
-import arrowUpIcon from '../../assets/arrow.png';
-import heartIcon from '../../assets/like.png';
-import progressBarImg from '../../assets/progress bar.png';
-
 const API_BASE = "http://localhost:3000/api/v1";
 
 const getAuthToken = async () => {
@@ -40,29 +24,6 @@ const getAuthToken = async () => {
   return null;
 };
 
-const LOGO_MAP = {
-  zara: zaraLogo,
-  rolex: rolexLogo,
-  dyson: dysonLogo,
-  gopro: goproLogo,
-  'h&m': hmLogo,
-  hm: hmLogo,
-  huawei: huaweiLogo,
-  nike: nikeLogo,
-  northface: northFaceLogo,
-  'north face': northFaceLogo,
-};
-
-const getLogoForSeller = (seller, index) => {
-  if (seller.logo_url) return seller.logo_url;
-  const nameLower = (seller.business_name || seller.name || '').toLowerCase();
-  for (const [key, logo] of Object.entries(LOGO_MAP)) {
-    if (nameLower.includes(key)) return logo;
-  }
-  const logos = [zaraLogo, rolexLogo, dysonLogo, goproLogo, hmLogo, huaweiLogo, nikeLogo, northFaceLogo];
-  return logos[index % logos.length];
-};
-
 const DEFAULT_SELLERS = [
   {
     id: 1,
@@ -79,7 +40,6 @@ const DEFAULT_SELLERS = [
     stock: '865',
     sells: '+4.5k',
     clients: '+2k',
-    logo: zaraLogo,
   },
   {
     id: 2,
@@ -96,7 +56,6 @@ const DEFAULT_SELLERS = [
     stock: '261',
     sells: '+2.9k',
     clients: '+1.4k',
-    logo: rolexLogo,
   },
   {
     id: 3,
@@ -113,7 +72,6 @@ const DEFAULT_SELLERS = [
     stock: '781',
     sells: '+5.3k',
     clients: '+3.1k',
-    logo: dysonLogo,
   },
   {
     id: 4,
@@ -130,7 +88,6 @@ const DEFAULT_SELLERS = [
     stock: '890',
     sells: '+10.6k',
     clients: '+6.3k',
-    logo: goproLogo,
   },
   {
     id: 5,
@@ -147,7 +104,6 @@ const DEFAULT_SELLERS = [
     stock: '1309',
     sells: '+21.6k',
     clients: '+8.1k',
-    logo: hmLogo,
   },
   {
     id: 6,
@@ -164,7 +120,6 @@ const DEFAULT_SELLERS = [
     stock: '356',
     sells: '+4.0k',
     clients: '+6.3k',
-    logo: huaweiLogo,
   },
   {
     id: 7,
@@ -181,7 +136,6 @@ const DEFAULT_SELLERS = [
     stock: '12k',
     sells: '+19.0k',
     clients: '+16.0k',
-    logo: nikeLogo,
   },
   {
     id: 8,
@@ -198,7 +152,6 @@ const DEFAULT_SELLERS = [
     stock: '1.6k',
     sells: '+13.9k',
     clients: '+2.1k',
-    logo: northFaceLogo,
   },
 ];
 
@@ -222,7 +175,7 @@ export default function SellerList() {
       if (res.ok) {
         const data = await res.json();
         if (data && data.data && data.data.length > 0) {
-          const apiSellers = data.data.map((s, idx) => ({
+          const apiSellers = data.data.map((s) => ({
             id: s.id,
             name: s.business_name || s.owner_name || 'Seller Store',
             category: s.category || 'Fashion',
@@ -237,7 +190,6 @@ export default function SellerList() {
             stock: s.total_products > 0 ? String(s.total_products) : '865',
             sells: '+4.5k',
             clients: '+2k',
-            logo: getLogoForSeller(s, idx),
           }));
 
           // Merge backend sellers with defaults if fewer than 8 cards
@@ -284,15 +236,6 @@ export default function SellerList() {
                   className="rounded-3 overflow-hidden d-flex align-items-center justify-content-center mb-3"
                   style={{ height: '144px', width: '100%', backgroundColor: '#F3F4F7' }}
                 >
-                  <img 
-                    src={seller.logo} 
-                    alt={seller.name}
-                    style={{ 
-                      width: '100%', 
-                      height: '100%', 
-                      objectFit: 'cover'
-                    }}
-                  />
                 </div>
 
                 <div className="d-flex justify-content-between align-items-start mb-1">
@@ -323,15 +266,12 @@ export default function SellerList() {
 
                 <div className="text-muted mb-3" style={{ fontSize: '12px', lineHeight: '1.9' }}>
                   <div className="d-flex align-items-center gap-2 text-truncate">
-                    <img src={locationIcon} alt="location" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
                     <span className="text-truncate">{seller.address}</span>
                   </div>
                   <div className="d-flex align-items-center gap-2 text-truncate">
-                    <img src={mailIcon} alt="email" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
                     <span className="text-truncate">{seller.email}</span>
                   </div>
                   <div className="d-flex align-items-center gap-2 text-truncate">
-                    <img src={phoneIcon} alt="phone" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
                     <span className="text-truncate">{seller.phone}</span>
                   </div>
                 </div>
@@ -339,15 +279,9 @@ export default function SellerList() {
                   <span className="text-muted">{seller.subCategory}</span>
                   <div className="d-flex align-items-center gap-1">
                     <span className="fw-bold text-dark">{seller.revenue}</span>
-                    <img src={arrowUpIcon} alt="up" style={{ width: '12px', height: '12px', objectFit: 'contain' }} />
                   </div>
                 </div>
                 <div className="mb-3 w-100" style={{ height: '6px' }}>
-                  <img 
-                    src={progressBarImg} 
-                    alt="progress bar" 
-                    style={{ width: '100%', height: '100%', objectFit: 'fill' }} 
-                  />
                 </div>
                 <div className="row text-center border-top pt-3 mb-3" style={{ borderColor: '#F0F0F0' }}>
                   <div className="col-4">
@@ -384,7 +318,6 @@ export default function SellerList() {
                   className={`btn btn-sm py-2 px-3 d-flex align-items-center justify-content-center cursor-pointer ${favorites[seller.id] ? 'bg-danger-subtle' : ''}`}
                   style={{ backgroundColor: '#FFF2F2', borderRadius: '8px', border: 'none' }}
                 >
-                  <img src={heartIcon} alt="favorite" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
                 </button>
               </div>
 

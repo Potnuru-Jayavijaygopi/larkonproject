@@ -1,19 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, useParams } from 'react-router-dom';
 
-import zaraLogo from '../../assets/logozara.png';
-import rolexLogo from '../../assets/logorolex.png';
-import dysonLogo from '../../assets/dyson.png';
-import goproLogo from '../../assets/gopro.png';
-import hmLogo from '../../assets/hm.png';
-import huaweiLogo from '../../assets/huawei.png';
-import nikeLogo from '../../assets/nike.png';
-import northFaceLogo from '../../assets/northface.png';
-
-import locationIcon from '../../assets/location.png'; 
-import mailIcon from '../../assets/mail.png';         
-import phoneIcon from '../../assets/phone.png';       
-
 const API_BASE = "http://localhost:3000/api/v1";
 
 const getAuthToken = async () => {
@@ -35,27 +22,6 @@ const getAuthToken = async () => {
     console.error("Auto login failed:", err);
   }
   return null;
-};
-
-const LOGO_MAP = {
-  zara: zaraLogo,
-  rolex: rolexLogo,
-  dyson: dysonLogo,
-  gopro: goproLogo,
-  'h&m': hmLogo,
-  hm: hmLogo,
-  huawei: huaweiLogo,
-  nike: nikeLogo,
-  northface: northFaceLogo,
-  'north face': northFaceLogo,
-};
-
-const getLogoForSeller = (name) => {
-  const nameLower = (name || '').toLowerCase();
-  for (const [key, logo] of Object.entries(LOGO_MAP)) {
-    if (nameLower.includes(key)) return logo;
-  }
-  return zaraLogo;
 };
 
 export default function SellerEdit() {
@@ -189,8 +155,6 @@ export default function SellerEdit() {
     }
   };
 
-  const sellerLogo = uploadedImage || getLogoForSeller(formData.brandTitle);
-
   return (
     <div className="min-vh-100 p-4" style={{ backgroundColor: '#F3F4F6' }}>
       
@@ -217,16 +181,6 @@ export default function SellerEdit() {
             className="rounded-4 overflow-hidden mb-2 d-flex align-items-center justify-content-center"
             style={{ backgroundColor: '#EEF2F6', height: '140px', width: '100%' }}
           >
-            <img 
-              src={sellerLogo} 
-              alt={formData.brandTitle} 
-              style={{ 
-                width: '100%', 
-                height: '100%', 
-                objectFit: 'cover',
-                display: 'block'
-              }} 
-            />
           </div>
 
           <div className="d-flex align-items-center justify-content-between mb-1">
@@ -252,15 +206,12 @@ export default function SellerEdit() {
 
           <div className="d-flex flex-column gap-2 mb-2 text-muted" style={{ fontSize: '12px' }}>
             <div className="d-flex align-items-center gap-2">
-              <img src={locationIcon} alt="Loc" style={{ width: '15px', height: '15px', objectFit: 'contain' }} />
               <span className="text-truncate">{formData.location}</span>
             </div>
             <div className="d-flex align-items-center gap-2">
-              <img src={mailIcon} alt="Mail" style={{ width: '15px', height: '15px', objectFit: 'contain' }} />
               <span className="text-truncate">{formData.email}</span>
             </div>
             <div className="d-flex align-items-center gap-2">
-              <img src={phoneIcon} alt="Phone" style={{ width: '15px', height: '15px', objectFit: 'contain' }} />
               <span className="text-truncate">{formData.phone}</span>
             </div>
           </div>
@@ -321,7 +272,6 @@ export default function SellerEdit() {
             >
               {uploadedImage ? (
                 <div className="d-flex flex-column align-items-center gap-2">
-                  <img src={uploadedImage} alt="Uploaded logo" style={{ height: '60px', objectFit: 'contain', borderRadius: '8px' }} />
                   <p className="mb-0 fw-semibold" style={{ fontSize: '12px', color: '#FF5722' }}>Image selected! Click to change</p>
                 </div>
               ) : (
@@ -387,7 +337,6 @@ export default function SellerEdit() {
                   <label className="form-label text-muted mb-1" style={{ fontSize: '11px' }}>Location</label>
                   <div className="input-group input-group-sm">
                     <span className="input-group-text bg-light border-end-0">
-                      <img src={locationIcon} alt="Loc" style={{ width: '13px' }} />
                     </span>
                     <input 
                       type="text" 
@@ -403,7 +352,6 @@ export default function SellerEdit() {
                   <label className="form-label text-muted mb-1" style={{ fontSize: '11px' }}>Email</label>
                   <div className="input-group input-group-sm">
                     <span className="input-group-text bg-light border-end-0">
-                      <img src={mailIcon} alt="Mail" style={{ width: '13px' }} />
                     </span>
                     <input 
                       type="email" 
@@ -419,7 +367,6 @@ export default function SellerEdit() {
                   <label className="form-label text-muted mb-1" style={{ fontSize: '11px' }}>Phone Number</label>
                   <div className="input-group input-group-sm">
                     <span className="input-group-text bg-light border-end-0">
-                      <img src={phoneIcon} alt="Phone" style={{ width: '13px' }} />
                     </span>
                     <input 
                       type="text" 
