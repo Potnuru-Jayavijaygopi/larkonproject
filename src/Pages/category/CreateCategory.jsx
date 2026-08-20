@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsImage, BsCloudUpload } from "react-icons/bs";
 import { categoryAPI } from "../../services/api";
@@ -17,6 +17,23 @@ function CreateCategory({ onNavigate }) {
   const [metaDescription, setMetaDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleBrowseClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleSaveChange = async (e) => {
     if (e) e.preventDefault();
@@ -66,10 +83,18 @@ function CreateCategory({ onNavigate }) {
         <div className="col-xl-4 col-lg-5">
           <div className="content-card p-3 shadow-sm text-center">
             <div
-              className="rounded-3 bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center mb-3 mx-auto"
+              className="rounded-3 bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center mb-3 mx-auto overflow-hidden"
               style={{ height: "140px", width: "100%" }}
             >
-              <BsImage className="fs-1 text-dark opacity-75" />
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Category Preview"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                <BsImage className="fs-1 text-dark opacity-75" />
+              )}
             </div>
 
             <h6
@@ -158,9 +183,17 @@ function CreateCategory({ onNavigate }) {
             >
               Add Thumbnail Photo
             </h6>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              style={{ display: "none" }}
+            />
             <div
               className="border border-2 border-dashed rounded-3 p-4 text-center"
-              style={{ borderColor: "#cbd5e1", backgroundColor: "#fafafa" }}
+              style={{ borderColor: "#cbd5e1", backgroundColor: "#fafafa", cursor: "pointer" }}
+              onClick={handleBrowseClick}
             >
               <BsCloudUpload
                 className="display-6 mb-2"
@@ -171,7 +204,7 @@ function CreateCategory({ onNavigate }) {
                 style={{ fontSize: "0.85rem" }}
               >
                 Drop your images here, or{" "}
-                <span style={{ color: "#ff6026", cursor: "pointer" }}>
+                <span style={{ color: "#ff6026", cursor: "pointer", textDecoration: "underline" }}>
                   click to browse
                 </span>
               </h6>
@@ -179,8 +212,7 @@ function CreateCategory({ onNavigate }) {
                 className="text-muted small mb-0"
                 style={{ fontSize: "0.725rem" }}
               >
-                1600 x 1200 (4:3) recommended. PNG, JPG and GIF files are
-                allowed
+                {selectedFile ? `Selected: ${selectedFile.name}` : "1600 x 1200 (4:3) recommended. PNG, JPG and GIF files are allowed"}
               </p>
             </div>
           </div>

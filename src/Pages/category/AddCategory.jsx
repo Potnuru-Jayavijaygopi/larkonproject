@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BsImage, BsCloudUpload } from "react-icons/bs";
 import { categoryAPI } from "../../services/api";
@@ -9,13 +9,13 @@ function AddCategory({ onNavigate }) {
 
   const [categoryId, setCategoryId] = useState(id || null);
   const [categoryTitle, setCategoryTitle] = useState(
-    "Fashion Men ,Women & kids"
+    "Fashion Men ,Women & kids",
   );
   const [createdBy, setCreatedBy] = useState("Admin");
   const [stock, setStock] = useState("46233");
   const [tagId, setTagId] = useState("FS16276");
   const [description, setDescription] = useState(
-    "Aurora Fashion has once again captivated fashion enthusiasts with its latest collection, seamlessly blending elegance with comfort in a range of exquisite designs."
+    "Aurora Fashion has once again captivated fashion enthusiasts with its latest collection, seamlessly blending elegance with comfort in a range of exquisite designs.",
   );
   const [metaTitle, setMetaTitle] = useState("Fashion Brand");
   const [metaTagKeyword, setMetaTagKeyword] = useState("fashion");
@@ -23,16 +23,35 @@ function AddCategory({ onNavigate }) {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
 
-  // Load existing category details if an ID is present
+  const handleBrowseClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   useEffect(() => {
     async function loadCategory() {
       let targetId = id;
       if (!targetId) {
-        // Fetch first category if none specified in route
         try {
           const all = await categoryAPI.getAll();
-          const list = Array.isArray(all) ? all : Array.isArray(all?.data) ? all.data : [];
+          const list = Array.isArray(all)
+            ? all
+            : Array.isArray(all?.data)
+              ? all.data
+              : [];
           if (list.length > 0) {
             targetId = list[0].id;
           }
@@ -120,7 +139,10 @@ function AddCategory({ onNavigate }) {
 
       {loading && (
         <div className="text-center py-2 text-secondary small mb-3">
-          <div className="spinner-border spinner-border-sm text-primary me-2" role="status" />
+          <div
+            className="spinner-border spinner-border-sm text-primary me-2"
+            role="status"
+          />
           Loading category data...
         </div>
       )}
@@ -129,10 +151,18 @@ function AddCategory({ onNavigate }) {
         <div className="col-xl-4 col-lg-5">
           <div className="content-card p-3 shadow-sm text-center">
             <div
-              className="rounded-3 bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center mb-3 mx-auto"
+              className="rounded-3 bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center mb-3 mx-auto overflow-hidden"
               style={{ height: "140px", width: "100%" }}
             >
-              <BsImage className="fs-1 text-dark opacity-75" />
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Category Preview"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                <BsImage className="fs-1 text-dark opacity-75" />
+              )}
             </div>
 
             <h6
@@ -207,9 +237,21 @@ function AddCategory({ onNavigate }) {
               Add Thumbnail Photo
             </h6>
 
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              style={{ display: "none" }}
+            />
             <div
               className="border border-2 border-dashed rounded-3 p-4 text-center"
-              style={{ borderColor: "#cbd5e1", backgroundColor: "#fafafa" }}
+              style={{
+                borderColor: "#cbd5e1",
+                backgroundColor: "#fafafa",
+                cursor: "pointer",
+              }}
+              onClick={handleBrowseClick}
             >
               <BsCloudUpload
                 className="display-6 mb-2"
@@ -217,7 +259,10 @@ function AddCategory({ onNavigate }) {
               />
               <h6 className="fw-bold mb-1" style={{ fontSize: "0.85rem" }}>
                 Drop your images here, or{" "}
-                <span className="cursor-pointer" style={{ color: "#ea580c" }}>
+                <span
+                  className="cursor-pointer"
+                  style={{ color: "#ea580c", textDecoration: "underline" }}
+                >
                   click to browse
                 </span>
               </h6>
@@ -225,8 +270,9 @@ function AddCategory({ onNavigate }) {
                 className="text-muted small mb-0"
                 style={{ fontSize: "0.725rem" }}
               >
-                1600 x 1200 (4:3) recommended. PNG, JPG and GIF files are
-                allowed
+                {selectedFile
+                  ? `Selected: ${selectedFile.name}`
+                  : "1600 x 1200 (4:3) recommended. PNG, JPG and GIF files are allowed"}
               </p>
             </div>
           </div>

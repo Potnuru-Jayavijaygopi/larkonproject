@@ -38,6 +38,14 @@ function SignUp() {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = "https://accounts.google.com/";
+  };
+
+  const handleFacebookLogin = () => {
+    window.location.href = "https://www.facebook.com/";
+  };
+
   const handleBackToHome = () => {
     navigate("/");
   };
@@ -172,7 +180,7 @@ function SignUp() {
                   color: "#334155",
                   fontSize: "0.825rem",
                 }}
-                onClick={() => navigate("/dashboard")}
+                onClick={handleGoogleLogin}
               >
                 <BsGoogle style={{ color: "#4285f4", fontSize: "0.9rem" }} />
                 <span>Sign up with Google</span>
@@ -185,7 +193,7 @@ function SignUp() {
                   color: "#ff5e29",
                   fontSize: "0.825rem",
                 }}
-                onClick={() => navigate("/dashboard")}
+                onClick={handleFacebookLogin}
               >
                 <BsFacebook style={{ color: "#ff5e29", fontSize: "0.9rem" }} />
                 <span>Sign up with Facebook</span>

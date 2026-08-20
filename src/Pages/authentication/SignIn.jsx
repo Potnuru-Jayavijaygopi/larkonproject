@@ -12,8 +12,13 @@ function SignIn() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const handleGoogleLogin = () => {
-  window.location.href = 'https://accounts.google.com/';
-};
+    window.location.href = "https://accounts.google.com/";
+  };
+
+  const handleFacebookLogin = () => {
+    window.location.href = "https://www.facebook.com/";
+  };
+
   const handleSignIn = async (e) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) {
@@ -183,7 +188,7 @@ function SignIn() {
                   color: "#ff5e29",
                   fontSize: "0.825rem",
                 }}
-                onClick={() => navigate("/dashboard")}
+                onClick={handleFacebookLogin}
               >
                 <BsFacebook style={{ color: "#ff5e29", fontSize: "0.9rem" }} />
                 <span>Sign in with Facebook</span>
