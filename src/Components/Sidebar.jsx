@@ -51,6 +51,7 @@ import disableItemIcon from '../assets/disable item.png';
 
 import logoImg from '../assets/logo.png';
 
+
 function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -71,13 +72,12 @@ function Sidebar() {
 
   const handleStandaloneClick = (e, routePath) => {
     if (e) e.preventDefault();
-    setOpenMenu(null);
+    setOpenMenu(null); 
     navigate(routePath);
   };
 
   return (
     <aside className="sidebar">
-
       <div className="sidebar-brand d-flex align-items-center justify-content-between px-3 py-3">
         <div
           className="logo-text cursor-pointer d-flex align-items-center"
@@ -91,7 +91,6 @@ function Sidebar() {
         </div>
         <BsChevronDoubleRight className="text-secondary cursor-pointer small opacity-75" />
       </div>
-
 
       <div className="sidebar-menu px-2 pb-4">
         <div className="menu-category text-uppercase small text-secondary px-3 mt-3 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
@@ -285,7 +284,6 @@ function Sidebar() {
           )}
         </div>
 
-
         <div>
           <a
             href="#purchases"
@@ -406,7 +404,7 @@ function Sidebar() {
           )}
         </div>
 
-
+        
         <NavLink
           to="/settings"
           className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
@@ -419,10 +417,12 @@ function Sidebar() {
         </NavLink>
 
 
+        
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Users
         </div>
 
+       
         <NavLink
           to="/profile"
           className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
@@ -434,10 +434,11 @@ function Sidebar() {
           </div>
         </NavLink>
 
+        
         <div>
           <a
             href="#roles"
-            className={`nav-link-custom ${currentPath.startsWith('/roles') ? 'active' : ''}`}
+            className="nav-link-custom"
             onClick={(e) => toggleParentMenu(e, 'roles')}
           >
             <div className="nav-link-left">
@@ -446,67 +447,21 @@ function Sidebar() {
             </div>
             {openMenu === 'roles' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
-
-          {openMenu === 'roles' && (
-            <div className="submenu">
-              <NavLink
-                to="/roles/list"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'roles', '/roles/list')}
-              >
-                Roles List
-              </NavLink>
-              <NavLink
-                to="/roles/edit"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'roles', '/roles/edit')}
-              >
-                Role Edit
-              </NavLink>
-              <NavLink
-                to="/roles/create"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'roles', '/roles/create')}
-              >
-                Role Create
-              </NavLink>
-            </div>
-          )}
         </div>
 
-        <div>
-          <a
-            href="#permissions"
-            className={`nav-link-custom ${currentPath.startsWith('/permissions') ? 'active' : ''}`}
-            onClick={(e) => toggleParentMenu(e, 'permissions')}
-          >
-            <div className="nav-link-left">
-              <img src={permissionsIcon} alt="Permissions" className="sidebar-icon-img" />
-              <span>Permissions</span>
-            </div>
-            {openMenu === 'permissions' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
-          </a>
+      
+        <NavLink
+          to="/permissions"
+          className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
+          onClick={(e) => handleStandaloneClick(e, '/permissions')}
+        >
+          <div className="nav-link-left">
+            <img src={permissionsIcon} alt="Permissions" className="sidebar-icon-img" />
+            <span>Permissions</span>
+          </div>
+        </NavLink>
 
-          {openMenu === 'permissions' && (
-            <div className="submenu">
-              <NavLink
-                to="/permissions"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'permissions', '/permissions')}
-              >
-                Permissions
-              </NavLink>
-              <NavLink
-                to="/permissions2"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'permissions', '/permissions2')}
-              >
-                Permissions 2
-              </NavLink>
-            </div>
-          )}
-        </div>
-
+        
         <div>
           <a
             href="#customers"
@@ -519,19 +474,9 @@ function Sidebar() {
             </div>
             {openMenu === 'customers' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
-          {openMenu === 'customers' && (
-            <div className="submenu">
-              <NavLink
-                to="/customers/details"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'customers', '/customers/details')}
-              >
-                Customer Details
-              </NavLink>
-            </div>
-          )}
         </div>
 
+        
         <div>
           <a
             href="#sellers"
@@ -544,49 +489,19 @@ function Sidebar() {
             </div>
             {openMenu === 'sellers' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
-
-          {openMenu === 'sellers' && (
-            <div className="submenu">
-              <NavLink
-                to="/sellers/list"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'sellers', '/sellers/list')}
-              >
-                Seller List
-              </NavLink>
-              <NavLink
-                to="/sellers/details"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'sellers', '/sellers/details')}
-              >
-                Seller Details
-              </NavLink>
-              <NavLink
-                to="/sellers/edit"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'sellers', '/sellers/edit')}
-              >
-                Seller Edit
-              </NavLink>
-              <NavLink
-                to="/sellers/create"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'sellers', '/sellers/create')}
-              >
-                Seller Create
-              </NavLink>
-            </div>
-          )}
         </div>
 
+
+      
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Other
         </div>
 
+        
         <div>
           <a
             href="#coupons"
-            className={`nav-link-custom ${currentPath.startsWith('/coupons') ? 'active' : ''}`}
+            className="nav-link-custom"
             onClick={(e) => toggleParentMenu(e, 'coupons')}
           >
             <div className="nav-link-left">
@@ -595,27 +510,9 @@ function Sidebar() {
             </div>
             {openMenu === 'coupons' ? <BsChevronDown className="small" /> : <BsChevronRight className="small" />}
           </a>
-
-          {openMenu === 'coupons' && (
-            <div className="submenu">
-              <NavLink
-                to="/coupons/list"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'coupons', '/coupons/list')}
-              >
-                Coupons-List
-              </NavLink>
-              <NavLink
-                to="/coupons/add"
-                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
-                onClick={(e) => handleSubItemClick(e, 'coupons', '/coupons/add')}
-              >
-                Coupons-Add
-              </NavLink>
-            </div>
-          )}
         </div>
 
+        
         <NavLink
           to="/reviews"
           className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
@@ -627,6 +524,8 @@ function Sidebar() {
           </div>
         </NavLink>
 
+
+        
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Other Apps
         </div>
@@ -676,7 +575,7 @@ function Sidebar() {
         </NavLink>
 
 
-
+       
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Support
         </div>
@@ -715,10 +614,12 @@ function Sidebar() {
         </NavLink>
 
 
+        
         <div className="menu-category text-uppercase small text-secondary px-3 mt-4 mb-2" style={{ fontSize: '0.68rem', letterSpacing: '0.8px' }}>
           Custom
         </div>
 
+        
         <div>
           <a
             href="#pages"
@@ -773,6 +674,7 @@ function Sidebar() {
           )}
         </div>
 
+        
         <div>
           <a
             href="#authentication"
@@ -820,6 +722,7 @@ function Sidebar() {
           )}
         </div>
 
+       
         <NavLink
           to="/widgets"
           className={({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`}
@@ -837,6 +740,7 @@ function Sidebar() {
           Components
         </div>
 
+       
         <div>
           <a
             href="#base-ui"
@@ -889,6 +793,7 @@ function Sidebar() {
           )}
         </div>
 
+       
         <div>
           <a
             href="#advanced-ui"
@@ -903,6 +808,7 @@ function Sidebar() {
           </a>
         </div>
 
+        
         <div>
           <a
             href="#charts"
@@ -917,6 +823,7 @@ function Sidebar() {
           </a>
         </div>
 
+        
         <div>
           <a
             href="#forms"
@@ -931,6 +838,7 @@ function Sidebar() {
           </a>
         </div>
 
+        
         <div>
           <a
             href="#tables"
@@ -945,6 +853,7 @@ function Sidebar() {
           </a>
         </div>
 
+       
         <div>
           <a
             href="#icons"
@@ -959,6 +868,7 @@ function Sidebar() {
           </a>
         </div>
 
+        
         <div>
           <a
             href="#maps"
@@ -973,6 +883,7 @@ function Sidebar() {
           </a>
         </div>
 
+        
         <a
           href="#badge-menu"
           className="nav-link-custom"
@@ -987,6 +898,7 @@ function Sidebar() {
           <span className="badge bg-danger rounded-circle p-1" style={{ fontSize: '0.65rem', minWidth: '18px' }}>1</span>
         </a>
 
+        
         <div>
           <a
             href="#menu-item"
@@ -1001,6 +913,7 @@ function Sidebar() {
           </a>
         </div>
 
+        
         <div className="nav-link-custom opacity-50 cursor-not-allowed">
           <div className="nav-link-left">
             <img src={disableItemIcon} alt="Disable Item" className="sidebar-icon-img" />

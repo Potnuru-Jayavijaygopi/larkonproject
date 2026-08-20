@@ -22,6 +22,14 @@ import OrderDetails from './Pages/orders/OrderDetails';
 import OrderCart from './Pages/orders/OrderCart';
 import OrderCheckout from './Pages/orders/OrderCheckout';
 
+import PurchaseList from './Pages/purchases/PurchaseList';
+import OrdersList from './Pages/purchases/OrdersList';
+import ReturnOrders from './Pages/purchases/ReturnOrders';
+
+import AttributeList from './Pages/attributes/AttributeList';
+import AddAttribute from './Pages/attributes/AddAttribute';
+import CreateAttribute from './Pages/attributes/CreateAttribute';
+
 import Widgets from './Pages/widgets/Widgets';
 
 import Accordion from './Pages/base-ui/Accordion';
@@ -82,6 +90,17 @@ const router = createBrowserRouter([
       { path: 'orders/details', element: <OrderDetails /> },
       { path: 'orders/cart', element: <OrderCart /> },
       { path: 'orders/checkout', element: <OrderCheckout /> },
+
+      // Purchases routes
+      { path: 'purchases/list', element: <PurchaseList /> },
+      { path: 'purchases/order-list', element: <OrdersList /> },
+      { path: 'purchases/returns', element: <ReturnOrders /> },
+
+      // Attributes routes
+      { path: 'attributes/list', element: <AttributeList /> },
+      { path: 'attributes/add', element: <AddAttribute /> },
+      { path: 'attributes/edit/:id', element: <AddAttribute /> },
+      { path: 'attributes/create', element: <CreateAttribute /> },
 
       // Base-UI routes
       { path: 'base-ui/accordion', element: <Accordion /> },
