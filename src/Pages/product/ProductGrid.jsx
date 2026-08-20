@@ -8,6 +8,7 @@ import {
   BsPlusLg,
   BsSearch,
   BsChevronDown,
+  BsChevronUp,
   BsHeartFill,
   BsHeart,
   BsImage,
@@ -15,6 +16,17 @@ import {
   BsCartPlus,
 } from "react-icons/bs";
 import { productAPI, categoryAPI, parseProductImages } from "../../services/api";
+
+const defaultCategoryList = [
+  { id: 'cat-fashion', category_name: "Fashion Men , Women & Kid's" },
+  { id: 'cat-sunglass', category_name: "Eye Ware & Sunglass" },
+  { id: 'cat-watches', category_name: "Watches" },
+  { id: 'cat-electronics', category_name: "Electronics Items" },
+  { id: 'cat-furniture', category_name: "Furniture" },
+  { id: 'cat-headphones', category_name: "Headphones" },
+  { id: 'cat-beauty', category_name: "Beauty & Health" },
+  { id: 'cat-footware', category_name: "Foot Ware" },
+];
 
 function ProductGrid({ onNavigate }) {
   const navigate = useNavigate();
@@ -26,8 +38,31 @@ function ProductGrid({ onNavigate }) {
 
   const [favoriteItems, setFavoriteItems] = useState({});
   const [searchFilter, setSearchFilter] = useState("");
+
+  // Filter States
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [pricePreset, setPricePreset] = useState("all");
+  const [customMinPrice, setCustomMinPrice] = useState("0");
+  const [customMaxPrice, setCustomMaxPrice] = useState("200");
+  const [selectedGenders, setSelectedGenders] = useState([]);
+  const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedRating, setSelectedRating] = useState(null);
+
+  // Accordion open/collapse states
+  const [openSections, setOpenSections] = useState({
+    categories: true,
+    price: true,
+    gender: true,
+    sizeFit: true,
+    rating: true,
+  });
+
+  const toggleSection = (sectionKey) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [sectionKey]: !prev[sectionKey],
+    }));
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -46,7 +81,11 @@ function ProductGrid({ onNavigate }) {
           });
         }
         setCategoryMap(catMap);
-        setCategories(Array.isArray(categoriesData) ? categoriesData : []);
+        setCategories(
+          Array.isArray(categoriesData) && categoriesData.length > 0
+            ? categoriesData
+            : defaultCategoryList
+        );
         setProducts(Array.isArray(productsData) ? productsData : []);
       } catch (err) {
         console.error("Failed to load products for grid:", err);
@@ -94,28 +133,129 @@ function ProductGrid({ onNavigate }) {
     );
   };
 
-  // Filter products based on search, categories, rating
+  const handleGenderToggle = (gender) => {
+    setSelectedGenders((prev) =>
+      prev.includes(gender)
+        ? prev.filter((g) => g !== gender)
+        : [...prev, gender]
+    );
+  };
+
+  const handleSizeToggle = (size) => {
+    setSelectedSizes((prev) =>
+      prev.includes(size)
+        ? prev.filter((s) => s !== size)
+        : [...prev, size]
+    );
+  };
+
+  // Dynamic Filtering Logic
   const filteredProducts = products.filter((item) => {
+    // 1. Search Filter
     const name = (item.product_name || item.title || "").toLowerCase();
     const matchesSearch = !searchFilter || name.includes(searchFilter.toLowerCase());
 
-    const itemCat = categoryMap[item.category_id] || item.tag || "";
+    // 2. Category Filter
+    const itemCat = (categoryMap[item.category_id] || item.tag || "").toLowerCase();
     const matchesCat =
       selectedCategories.length === 0 ||
-      selectedCategories.some((c) =>
-        itemCat.toLowerCase().includes(c.toLowerCase()) ||
-        c.toLowerCase().includes(itemCat.toLowerCase())
+      selectedCategories.some((c) => {
+        const cLow = c.toLowerCase();
+        return (
+          itemCat.includes(cLow) ||
+          cLow.includes(itemCat) ||
+          (cLow.includes("fashion") && (itemCat.includes("fashion") || itemCat.includes("clothing"))) ||
+          (cLow.includes("sunglass") && itemCat.includes("eye")) ||
+          (cLow.includes("watch") && itemCat.includes("watch")) ||
+          (cLow.includes("electronic") && itemCat.includes("elect"))
+        );
+      });
+
+    // 3. Price Preset Filter
+    const priceVal = parseFloat(item.price || 0);
+    let matchesPresetPrice = true;
+    if (pricePreset === "below-200") {
+      matchesPresetPrice = priceVal < 200;
+    } else if (pricePreset === "200-500") {
+      matchesPresetPrice = priceVal >= 200 && priceVal <= 500;
+    } else if (pricePreset === "500-800") {
+      matchesPresetPrice = priceVal >= 500 && priceVal <= 800;
+    } else if (pricePreset === "800-1000") {
+      matchesPresetPrice = priceVal >= 800 && priceVal <= 1000;
+    } else if (pricePreset === "1000-1100") {
+      matchesPresetPrice = priceVal >= 1000 && priceVal <= 1100;
+    }
+
+    // 4. Custom Price Range
+    let matchesCustomPrice = true;
+    const minP = parseFloat(customMinPrice);
+    const maxP = parseFloat(customMaxPrice);
+    if (!isNaN(minP) && customMinPrice !== "") {
+      matchesCustomPrice = matchesCustomPrice && priceVal >= minP;
+    }
+    if (!isNaN(maxP) && customMaxPrice !== "") {
+      matchesCustomPrice = matchesCustomPrice && priceVal <= maxP;
+    }
+
+    // 5. Gender Filter
+    let matchesGender = true;
+    if (selectedGenders.length > 0) {
+      const itemGender = (item.gender || "").toLowerCase();
+      matchesGender = selectedGenders.some((g) => {
+        const gLow = g.toLowerCase();
+        if (gLow.includes("men") && !gLow.includes("women")) {
+          return itemGender === "men" || itemGender.includes("male");
+        }
+        if (gLow.includes("women")) {
+          return itemGender === "women" || itemGender.includes("female");
+        }
+        if (gLow.includes("kid")) {
+          return itemGender.includes("kid") || itemGender.includes("child");
+        }
+        return itemGender.includes(gLow);
+      });
+    }
+
+    // 6. Size & Fit Filter
+    let matchesSize = true;
+    if (selectedSizes.length > 0) {
+      let itemSizes = [];
+      if (Array.isArray(item.size)) {
+        itemSizes = item.size.map((s) => String(s).toUpperCase().trim());
+      } else if (typeof item.size === "string") {
+        itemSizes = item.size
+          .toUpperCase()
+          .split(",")
+          .map((s) => s.trim().replace(/^SIZE\s*:\s*/i, ""));
+      }
+      matchesSize = selectedSizes.some((s) =>
+        itemSizes.some((is) => is.includes(s.toUpperCase()))
       );
+    }
 
-    const rating = parseFloat(item.average_rating || 0);
-    const matchesRating = selectedRating ? rating >= selectedRating : true;
+    // 7. Rating Filter
+    const ratingVal = parseFloat(item.average_rating || 0);
+    const matchesRating = selectedRating ? ratingVal >= selectedRating : true;
 
-    return matchesSearch && matchesCat && matchesRating;
+    return (
+      matchesSearch &&
+      matchesCat &&
+      matchesPresetPrice &&
+      matchesCustomPrice &&
+      matchesGender &&
+      matchesSize &&
+      matchesRating
+    );
   });
+
+  const displayCategoryList =
+    categories.length > 0 ? categories : defaultCategoryList;
 
   return (
     <div className="row g-4">
+      {/* Left Filter Sidebar */}
       <div className="col-lg-3 col-md-4">
+        {/* Search Filter Box */}
         <div className="content-card p-3 mb-3">
           <div className="position-relative">
             <BsSearch className="position-absolute top-50 start-0 translate-middle-y ms-2 text-muted small" />
@@ -129,181 +269,453 @@ function ProductGrid({ onNavigate }) {
           </div>
         </div>
 
+        {/* Filters Card */}
         <div className="content-card p-3">
-          <div className="mb-4">
-            <div className="filter-header-box">
+          {/* 1. Categories Accordion */}
+          <div className="mb-3">
+            <div
+              className="filter-header-box"
+              onClick={() => toggleSection("categories")}
+            >
               <span>Categories</span>
-              <BsChevronDown className="small" />
-            </div>
-            <div className="px-1">
-              <div className="form-check mb-2">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="catAll"
-                  checked={selectedCategories.length === 0}
-                  onChange={() => handleCategoryToggle("all")}
-                />
-                <label className="form-check-label small" htmlFor="catAll">
-                  All Categories
-                </label>
-              </div>
-
-              {categories.length > 0 ? (
-                categories.map((cat) => (
-                  <div className="form-check mb-2" key={cat.id}>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id={`cat-${cat.id}`}
-                      checked={selectedCategories.includes(cat.category_name)}
-                      onChange={() => handleCategoryToggle(cat.category_name)}
-                    />
-                    <label
-                      className="form-check-label small"
-                      htmlFor={`cat-${cat.id}`}
-                    >
-                      {cat.category_name}
-                    </label>
-                  </div>
-                ))
+              {openSections.categories ? (
+                <BsChevronDown className="small" />
               ) : (
-                <>
-                  <div className="form-check mb-2">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id="catFashion"
-                      checked={selectedCategories.includes("Fashion")}
-                      onChange={() => handleCategoryToggle("Fashion")}
-                    />
-                    <label className="form-check-label small" htmlFor="catFashion">
-                      Fashion Men , Women &amp; Kid's
-                    </label>
-                  </div>
-                  <div className="form-check mb-2">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id="catEyewear"
-                      checked={selectedCategories.includes("Sunglass")}
-                      onChange={() => handleCategoryToggle("Sunglass")}
-                    />
-                    <label className="form-check-label small" htmlFor="catEyewear">
-                      Eye Ware &amp; Sunglass
-                    </label>
-                  </div>
-                  <div className="form-check mb-2">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id="catWatches"
-                      checked={selectedCategories.includes("Watches")}
-                      onChange={() => handleCategoryToggle("Watches")}
-                    />
-                    <label className="form-check-label small" htmlFor="catWatches">
-                      Watches
-                    </label>
-                  </div>
-                  <div className="form-check mb-2">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id="catElectronics"
-                      checked={selectedCategories.includes("Electronics")}
-                      onChange={() => handleCategoryToggle("Electronics")}
-                    />
-                    <label
-                      className="form-check-label small"
-                      htmlFor="catElectronics"
-                    >
-                      Electronics Items
-                    </label>
-                  </div>
-                </>
+                <BsChevronUp className="small" />
               )}
             </div>
+            {openSections.categories && (
+              <div className="px-1 mb-2">
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="catAll"
+                    checked={selectedCategories.length === 0}
+                    onChange={() => handleCategoryToggle("all")}
+                  />
+                  <label className="form-check-label small" htmlFor="catAll">
+                    All Categories
+                  </label>
+                </div>
+
+                {displayCategoryList.map((cat) => {
+                  const catName = cat.category_name || cat.name;
+                  const isChecked = selectedCategories.includes(catName);
+                  return (
+                    <div className="form-check mb-2" key={cat.id || catName}>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id={`cat-${cat.id || catName}`}
+                        checked={isChecked}
+                        onChange={() => handleCategoryToggle(catName)}
+                      />
+                      <label
+                        className="form-check-label small"
+                        htmlFor={`cat-${cat.id || catName}`}
+                      >
+                        {catName}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
-          <div className="mb-4">
-            <div className="filter-header-box">
+          {/* 2. Product Price Accordion */}
+          <div className="mb-3">
+            <div
+              className="filter-header-box"
+              onClick={() => toggleSection("price")}
+            >
+              <span>Product Price</span>
+              {openSections.price ? (
+                <BsChevronDown className="small" />
+              ) : (
+                <BsChevronUp className="small" />
+              )}
+            </div>
+            {openSections.price && (
+              <div className="px-1 mb-2">
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="pricePreset"
+                    id="priceAll"
+                    checked={pricePreset === "all"}
+                    onChange={() => setPricePreset("all")}
+                  />
+                  <label className="form-check-label small" htmlFor="priceAll">
+                    All Price
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="pricePreset"
+                    id="priceBelow200"
+                    checked={pricePreset === "below-200"}
+                    onChange={() => setPricePreset("below-200")}
+                  />
+                  <label className="form-check-label small" htmlFor="priceBelow200">
+                    Below $200 (145)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="pricePreset"
+                    id="price200_500"
+                    checked={pricePreset === "200-500"}
+                    onChange={() => setPricePreset("200-500")}
+                  />
+                  <label className="form-check-label small" htmlFor="price200_500">
+                    $200 - $500 (1,885)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="pricePreset"
+                    id="price500_800"
+                    checked={pricePreset === "500-800"}
+                    onChange={() => setPricePreset("500-800")}
+                  />
+                  <label className="form-check-label small" htmlFor="price500_800">
+                    $500 - $800 (2,276)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="pricePreset"
+                    id="price800_1000"
+                    checked={pricePreset === "800-1000"}
+                    onChange={() => setPricePreset("800-1000")}
+                  />
+                  <label className="form-check-label small" htmlFor="price800_1000">
+                    $800 - $1000 (12,676)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="pricePreset"
+                    id="price1000_1100"
+                    checked={pricePreset === "1000-1100"}
+                    onChange={() => setPricePreset("1000-1100")}
+                  />
+                  <label className="form-check-label small" htmlFor="price1000_1100">
+                    $1000 - $1100 (13,123)
+                  </label>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 3. Custom Price Range */}
+          <div className="mb-4 px-1">
+            <div className="fw-bold small text-dark mb-2" style={{ fontSize: "0.85rem" }}>
+              Custom Price Range :
+            </div>
+            {/* Range Slider Track */}
+            <div className="position-relative my-3" style={{ height: "6px" }}>
+              <div
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  height: "4px",
+                  backgroundColor: "#ff5e29",
+                  borderRadius: "2px",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  left: "0%",
+                  top: "-5px",
+                  width: "14px",
+                  height: "14px",
+                  backgroundColor: "#ff5e29",
+                  border: "2px solid #ffffff",
+                  borderRadius: "50%",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  left: "35%",
+                  top: "-5px",
+                  width: "14px",
+                  height: "14px",
+                  backgroundColor: "#ff5e29",
+                  border: "2px solid #ffffff",
+                  borderRadius: "50%",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+                }}
+              />
+            </div>
+            {/* Input range boxes */}
+            <div className="d-flex align-items-center gap-2 mt-3">
+              <div className="input-group input-group-sm">
+                <span className="input-group-text bg-white border-end-0 text-muted" style={{ fontSize: '0.8rem' }}>$</span>
+                <input
+                  type="number"
+                  className="form-control border-start-0 text-center"
+                  placeholder="0"
+                  value={customMinPrice}
+                  onChange={(e) => setCustomMinPrice(e.target.value)}
+                  style={{ fontSize: '0.825rem' }}
+                />
+              </div>
+              <span className="text-muted small">to</span>
+              <div className="input-group input-group-sm">
+                <span className="input-group-text bg-white border-end-0 text-muted" style={{ fontSize: '0.8rem' }}>$</span>
+                <input
+                  type="number"
+                  className="form-control border-start-0 text-center"
+                  placeholder="200"
+                  value={customMaxPrice}
+                  onChange={(e) => setCustomMaxPrice(e.target.value)}
+                  style={{ fontSize: '0.825rem' }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 4. Gender Accordion */}
+          <div className="mb-3">
+            <div
+              className="filter-header-box"
+              onClick={() => toggleSection("gender")}
+            >
+              <span>Gender</span>
+              {openSections.gender ? (
+                <BsChevronDown className="small" />
+              ) : (
+                <BsChevronUp className="small" />
+              )}
+            </div>
+            {openSections.gender && (
+              <div className="px-1 mb-2">
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="genderMen"
+                    checked={selectedGenders.includes("Men")}
+                    onChange={() => handleGenderToggle("Men")}
+                  />
+                  <label className="form-check-label small" htmlFor="genderMen">
+                    Men (1,834)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="genderWomen"
+                    checked={selectedGenders.includes("Women")}
+                    onChange={() => handleGenderToggle("Women")}
+                  />
+                  <label className="form-check-label small" htmlFor="genderWomen">
+                    Women (2,890)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="genderKids"
+                    checked={selectedGenders.includes("Kid's")}
+                    onChange={() => handleGenderToggle("Kid's")}
+                  />
+                  <label className="form-check-label small" htmlFor="genderKids">
+                    Kid's (1,231)
+                  </label>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 5. Size & Fit Accordion */}
+          <div className="mb-3">
+            <div
+              className="filter-header-box"
+              onClick={() => toggleSection("sizeFit")}
+            >
+              <span>Size &amp; Fit</span>
+              {openSections.sizeFit ? (
+                <BsChevronDown className="small" />
+              ) : (
+                <BsChevronUp className="small" />
+              )}
+            </div>
+            {openSections.sizeFit && (
+              <div className="px-1 mb-2">
+                <p className="text-muted mb-2" style={{ fontSize: "0.75rem", fontStyle: "italic" }}>
+                  *For better results, select gender and category*
+                </p>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="sizeS"
+                    checked={selectedSizes.includes("S")}
+                    onChange={() => handleSizeToggle("S")}
+                  />
+                  <label className="form-check-label small" htmlFor="sizeS">
+                    S (1,437)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="sizeM"
+                    checked={selectedSizes.includes("M")}
+                    onChange={() => handleSizeToggle("M")}
+                  />
+                  <label className="form-check-label small" htmlFor="sizeM">
+                    M (2,675)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="sizeL"
+                    checked={selectedSizes.includes("L")}
+                    onChange={() => handleSizeToggle("L")}
+                  />
+                  <label className="form-check-label small" htmlFor="sizeL">
+                    L (4,870)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="sizeXL"
+                    checked={selectedSizes.includes("XL")}
+                    onChange={() => handleSizeToggle("XL")}
+                  />
+                  <label className="form-check-label small" htmlFor="sizeXL">
+                    XL (7,543)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="sizeXXL"
+                    checked={selectedSizes.includes("XXL")}
+                    onChange={() => handleSizeToggle("XXL")}
+                  />
+                  <label className="form-check-label small" htmlFor="sizeXXL">
+                    XXL (1,099)
+                  </label>
+                </div>
+                <div className="mt-1">
+                  <span
+                    className="text-muted small cursor-pointer"
+                    style={{ fontSize: "0.8rem", textDecoration: "underline" }}
+                  >
+                    More
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 6. Rating Accordion */}
+          <div className="mb-3">
+            <div
+              className="filter-header-box"
+              onClick={() => toggleSection("rating")}
+            >
               <span>Rating</span>
-              <BsChevronDown className="small" />
+              {openSections.rating ? (
+                <BsChevronDown className="small" />
+              ) : (
+                <BsChevronUp className="small" />
+              )}
             </div>
-            <div className="px-1">
-              <div className="form-check mb-2">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="ratingFilter"
-                  id="rateAll"
-                  checked={selectedRating === null}
-                  onChange={() => setSelectedRating(null)}
-                />
-                <label className="form-check-label small" htmlFor="rateAll">
-                  All Ratings
-                </label>
+            {openSections.rating && (
+              <div className="px-1 mb-2">
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="ratingFilter"
+                    id="rate1"
+                    checked={selectedRating === 1}
+                    onChange={() => setSelectedRating(1)}
+                  />
+                  <label className="form-check-label small" htmlFor="rate1">
+                    1 ⭐ &amp; Above (437)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="ratingFilter"
+                    id="rate2"
+                    checked={selectedRating === 2}
+                    onChange={() => setSelectedRating(2)}
+                  />
+                  <label className="form-check-label small" htmlFor="rate2">
+                    2 ⭐ &amp; Above (657)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="ratingFilter"
+                    id="rate3"
+                    checked={selectedRating === 3}
+                    onChange={() => setSelectedRating(3)}
+                  />
+                  <label className="form-check-label small" htmlFor="rate3">
+                    3 ⭐ &amp; Above (1,897)
+                  </label>
+                </div>
+                <div className="form-check mb-2">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="ratingFilter"
+                    id="rate4"
+                    checked={selectedRating === 4}
+                    onChange={() => setSelectedRating(4)}
+                  />
+                  <label className="form-check-label small" htmlFor="rate4">
+                    4 ⭐ &amp; Above (3,571)
+                  </label>
+                </div>
               </div>
-              <div className="form-check mb-2">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="ratingFilter"
-                  id="rate4"
-                  checked={selectedRating === 4}
-                  onChange={() => setSelectedRating(4)}
-                />
-                <label className="form-check-label small" htmlFor="rate4">
-                  4 ⭐ &amp; Above
-                </label>
-              </div>
-              <div className="form-check mb-2">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="ratingFilter"
-                  id="rate3"
-                  checked={selectedRating === 3}
-                  onChange={() => setSelectedRating(3)}
-                />
-                <label className="form-check-label small" htmlFor="rate3">
-                  3 ⭐ &amp; Above
-                </label>
-              </div>
-              <div className="form-check mb-2">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="ratingFilter"
-                  id="rate2"
-                  checked={selectedRating === 2}
-                  onChange={() => setSelectedRating(2)}
-                />
-                <label className="form-check-label small" htmlFor="rate2">
-                  2 ⭐ &amp; Above
-                </label>
-              </div>
-              <div className="form-check mb-2">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="ratingFilter"
-                  id="rate1"
-                  checked={selectedRating === 1}
-                  onChange={() => setSelectedRating(1)}
-                />
-                <label className="form-check-label small" htmlFor="rate1">
-                  1 ⭐ &amp; Above
-                </label>
-              </div>
-            </div>
+            )}
           </div>
 
+          {/* 7. Apply Button */}
           <button
-            className="btn btn-add-product w-100 mt-2"
+            className="btn text-white w-100 mt-3 py-2 rounded-2 fw-medium border-0"
             type="button"
+            style={{ backgroundColor: "#ff5e29", fontSize: "0.875rem" }}
             onClick={() => {
-              // Apply is instant with reactive state
+              // Filters update reactively; click provides smooth user feedback
             }}
           >
             Apply
@@ -311,6 +723,7 @@ function ProductGrid({ onNavigate }) {
         </div>
       </div>
 
+      {/* Right Product Grid Column */}
       <div className="col-lg-9 col-md-8">
         <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
           <div>
@@ -323,7 +736,7 @@ function ProductGrid({ onNavigate }) {
               </strong>
             </div>
             <div className="small text-muted">
-              Showing <strong>{filteredProducts.length}</strong> items results
+              Showing all <strong>{filteredProducts.length}</strong> items results
             </div>
           </div>
 
@@ -379,7 +792,7 @@ function ProductGrid({ onNavigate }) {
                   : (priceVal * 1.25).toFixed(2);
               const oldPrice = `$${oldPriceVal}`;
               const discountText =
-                discountVal > 0 ? `${discountVal}% Off` : "Special Offer";
+                discountVal > 0 ? `${discountVal}% Off` : "30% Off";
               const rating = item.average_rating
                 ? parseFloat(item.average_rating).toFixed(1)
                 : "4.5";
@@ -394,7 +807,11 @@ function ProductGrid({ onNavigate }) {
                       style={{ zIndex: 2 }}
                       onClick={() => handleToggleFavorite(item.id)}
                     >
-                      {favoriteItems[item.id] ? <BsHeartFill /> : <BsHeart />}
+                      {favoriteItems[item.id] ? (
+                        <BsHeartFill className="text-danger" />
+                      ) : (
+                        <BsHeart className="text-danger opacity-75" />
+                      )}
                     </button>
 
                     <div
@@ -450,7 +867,7 @@ function ProductGrid({ onNavigate }) {
                           className="text-muted"
                           style={{ fontSize: "10px" }}
                         >
-                          ({reviews})
+                          ({reviews} Review)
                         </span>
                       </div>
 
