@@ -1,30 +1,64 @@
+/**
+ * Centralized API Service for Larkon Frontend
+ * Connects to Backend Larkon REST APIs (Express + PostgreSQL)
+ */
 
-const API_BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:3000/api/v1';
+export const API_BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:3000/api/v1';
 
-
+// Token Management
 export const getAuthToken = () => {
-  return (
-    localStorage.getItem('accessToken') ||
-    localStorage.getItem('token') ||
-    sessionStorage.getItem('accessToken') ||
-    ''
-  );
+  try {
+    const directToken = localStorage.getItem('accessToken') || localStorage.getItem('token') || sessionStorage.getItem('accessToken');
+    if (directToken) return directToken;
+
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      if (user?.token) return user.token;
+      if (user?.accessToken) return user.accessToken;
+      if (user?.data?.accessToken) return user.data.accessToken;
+    }
+  } catch (e) {
+    console.error('Error reading auth token:', e);
+  }
+  return '';
 };
 
-export const setAuthData = ({ accessToken, refreshToken, user }) => {
-  if (accessToken) localStorage.setItem('accessToken', accessToken);
-  if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
-  if (user) localStorage.setItem('user', JSON.stringify(user));
+export const setAuthData = (token, user = null) => {
+  if (typeof token === 'object' && token !== null) {
+    if (token.accessToken) {
+      localStorage.setItem('accessToken', token.accessToken);
+      localStorage.setItem('token', token.accessToken);
+    }
+    if (token.refreshToken) {
+      localStorage.setItem('refreshToken', token.refreshToken);
+    }
+    if (token.user) {
+      localStorage.setItem('user', JSON.stringify(token.user));
+    }
+    return;
+  }
+  if (token) {
+    localStorage.setItem('accessToken', token);
+    localStorage.setItem('token', token);
+  }
+  if (user) {
+    localStorage.setItem('user', JSON.stringify(user));
+  }
 };
 
 export const clearAuthData = () => {
+  localStorage.removeItem('token');
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('user');
   sessionStorage.removeItem('accessToken');
 };
 
-
+/**
+ * Ensure the client has a valid session token.
+ * Automatically authenticates with default admin credentials if no token is found.
+ */
 export const ensureAuthenticated = async (forceRefresh = false) => {
   if (!forceRefresh) {
     const existingToken = getAuthToken();
@@ -37,14 +71,15 @@ export const ensureAuthenticated = async (forceRefresh = false) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: 'admin@larkon.com',
-        password: 'Password123!'
-      })
+        password: 'Password123!',
+      }),
     });
 
     const data = await res.json();
-    if (data.success && data.accessToken) {
-      setAuthData(data);
-      return data.accessToken;
+    if (data.success && (data.accessToken || data.data?.accessToken)) {
+      const accessToken = data.accessToken || data.data?.accessToken;
+      setAuthData(accessToken, data.user || data.data?.user);
+      return accessToken;
     }
   } catch (err) {
     console.warn('Auto-auth notice:', err);
@@ -52,6 +87,9 @@ export const ensureAuthenticated = async (forceRefresh = false) => {
   return '';
 };
 
+/**
+ * Generic HTTP request helper with automatic 401 retry
+ */
 async function request(endpoint, options = {}, isRetry = false) {
   const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
   const headers = { ...options.headers };
@@ -89,7 +127,6 @@ async function request(endpoint, options = {}, isRetry = false) {
       }
     }
 
-
     if (response.status === 401 && !isRetry && options.requiresAuth !== false) {
       console.warn('Received 401 Unauthorized. Refreshing token and retrying request...');
       clearAuthData();
@@ -118,61 +155,58 @@ async function request(endpoint, options = {}, isRetry = false) {
   }
 }
 
-export function parseProductImages(imageField) {
-  if (!imageField) return [];
+// Categories Endpoints
+export const categoryAPI = {
+  getAll: async () => {
+    const res = await request('/categories', { method: 'GET', requiresAuth: false });
+    return res.data || res;
+  },
 
-  if (Array.isArray(imageField)) {
-    return imageField.filter(Boolean);
-  }
+  getById: async (id) => {
+    const res = await request(`/categories/${id}`, { method: 'GET', requiresAuth: false });
+    return res.data || res;
+  },
 
-  if (typeof imageField === 'string') {
-    const trimmed = imageField.trim();
-    if (!trimmed) return [];
+  create: async (categoryData) => {
+    const res = await request('/categories', {
+      method: 'POST',
+      body: JSON.stringify(categoryData),
+    });
+    return res.data || res;
+  },
 
-  
-    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-      try {
-        const parsed = JSON.parse(trimmed);
-        if (Array.isArray(parsed)) return parsed.filter(Boolean);
-      } catch {
-  
-      }
-    }
+  update: async (id, categoryData) => {
+    const res = await request(`/categories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(categoryData),
+    });
+    return res.data || res;
+  },
 
-    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
-      const inner = trimmed.slice(1, -1);
-      const items = inner
-        .split(',')
-        .map((s) => s.trim().replace(/^"|"$/g, '').replace(/\\"/g, '"'))
-        .filter(Boolean);
-      if (items.length > 0) return items;
-    }
+  delete: async (id) => {
+    const res = await request(`/categories/${id}`, {
+      method: 'DELETE',
+    });
+    return res.data || res;
+  },
+};
 
-
-    if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('/')) {
-      return [trimmed];
-    }
-  }
-
-  return [];
-}
-
+// Products Endpoints
 export const productAPI = {
-
   getAll: async () => {
     const res = await request('/products', { method: 'GET', requiresAuth: false });
-    return res.data || [];
+    return res.data || res;
   },
 
   getById: async (id) => {
     const res = await request(`/products/${id}`, { method: 'GET', requiresAuth: false });
-    return res.data || null;
+    return res.data || res;
   },
 
   create: async (productData) => {
     const res = await request('/products', {
       method: 'POST',
-      body: JSON.stringify(productData)
+      body: JSON.stringify(productData),
     });
     return res.data || res;
   },
@@ -180,100 +214,85 @@ export const productAPI = {
   update: async (id, productData) => {
     const res = await request(`/products/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(productData)
+      body: JSON.stringify(productData),
     });
     return res.data || res;
   },
 
   delete: async (id) => {
     const res = await request(`/products/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return res.data || res;
   },
 
-  uploadImages: async (id, files) => {
+  uploadImages: async (productId, files) => {
     const formData = new FormData();
     if (Array.isArray(files)) {
       files.forEach((file) => formData.append('images', file));
-    } else if (files instanceof FileList) {
-      Array.from(files).forEach((file) => formData.append('images', file));
-    } else if (files instanceof File) {
+    } else {
       formData.append('images', files);
     }
-
-    const res = await request(`/products/${id}/images`, {
+    const res = await request(`/products/${productId}/images`, {
       method: 'POST',
-      body: formData
+      body: formData,
     });
     return res.data || res;
   },
+};
 
-  updateStatus: async (id, status) => {
-    const res = await request(`/products/${id}/status`, {
+// Inventory Endpoints
+export const inventoryAPI = {
+  getWarehouses: async () => {
+    const res = await request('/warehouses', { method: 'GET' });
+    return res.data || res;
+  },
+
+  getWarehouseById: async (id) => {
+    const res = await request(`/warehouses/${id}`, { method: 'GET' });
+    return res.data || res;
+  },
+
+  getReceivedOrders: async () => {
+    const res = await request('/inventory-received', { method: 'GET' });
+    return res.data || res;
+  },
+
+  getReceivedOrderById: async (id) => {
+    const res = await request(`/inventory-received/${id}`, { method: 'GET' });
+    return res.data || res;
+  },
+
+  getInventory: async () => {
+    const res = await request('/inventory', { method: 'GET' });
+    return res.data || res;
+  },
+
+  getLowStock: async () => {
+    const res = await request('/inventory/low-stock', { method: 'GET' });
+    return res.data || res;
+  },
+
+  adjustStock: async (productId, adjustment) => {
+    const res = await request(`/inventory/${productId}/adjust`, {
       method: 'PATCH',
-      body: JSON.stringify({ status })
+      body: JSON.stringify(adjustment),
     });
     return res.data || res;
   },
-
-  import: async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    const res = await request('/products/import', {
-      method: 'POST',
-      body: formData
-    });
-    return res.data || res;
-  }
 };
 
-export const categoryAPI = {
-  getAll: async () => {
-    const res = await request('/categories', { method: 'GET', requiresAuth: false });
-    return res.data || [];
-  },
-
-  getById: async (id) => {
-    const res = await request(`/categories/${id}`, { method: 'GET', requiresAuth: false });
-    return res.data || null;
-  }
-};
-
-
-export const attributeAPI = {
-  getAll: async () => {
-    const res = await request('/attributes', { method: 'GET', requiresAuth: false });
-    return res.data || [];
-  }
-};
-
-
-export const reviewAPI = {
-  getAll: async () => {
-    const res = await request('/reviews', { method: 'GET', requiresAuth: false });
-    return res.data || [];
-  }
-};
-
-
-export const pricingAPI = {
-  getPlans: async () => {
-    const res = await request('/pricing-plans', { method: 'GET', requiresAuth: false });
-    return res.data || [];
-  }
-};
-
-
+// Auth Endpoints
 export const authAPI = {
-  login: async (credentials) => {
+  login: async (email, password) => {
     const res = await request('/auth/login', {
       method: 'POST',
-      body: JSON.stringify(credentials),
-      requiresAuth: false
+      requiresAuth: false,
+      body: JSON.stringify({ email, password }),
     });
-    if (res.success && res.accessToken) {
-      setAuthData(res);
+    const token = res.accessToken || res.data?.accessToken || res.token;
+    if (token) {
+      setAuthData(token, res.user || res.data?.user);
     }
     return res;
   },
@@ -281,32 +300,116 @@ export const authAPI = {
   register: async (userData) => {
     const res = await request('/auth/register', {
       method: 'POST',
+      requiresAuth: false,
       body: JSON.stringify(userData),
-      requiresAuth: false
     });
-    return res;
-  },
+    
+    // Auto-login newly registered user to generate & store JWT access token
+    const email = userData.email;
+    const password = userData.password;
+    if (email && password) {
+      try {
+        const loginRes = await authAPI.login(email, password);
+        return loginRes;
+      } catch (loginErr) {
+        console.warn('Auto-login after register notice:', loginErr);
+      }
+    }
 
-  getMe: async () => {
-    const res = await request('/auth/me', { method: 'GET' });
-    return res.data || null;
+    const token = res.accessToken || res.data?.accessToken || res.token;
+    if (token) {
+      setAuthData(token, res.user || res.data?.user);
+    }
+    return res;
   },
 
   logout: async () => {
     try {
       await request('/auth/logout', { method: 'POST' });
+    } catch (e) {
+      console.warn('Logout API warning:', e);
     } finally {
       clearAuthData();
     }
+  },
+
+  getMe: async () => {
+    const res = await request('/auth/me', { method: 'GET' });
+    return res.data || res;
+  },
+
+  forgotPassword: async (email) => {
+    const res = await request('/password-resets/forgot-password', {
+      method: 'POST',
+      requiresAuth: false,
+      body: JSON.stringify({ email }),
+    });
+    return res;
+  },
+
+  resetPassword: async (token, password) => {
+    const res = await request('/password-resets/reset-password', {
+      method: 'POST',
+      requiresAuth: false,
+      body: JSON.stringify({ token, password }),
+    });
+    return res;
+  },
+};
+
+// Image helpers
+export const formatImageUrl = (imgUrl) => {
+  if (!imgUrl) return '';
+  if (typeof imgUrl !== 'string') return '';
+  if (imgUrl.startsWith('http://') || imgUrl.startsWith('https://') || imgUrl.startsWith('blob:')) {
+    return imgUrl;
+  }
+  return `${API_BASE_URL.replace('/api/v1', '')}/${imgUrl.replace(/^\/+/, '')}`;
+};
+
+export const parseProductImages = (imageField) => {
+  if (!imageField) return [];
+  if (Array.isArray(imageField)) {
+    return imageField.map((img) => formatImageUrl(img));
+  }
+  if (typeof imageField === 'string') {
+    if (imageField.startsWith('[') && imageField.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(imageField);
+        if (Array.isArray(parsed)) {
+          return parsed.map((img) => formatImageUrl(img));
+        }
+      } catch {
+        // fallback
+      }
+    }
+    return [formatImageUrl(imageField)];
+  }
+  return [];
+};
+
+// Formatting helpers
+export const formatDate = (dateStr) => {
+  if (!dateStr) return 'N/A';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return dateStr;
   }
 };
 
-export default {
-  products: productAPI,
-  categories: categoryAPI,
-  attributes: attributeAPI,
-  reviews: reviewAPI,
-  pricing: pricingAPI,
-  auth: authAPI,
-  parseProductImages
+const api = {
+  request,
+  get: (url, opts) => request(url, { ...opts, method: 'GET' }),
+  post: (url, data, opts) => request(url, { ...opts, method: 'POST', body: JSON.stringify(data) }),
+  put: (url, data, opts) => request(url, { ...opts, method: 'PUT', body: JSON.stringify(data) }),
+  delete: (url, opts) => request(url, { ...opts, method: 'DELETE' }),
 };
+
+export default api;

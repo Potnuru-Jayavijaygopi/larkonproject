@@ -2,21 +2,54 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsImage, BsGoogle, BsFacebook } from "react-icons/bs";
 import logo1Img from "../../assets/logo 1.png";
+import { authAPI } from "../../services/api";
+
 function SignUp() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    navigate("/dashboard");
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setError("Please fill in all required fields.");
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      await authAPI.register({
+        full_name: name.trim(),
+        email: email.trim(),
+        password: password,
+      });
+      alert("Registration successful! Welcome to Larkon.");
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Sign up failed:", err);
+      setError(err.message || "Registration failed. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = "https://accounts.google.com/";
+  };
+
+  const handleFacebookLogin = () => {
+    window.location.href = "https://www.facebook.com/";
   };
 
   const handleBackToHome = () => {
     navigate("/");
   };
+
   return (
     <div className="container-fluid min-vh-100 p-4 d-flex flex-column align-items-center justify-content-center bg-light">
       <div
@@ -45,6 +78,11 @@ function SignUp() {
             <p className="text-muted mb-4" style={{ fontSize: "0.825rem" }}>
               Create your account to start managing your admin dashboard.
             </p>
+
+            {error && (
+              <div className="alert alert-danger py-2 small mb-3">{error}</div>
+            )}
+
             <form onSubmit={handleSignUp}>
               <div className="mb-3">
                 <label
@@ -117,10 +155,11 @@ function SignUp() {
 
               <button
                 type="submit"
-                className="btn  w-100 py-2 rounded-3 border-0 fw-medium mb-3 shadow-sm"
-                style={{ backgroundColor: "#ffede7", fontSize: "0.85rem" ,color:'#ff5e29' }}
+                disabled={submitting}
+                className="btn text-white w-100 py-2 rounded-3 border-0 fw-medium mb-3 shadow-sm"
+                style={{ backgroundColor: "#ff5e29", fontSize: "0.85rem" }}
               >
-                Sign Up
+                {submitting ? "Signing Up..." : "Sign Up"}
               </button>
             </form>
 
@@ -141,7 +180,7 @@ function SignUp() {
                   color: "#334155",
                   fontSize: "0.825rem",
                 }}
-                onClick={() => navigate("/dashboard")}
+                onClick={handleGoogleLogin}
               >
                 <BsGoogle style={{ color: "#4285f4", fontSize: "0.9rem" }} />
                 <span>Sign up with Google</span>
@@ -154,7 +193,7 @@ function SignUp() {
                   color: "#ff5e29",
                   fontSize: "0.825rem",
                 }}
-                onClick={() => navigate("/dashboard")}
+                onClick={handleFacebookLogin}
               >
                 <BsFacebook style={{ color: "#ff5e29", fontSize: "0.9rem" }} />
                 <span>Sign up with Facebook</span>

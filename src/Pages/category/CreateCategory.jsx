@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsImage, BsCloudUpload } from "react-icons/bs";
+import { categoryAPI } from "../../services/api";
 
 function CreateCategory({ onNavigate }) {
   const navigate = useNavigate();
 
   const [categoryTitle, setCategoryTitle] = useState("");
-  const [createdBy, setCreatedBy] = useState("");
+  const [createdBy, setCreatedBy] = useState("Admin");
   const [stock, setStock] = useState("");
   const [tagId, setTagId] = useState("");
   const [description, setDescription] = useState("");
@@ -14,14 +15,53 @@ function CreateCategory({ onNavigate }) {
   const [metaTitle, setMetaTitle] = useState("");
   const [metaTagKeyword, setMetaTagKeyword] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
 
-  const handleSaveChange = (e) => {
-    e.preventDefault();
-    alert("New Category Created Successfully!");
-    if (navigate) {
-      navigate("/category/list");
-    } else if (onNavigate) {
-      onNavigate("category");
+  const handleBrowseClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSaveChange = async (e) => {
+    if (e) e.preventDefault();
+    if (!categoryTitle.trim()) {
+      setError("Please enter a category title.");
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      await categoryAPI.create({
+        category_name: categoryTitle.trim(),
+        description: description.trim() || `${categoryTitle.trim()} category collection`,
+        status: "active",
+      });
+
+      alert("New Category Created Successfully!");
+      if (navigate) {
+        navigate("/category/list");
+      } else if (onNavigate) {
+        onNavigate("category");
+      }
+    } catch (err) {
+      console.error("Failed to create category:", err);
+      setError(err.message || "Failed to create category on the server.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -35,14 +75,26 @@ function CreateCategory({ onNavigate }) {
 
   return (
     <form onSubmit={handleSaveChange}>
+      {error && (
+        <div className="alert alert-danger py-2 small mb-3">{error}</div>
+      )}
+
       <div className="row g-4">
         <div className="col-xl-4 col-lg-5">
           <div className="content-card p-3 shadow-sm text-center">
             <div
-              className="rounded-3 bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center mb-3 mx-auto"
+              className="rounded-3 bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center mb-3 mx-auto overflow-hidden"
               style={{ height: "140px", width: "100%" }}
             >
-              <BsImage className="fs-1 text-dark opacity-75" />
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Category Preview"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                <BsImage className="fs-1 text-dark opacity-75" />
+              )}
             </div>
 
             <h6
@@ -63,7 +115,7 @@ function CreateCategory({ onNavigate }) {
                 >
                   Created By :
                 </span>
-                <strong className="text-dark">{createdBy || "Seller"}</strong>
+                <strong className="text-dark">{createdBy || "Admin"}</strong>
               </div>
               <div>
                 <span
@@ -72,7 +124,7 @@ function CreateCategory({ onNavigate }) {
                 >
                   Stock :
                 </span>
-                <strong className="text-dark">{stock || "46233"}</strong>
+                <strong className="text-dark">{stock || "0"}</strong>
               </div>
               <div>
                 <span
@@ -89,7 +141,7 @@ function CreateCategory({ onNavigate }) {
               <button
                 className="btn btn-outline-secondary btn-sm "
                 type="submit"
-                onClick={handleSaveChange}
+                disabled={submitting}
                 style={{
                   width: "50%",
                   fontSize: "0.78rem",
@@ -100,7 +152,7 @@ function CreateCategory({ onNavigate }) {
                   padding: "8px 12px",
                 }}
               >
-                Create Category
+                {submitting ? "Saving..." : "Create Category"}
               </button>
 
               <button
@@ -122,6 +174,7 @@ function CreateCategory({ onNavigate }) {
             </div>
           </div>
         </div>
+
         <div className="col-xl-8 col-lg-7">
           <div className="content-card p-4 mb-4 shadow-sm">
             <h6
@@ -130,9 +183,17 @@ function CreateCategory({ onNavigate }) {
             >
               Add Thumbnail Photo
             </h6>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              style={{ display: "none" }}
+            />
             <div
-              className="border border-2 border-dashed rounded-3 p-4 text-center d-flex flex-column align-items-center justify-content-center"
+              className="border border-2 border-dashed rounded-3 p-4 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer"
               style={{ borderColor: "#cbd5e1", backgroundColor: "#fafafa" }}
+              onClick={handleBrowseClick}
             >
               <BsCloudUpload
                 className="display-6 mb-2"
@@ -143,7 +204,7 @@ function CreateCategory({ onNavigate }) {
                 style={{ fontSize: "0.85rem" }}
               >
                 Drop your images here, or{" "}
-                <span style={{ color: "#ff6026", cursor: "pointer" }}>
+                <span style={{ color: "#ff6026", cursor: "pointer", textDecoration: "underline" }}>
                   click to browse
                 </span>
               </h6>
@@ -151,11 +212,11 @@ function CreateCategory({ onNavigate }) {
                 className="text-muted small mb-0"
                 style={{ fontSize: "0.725rem" }}
               >
-                1600 x 1200 (4:3) recommended. PNG, JPG and GIF files are
-                allowed
+                {selectedFile ? `Selected: ${selectedFile.name}` : "1600 x 1200 (4:3) recommended. PNG, JPG and GIF files are allowed"}
               </p>
             </div>
           </div>
+
           <div className="content-card p-4 mb-4 shadow-sm">
             <h6
               className="fw-bold text-dark mb-3"
@@ -175,6 +236,7 @@ function CreateCategory({ onNavigate }) {
                 <input
                   id="catTitleInput"
                   type="text"
+                  required
                   className="form-control form-control-sm"
                   placeholder="Enter Title"
                   style={{ fontSize: "0.78rem" }}
@@ -198,9 +260,8 @@ function CreateCategory({ onNavigate }) {
                   value={createdBy}
                   onChange={(e) => setCreatedBy(e.target.value)}
                 >
-                  <option value="">Select Creator</option>
-                  <option value="Seller">Seller</option>
                   <option value="Admin">Admin</option>
+                  <option value="Seller">Seller</option>
                 </select>
               </div>
             </div>
@@ -335,9 +396,10 @@ function CreateCategory({ onNavigate }) {
             <button
               className="btn btn-light border btn-sm px-4 py-1"
               type="submit"
+              disabled={submitting}
               style={{ fontSize: "0.8rem" }}
             >
-              Save Change
+              {submitting ? "Saving..." : "Save Change"}
             </button>
             <button
               className="btn btn-add-product btn-sm px-4 py-1"

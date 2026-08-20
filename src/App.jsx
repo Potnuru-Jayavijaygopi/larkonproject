@@ -10,11 +10,17 @@ import ProductDetails from './Pages/product/ProductDetails';
 import AddProduct from './Pages/product/AddProduct';
 import CreateProduct from './Pages/product/CreateProduct';
 
-import ComingSoon from './Pages/pages1/ComingSoon';
-import Maintenance from './Pages/pages1/Maintenance';
-import Error404 from './Pages/pages1/Error404';
-import Timeline from './Pages/pages1/Timeline';
-import Pricing from './Pages/pages1/Pricing';
+import CategoryList from './Pages/category/CategoryList';
+import AddCategory from './Pages/category/AddCategory';
+import CreateCategory from './Pages/category/CreateCategory';
+
+import InventoryList from './Pages/inventory/InventoryList';
+import ReceivedOrders from './Pages/inventory/ReceivedOrders';
+
+import SignIn from './Pages/authentication/SignIn';
+import SignUp from './Pages/authentication/SignUp';
+import ResetPassword from './Pages/authentication/ResetPassword';
+import LockScreen from './Pages/authentication/LockScreen';
 
 const router = createBrowserRouter([
   {
@@ -34,12 +40,25 @@ const router = createBrowserRouter([
       { path: 'products/edit/:id', element: <AddProduct /> },
       { path: 'products/create', element: <CreateProduct /> },
 
-      // Pages1 routes
-      { path: 'pages/coming-soon', element: <ComingSoon /> },
-      { path: 'pages/maintenance', element: <Maintenance /> },
-      { path: 'pages/error-404', element: <Error404 /> },
-      { path: 'pages/timeline', element: <Timeline /> },
-      { path: 'pages/pricing', element: <Pricing /> },
+      // Category routes
+      { path: 'category/list', element: <CategoryList /> },
+      { path: 'category-list', element: <CategoryList /> },
+      { path: 'category/edit', element: <AddCategory /> },
+      { path: 'category/edit/:id', element: <AddCategory /> },
+      { path: 'category/add/:id', element: <AddCategory /> },
+      { path: 'category/create', element: <CreateCategory /> },
+      { path: 'category/add', element: <CreateCategory /> },
+
+      // Inventory routes
+      { path: 'inventory/warehouse', element: <InventoryList /> },
+      { path: 'inventory/received', element: <ReceivedOrders /> },
+
+      // Authentication routes
+      { path: 'authentication', element: <SignIn /> },
+      { path: 'authentication/signin', element: <SignIn /> },
+      { path: 'authentication/signup', element: <SignUp /> },
+      { path: 'authentication/reset-password', element: <ResetPassword /> },
+      { path: 'authentication/lock-screen', element: <LockScreen /> },
 
       { path: '*', element: <Dashboard /> },
     ],
