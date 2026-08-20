@@ -26,9 +26,11 @@ export const clearAuthData = () => {
 };
 
 // Automatic fallback auth ensure
-export const ensureAuthenticated = async () => {
-  const existingToken = getAuthToken();
-  if (existingToken) return existingToken;
+export const ensureAuthenticated = async (forceRefresh = false) => {
+  if (!forceRefresh) {
+    const existingToken = getAuthToken();
+    if (existingToken) return existingToken;
+  }
 
   try {
     const res = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -51,8 +53,8 @@ export const ensureAuthenticated = async () => {
   return '';
 };
 
-// Generic HTTP request helper
-async function request(endpoint, options = {}) {
+// Generic HTTP request helper with automatic 401 retry
+async function request(endpoint, options = {}, isRetry = false) {
   const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
   const headers = { ...options.headers };
 
@@ -87,6 +89,20 @@ async function request(endpoint, options = {}) {
         data = JSON.parse(text);
       } catch {
         data = { message: text };
+      }
+    }
+
+    // Auto-handle 401 Invalid / Expired Token
+    if (response.status === 401 && !isRetry && options.requiresAuth !== false) {
+      console.warn('Received 401 Unauthorized. Refreshing token and retrying request...');
+      clearAuthData();
+      const newToken = await ensureAuthenticated(true);
+      if (newToken) {
+        const retryHeaders = {
+          ...headers,
+          Authorization: `Bearer ${newToken}`
+        };
+        return request(endpoint, { ...options, headers: retryHeaders }, true);
       }
     }
 
