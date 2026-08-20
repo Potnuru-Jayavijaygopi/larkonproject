@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { couponAPI, formatDate } from '../services/api';
+import { toast } from 'react-toastify';
 
 import shoppingBagIcon from '../assets/bag-smile.png';
 import groupPatternIcon from '../assets/Group.png';
@@ -59,7 +60,6 @@ export default function CouponsList() {
     }
     try {
       await couponAPI.delete(id);
-      // Update local state to reflect deactivation
       setCoupons((prev) =>
         prev.map((c) => (c.id === id ? { ...c, status: 'In Active' } : c))
       );
@@ -96,7 +96,6 @@ export default function CouponsList() {
     }
   };
 
-  // Date filtering logic
   const now = new Date();
   const filteredCoupons = coupons.filter((coupon) => {
     if (dateFilter === 'All Time') return true;
@@ -120,12 +119,10 @@ export default function CouponsList() {
     return true;
   });
 
-  // Pagination calculations
   const totalPages = Math.ceil(filteredCoupons.length / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const displayedCoupons = filteredCoupons.slice(startIndex, startIndex + itemsPerPage);
 
-  // Active coupons count
   const activeCount = coupons.filter(
     (c) => c.status === 'Active' && (!c.end_date || new Date(c.end_date) >= now)
   ).length;
@@ -139,7 +136,7 @@ export default function CouponsList() {
         fontFamily: "'Public Sans', sans-serif",
         maxWidth: '1440px',
         margin: '0 auto',
-        zoom: '0.92' // Scales layout smoothly to fit 100% desktop screens nicely
+        zoom: '0.92' 
       }}
     >
       <style>{`
@@ -152,7 +149,6 @@ export default function CouponsList() {
         }
       `}</style>
 
-      {/* Top Banner Cards */}
       <div className="row g-3 mb-4">
         <div className="col-lg-4 col-md-4">
           <div
@@ -276,7 +272,6 @@ export default function CouponsList() {
         </div>
       </div>
 
-      {/* Main Table Card */}
       <div className="content-card bg-white rounded-4 shadow-sm p-3">
         <div className="card-header-custom bg-transparent d-flex align-items-center justify-content-between pb-3">
           <h2 className="card-title-custom fs-5 fw-bold mb-0 text-dark">
@@ -348,13 +343,11 @@ export default function CouponsList() {
                     (coupon.end_date && new Date(coupon.end_date) < now);
                   const isActive = coupon.status === 'Active' && !isExpired;
 
-                  // Format discount string (e.g., "20%" or "$20.00")
                   const discountDisplay =
                     coupon.coupon_type?.toLowerCase() === 'percentage'
                       ? `${parseFloat(coupon.discount_value || 0)}%`
                       : `$${parseFloat(coupon.discount_value || 0).toFixed(2)}`;
 
-                  // Format price/min order amount
                   const priceDisplay = coupon.minimum_order_amount
                     ? `$${parseFloat(coupon.minimum_order_amount).toFixed(2)}`
                     : '$0.00';
@@ -528,8 +521,6 @@ export default function CouponsList() {
             </tbody>
           </table>
         </div>
-
-        {/* Pagination */}
         <div
           className="card-footer bg-transparent py-3 border-0 d-flex align-items-center justify-content-end gap-1"
           style={{ borderTop: '1px solid var(--border-color)' }}

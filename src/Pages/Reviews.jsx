@@ -177,6 +177,10 @@ export default function ReviewsList() {
                             height: '32px',
                             objectFit: 'contain',
                           }}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = avatarPlaceholderIcon;
+                          }}
                         />
                       </div>
 

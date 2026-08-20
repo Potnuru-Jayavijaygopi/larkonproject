@@ -19,7 +19,6 @@ export default function AddCoupon() {
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
 
-  // Form fields
   const [status, setStatus] = useState('Active');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -40,7 +39,6 @@ export default function AddCoupon() {
     document.head.appendChild(link);
   }, []);
 
-  // Fetch categories for dropdown
   useEffect(() => {
     async function loadCategories() {
       try {
@@ -55,7 +53,6 @@ export default function AddCoupon() {
     loadCategories();
   }, []);
 
-  // Load existing coupon data if in edit mode
   useEffect(() => {
     if (!couponId) return;
 
@@ -114,7 +111,6 @@ export default function AddCoupon() {
       return;
     }
 
-    // Build backend payload format
     const payload = {
       couponCode: code.trim().toUpperCase(),
       country: country || 'India',

@@ -18,9 +18,6 @@ import updatesIcon from '../assets/Vector (6).png';
 import trashIcon from '../assets/Frame (3).png';
 import folderIcon from '../assets/Frame (1).png';
 import bookmarkIcon from '../assets/bookmark.png';
-import pdfIcon from '../assets/pdf.png';
-import docIcon from '../assets/doc.png';
-import imageIcon from '../assets/image icon.png';
 
 import ellipseUpdates from '../assets/Ellipse (2).png';
 import ellipseSocial from '../assets/Ellipse (3).png';
@@ -35,12 +32,15 @@ export default function EmailDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Compose Modal State
   const [showCompose, setShowCompose] = useState(false);
   const [composeTo, setComposeTo] = useState('');
   const [composeSubject, setComposeSubject] = useState('');
   const [composeBody, setComposeBody] = useState('');
   const [sending, setSending] = useState(false);
+
+  
+  const [showFolderDropdown, setShowFolderDropdown] = useState(false);
+  const [showLabelDropdown, setShowLabelDropdown] = useState(false);
 
   const fetchEmails = async () => {
     setLoading(true);
@@ -77,7 +77,6 @@ export default function EmailDashboard() {
   const handleToggleStar = async (email, e) => {
     if (e) e.stopPropagation();
     const newStarred = !email.is_starred;
-    // Optimistic update
     setEmails((prev) =>
       prev.map((item) =>
         item.id === email.id ? { ...item, is_starred: newStarred } : item
@@ -140,8 +139,7 @@ export default function EmailDashboard() {
     }
   };
 
-  // Filter emails by sidebar selection
-  const filteredEmails = emails.filter((item) => {
+  const folderFilteredEmails = emails.filter((item) => {
     const f = (item.folder || '').toLowerCase();
     if (activeSidebar === 'Inbox') return f === 'inbox' || f === '';
     if (activeSidebar === 'Starred') return Boolean(item.is_starred);
@@ -152,7 +150,25 @@ export default function EmailDashboard() {
     return true;
   });
 
-  // Calculate counts for badges
+  const filteredEmails = folderFilteredEmails.filter((item) => {
+    const textSample = `${item.subject || ''} ${item.body || ''} ${item.receiver_email || ''}`.toLowerCase();
+    
+    if (activeTab === 'Social') {
+      return textSample.includes('twitter') || textSample.includes('linkedin') || textSample.includes('social') || textSample.includes('dribbble');
+    }
+    if (activeTab === 'Promotions') {
+      return textSample.includes('campaign') || textSample.includes('offer') || textSample.includes('discount') || textSample.includes('sale');
+    }
+    if (activeTab === 'Updates') {
+      return textSample.includes('alert') || textSample.includes('update') || textSample.includes('calendar') || textSample.includes('reminder');
+    }
+    if (activeTab === 'Forums') {
+      return textSample.includes('asana') || textSample.includes('task') || textSample.includes('forum') || textSample.includes('group');
+    }
+    
+    return true;
+  });
+
   const inboxUnreadCount = emails.filter(
     (e) => (e.folder || '').toLowerCase() === 'inbox' && !e.is_read
   ).length;
@@ -165,7 +181,6 @@ export default function EmailDashboard() {
     <div className="p-3 bg-light min-vh-100" style={{ fontFamily: 'sans-serif' }}>
       <div className="container-fluid px-0">
         <div className="row g-3">
-          {/* Left Sidebar */}
           <div className="col-12 col-lg-2">
             <div className="bg-white rounded-3 shadow-sm p-3 h-100 d-flex flex-column justify-content-between">
               <div>
@@ -287,19 +302,19 @@ export default function EmailDashboard() {
                     Labels
                   </span>
                   <div className="d-flex flex-column gap-2" style={{ fontSize: '0.82rem', color: '#424E5A' }}>
-                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Updates')}>
+                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Updates')} style={{ cursor: 'pointer' }}>
                       <img src={ellipseUpdates} alt="Updates" style={{ width: '8px', height: '8px' }} />
                       <span>Updates</span>
                     </div>
-                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Social')}>
+                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Social')} style={{ cursor: 'pointer' }}>
                       <img src={ellipseSocial} alt="Social" style={{ width: '8px', height: '8px' }} />
                       <span>Social</span>
                     </div>
-                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Promotions')}>
+                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Promotions')} style={{ cursor: 'pointer' }}>
                       <img src={ellipsePromotions} alt="Promotions" style={{ width: '8px', height: '8px' }} />
                       <span>Promotions</span>
                     </div>
-                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Forums')}>
+                    <div className="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onClick={() => setActiveTab('Forums')} style={{ cursor: 'pointer' }}>
                       <img src={ellipseForums} alt="Forums" style={{ width: '8px', height: '8px' }} />
                       <span>Forums</span>
                     </div>
@@ -326,40 +341,77 @@ export default function EmailDashboard() {
             </div>
           </div>
 
-          {/* Right Email List */}
           <div className="col-12 col-lg-10">
             <div className="card border-0 rounded-3 shadow-sm bg-white p-3">
               <div className="d-flex align-items-center gap-2 mb-3 pb-2 flex-wrap justify-content-between">
                 <div className="d-flex align-items-center gap-2">
-                  <div className="btn-group bg-light rounded-2 border p-1">
-                    <button type="button" className="btn btn-sm btn-light border-0 px-2 py-1" onClick={fetchEmails} title="Refresh">
-                      <img src={inboxIcon} alt="inbox" style={{ width: '15px', height: '15px' }} />
+                  <div className="d-flex align-items-center bg-white border rounded-2 px-2 py-1 shadow-sm gap-2">
+                    <button type="button" className="btn btn-sm btn-light border-0 p-1 bg-transparent" onClick={fetchEmails} title="Refresh">
+                      <img src={inboxIcon} alt="inbox" style={{ width: '14px', height: '14px' }} />
                     </button>
-                    <button type="button" className="btn btn-sm btn-light border-0 px-2 py-1">
-                      <img src={infoIcon} alt="info" style={{ width: '15px', height: '15px' }} />
+                    <button type="button" className="btn btn-sm btn-light border-0 p-1 bg-transparent" title="Info">
+                      <img src={infoIcon} alt="info" style={{ width: '14px', height: '14px' }} />
                     </button>
-                    <button type="button" className="btn btn-sm btn-light border-0 px-2 py-1" onClick={handleDeleteSelected} title="Delete selected">
-                      <img src={trashIcon} alt="trash" style={{ width: '15px', height: '15px' }} />
+                    <button type="button" className="btn btn-sm btn-light border-0 p-1 bg-transparent" onClick={handleDeleteSelected} title="Delete selected">
+                      <img src={trashIcon} alt="trash" style={{ width: '14px', height: '14px' }} />
                     </button>
                   </div>
+                  <div className="position-relative">
+                    <div 
+                      className="d-flex align-items-center justify-content-between bg-white border rounded-2 px-2 py-1 shadow-sm gap-2" 
+                      style={{ cursor: 'pointer', minWidth: '65px' }}
+                      onClick={() => {
+                        setShowFolderDropdown(!showFolderDropdown);
+                        setShowLabelDropdown(false);
+                      }}
+                    >
+                      <div className="d-flex align-items-center gap-1">
+                        <img src={folderIcon} alt="folder" style={{ width: '14px', height: '14px' }} />
+                        <span style={{ fontSize: '0.75rem', color: '#424E5A' }}>Folder</span>
+                      </div>
+                      <span className="text-secondary" style={{ fontSize: '0.55rem' }}>▼</span>
+                    </div>
 
-                  <button type="button" className="btn btn-sm btn-light bg-light rounded-2 border px-3 py-1 d-flex align-items-center gap-1">
-                    <img src={folderIcon} alt="folder" style={{ width: '15px', height: '15px' }} />
-                    <span className="text-secondary" style={{ fontSize: '0.65rem' }}>▼</span>
-                  </button>
+                    {showFolderDropdown && (
+                      <div className="position-absolute start-0 mt-1 bg-white border rounded shadow-sm py-1" style={{ zIndex: 1000, minWidth: '130px', fontSize: '0.8rem' }}>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveSidebar('Inbox'); setShowFolderDropdown(false); }}>Inbox</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveSidebar('Sent Mail'); setShowFolderDropdown(false); }}>Sent Mail</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveSidebar('Draft'); setShowFolderDropdown(false); }}>Drafts</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveSidebar('Trash Mail'); setShowFolderDropdown(false); }}>Trash</div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="position-relative">
+                    <div 
+                      className="d-flex align-items-center justify-content-between bg-white border rounded-2 px-2 py-1 shadow-sm gap-2" 
+                      style={{ cursor: 'pointer', minWidth: '65px' }}
+                      onClick={() => {
+                        setShowLabelDropdown(!showLabelDropdown);
+                        setShowFolderDropdown(false);
+                      }}
+                    >
+                      <div className="d-flex align-items-center gap-1">
+                        <img src={bookmarkIcon} alt="bookmark" style={{ width: '14px', height: '14px' }} />
+                        <span style={{ fontSize: '0.75rem', color: '#424E5A' }}>Label</span>
+                      </div>
+                      <span className="text-secondary" style={{ fontSize: '0.55rem' }}>▼</span>
+                    </div>
 
-                  <button type="button" className="btn btn-sm btn-light bg-light rounded-2 border px-3 py-1 d-flex align-items-center gap-1">
-                    <img src={bookmarkIcon} alt="bookmark" style={{ width: '15px', height: '15px' }} />
-                    <span className="text-secondary" style={{ fontSize: '0.65rem' }}>▼</span>
-                  </button>
+                    {showLabelDropdown && (
+                      <div className="position-absolute start-0 mt-1 bg-white border rounded shadow-sm py-1" style={{ zIndex: 1000, minWidth: '130px', fontSize: '0.8rem' }}>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveTab('Updates'); setShowLabelDropdown(false); }}>Updates</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveTab('Social'); setShowLabelDropdown(false); }}>Social</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveTab('Promotions'); setShowLabelDropdown(false); }}>Promotions</div>
+                        <div className="px-3 py-1 text-hover bg-light cursor-pointer" onClick={() => { setActiveTab('Forums'); setShowLabelDropdown(false); }}>Forums</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <span className="badge bg-light text-secondary border px-3 py-2 fw-medium" style={{ fontSize: '0.8rem' }}>
                   Folder: {activeSidebar} ({filteredEmails.length})
                 </span>
               </div>
-
-              {/* Tabs */}
               <div className="d-flex border-bottom mb-2 align-items-center gap-4 px-2 overflow-x-auto">
                 <button
                   type="button"
@@ -431,8 +483,6 @@ export default function EmailDashboard() {
                   <span>Forums</span>
                 </button>
               </div>
-
-              {/* Email Table */}
               <div className="table-responsive">
                 <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.85rem' }}>
                   <tbody>
@@ -446,7 +496,7 @@ export default function EmailDashboard() {
                     ) : filteredEmails.length === 0 ? (
                       <tr>
                         <td colSpan="6" className="text-center py-4 text-secondary">
-                          No emails found in {activeSidebar}.
+                          No emails found in {activeTab} view.
                         </td>
                       </tr>
                     ) : (
@@ -523,8 +573,6 @@ export default function EmailDashboard() {
           </div>
         </div>
       </div>
-
-      {/* Compose Email Modal */}
       {showCompose && (
         <div
           className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
