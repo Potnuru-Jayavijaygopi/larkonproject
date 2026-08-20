@@ -841,7 +841,7 @@ function Settings({ onNavigate }) {
           </div>
         </div>
 
-        <div className="d-flex justify-content-end  gap-2 mb-4">
+        <div className="d-flex justify-content-end gap-2 mb-4">
           <button
             className="btn btn-danger btn-sm px-4 py-1"
             type="button"
