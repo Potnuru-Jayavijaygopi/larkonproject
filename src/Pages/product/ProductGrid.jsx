@@ -255,17 +255,7 @@ function ProductGrid({ onNavigate }) {
     <div className="row g-4">
       {/* Left Filter Sidebar */}
       <div className="col-lg-3 col-md-4">
-        <div
-          className="sticky-top"
-          style={{
-            top: "80px",
-            maxHeight: "calc(100vh - 100px)",
-            overflowY: "auto",
-            overflowX: "hidden",
-            scrollbarWidth: "thin",
-            paddingRight: "6px",
-          }}
-        >
+        <div className="product-filter-sidebar">
           {/* Search Filter Box */}
           <div className="content-card p-3 mb-3">
             <div className="position-relative">

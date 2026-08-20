@@ -183,7 +183,7 @@ body {
   padding: 0 1.5rem;
   position: sticky;
   top: 0;
-  z-index: 999;
+  z-index: 1050;
 }
 
 .header-title {
@@ -440,4 +440,22 @@ body {
   color: var(--primary-orange);
   text-decoration: none;
   font-weight: 600;
+}
+
+/* Independent Sidebar Filter with Hidden Scrollbar */
+.product-filter-sidebar {
+  position: sticky;
+  top: 75px;
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  z-index: 10;
+}
+
+.product-filter-sidebar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+  width: 0;
+  height: 0;
 }
