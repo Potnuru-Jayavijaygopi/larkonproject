@@ -17,6 +17,8 @@ import CreateCategory from './Pages/category/CreateCategory';
 import InventoryList from './Pages/inventory/InventoryList';
 import ReceivedOrders from './Pages/inventory/ReceivedOrders';
 
+import Widgets from './Pages/widgets/Widgets';
+
 import SignIn from './Pages/authentication/SignIn';
 import SignUp from './Pages/authentication/SignUp';
 import ResetPassword from './Pages/authentication/ResetPassword';
@@ -52,6 +54,9 @@ const router = createBrowserRouter([
       // Inventory routes
       { path: 'inventory/warehouse', element: <InventoryList /> },
       { path: 'inventory/received', element: <ReceivedOrders /> },
+
+      // Widgets route
+      { path: 'widgets', element: <Widgets /> },
 
       // Authentication routes
       { path: 'authentication', element: <SignIn /> },
