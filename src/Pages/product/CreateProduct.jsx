@@ -78,11 +78,15 @@ function CreateProduct({ onNavigate }) {
       const payload = {
         product_name: productName.trim(),
         category_id: parseInt(catId) || 1,
-        seller_id: null,
+        seller_id: 1,
         brand: brand.trim() || 'Larkon Fashion',
         weight: weight.trim() || '500g',
         gender: gender || 'Men',
-        size: selectedSize || 'M',
+        size: Array.isArray(selectedSize)
+          ? selectedSize
+          : typeof selectedSize === 'string' && selectedSize.includes(',')
+          ? selectedSize.split(',').map((s) => s.trim())
+          : [selectedSize || 'M'],
         color: selectedColor || 'navy',
         description:
           description.trim() ||
