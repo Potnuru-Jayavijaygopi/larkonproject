@@ -28,6 +28,36 @@ const defaultCategoryList = [
   { id: 'cat-footware', category_name: "Foot Ware" },
 ];
 
+const figmaOrder = [
+  "men black slim fit t-shirt",
+  "olive green leather bag",
+  "women golden dress",
+  "gray cap for men",
+  "dark green cargo pent",
+  "orange headphone",
+  "kid's yellow shoes",
+  "men dark brown wallet",
+  "sky blue mat sunglass",
+  "kid's yellow t-shirt",
+  "white rubber smart watch",
+  "men brown leather shoes"
+];
+
+const figmaMetaData = {
+  "men black slim fit t-shirt": { oldPrice: 100, price: 80, rating: "4.5", reviews: 55 },
+  "olive green leather bag": { oldPrice: 150, price: 136, rating: "4.1", reviews: 143 },
+  "women golden dress": { oldPrice: 250, price: 219, rating: "4.4", reviews: 174 },
+  "gray cap for men": { oldPrice: 100, price: 76, rating: "4.2", reviews: 23 },
+  "dark green cargo pent": { oldPrice: 130, price: 110, rating: "4.4", reviews: 109 },
+  "orange headphone": { oldPrice: 250, price: 231, rating: "4.2", reviews: 200 },
+  "kid's yellow shoes": { oldPrice: 100, price: 89, rating: "4.5", reviews: 321 },
+  "men dark brown wallet": { oldPrice: 150, price: 132, rating: "4.1", reviews: 190 },
+  "sky blue mat sunglass": { oldPrice: 100, price: 77, rating: "3.5", reviews: 290 },
+  "kid's yellow t-shirt": { oldPrice: 140, price: 110, rating: "4.1", reviews: 156 },
+  "white rubber smart watch": { oldPrice: 110, price: 77, rating: "3.4", reviews: 201 },
+  "men brown leather shoes": { oldPrice: 250, price: 222, rating: "4.1", reviews: 370 },
+};
+
 function ProductGrid({ onNavigate }) {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -149,8 +179,21 @@ function ProductGrid({ onNavigate }) {
     );
   };
 
+  // Sort products according to Figma design order
+  const sortedProducts = [...products].sort((a, b) => {
+    const nameA = (a.product_name || a.title || "").toLowerCase().trim();
+    const nameB = (b.product_name || b.title || "").toLowerCase().trim();
+    const indexA = figmaOrder.indexOf(nameA);
+    const indexB = figmaOrder.indexOf(nameB);
+
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    return 0;
+  });
+
   // Dynamic Filtering Logic
-  const filteredProducts = products.filter((item) => {
+  const filteredProducts = sortedProducts.filter((item) => {
     // 1. Search Filter
     const name = (item.product_name || item.title || "").toLowerCase();
     const matchesSearch = !searchFilter || name.includes(searchFilter.toLowerCase());
@@ -167,7 +210,9 @@ function ProductGrid({ onNavigate }) {
           (cLow.includes("fashion") && (itemCat.includes("fashion") || itemCat.includes("clothing"))) ||
           (cLow.includes("sunglass") && itemCat.includes("eye")) ||
           (cLow.includes("watch") && itemCat.includes("watch")) ||
-          (cLow.includes("electronic") && itemCat.includes("elect"))
+          (cLow.includes("electronic") && itemCat.includes("elect")) ||
+          (cLow.includes("foot") && itemCat.includes("shoe")) ||
+          (cLow.includes("headphone") && itemCat.includes("audio"))
         );
       });
 
@@ -781,22 +826,27 @@ function ProductGrid({ onNavigate }) {
         ) : (
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3 align-items-stretch">
             {filteredProducts.map((item) => {
+              const nameLower = (item.product_name || item.title || "").toLowerCase().trim();
+              const meta = figmaMetaData[nameLower] || {};
+
               const images = parseProductImages(item.image);
               const firstImage = images.length > 0 ? images[0] : null;
-              const priceVal = parseFloat(item.price || 0);
+
+              const priceVal = parseFloat(item.price || meta.price || 80);
               const formattedPrice = `$${priceVal.toFixed(2)}`;
-              const discountVal = parseFloat(item.discount || 0);
-              const oldPriceVal =
-                discountVal > 0
-                  ? (priceVal / (1 - discountVal / 100)).toFixed(2)
-                  : (priceVal * 1.25).toFixed(2);
-              const oldPrice = `$${oldPriceVal}`;
-              const discountText =
-                discountVal > 0 ? `${discountVal}% Off` : "30% Off";
-              const rating = item.average_rating
-                ? parseFloat(item.average_rating).toFixed(1)
-                : "4.5";
-              const reviews = item.review_count ?? 55;
+
+              const oldPriceVal = meta.oldPrice ? `$${meta.oldPrice}` : `$${(priceVal * 1.25).toFixed(0)}`;
+              const discountText = "30% Off";
+
+              const ratingVal =
+                item.average_rating && parseFloat(item.average_rating) > 0
+                  ? parseFloat(item.average_rating).toFixed(1)
+                  : (meta.rating || "4.5");
+
+              const reviews =
+                item.review_count !== undefined && item.review_count !== null && item.review_count > 0
+                  ? item.review_count
+                  : (meta.reviews || 55);
 
               return (
                 <div className="col d-flex" key={item.id}>
@@ -862,7 +912,7 @@ function ProductGrid({ onNavigate }) {
                             className="fw-bold ms-1"
                             style={{ fontSize: "11px" }}
                           >
-                            {rating}
+                            {ratingVal}
                           </span>
                           <span
                             className="text-muted"
@@ -874,7 +924,7 @@ function ProductGrid({ onNavigate }) {
 
                         <div className="d-flex align-items-center gap-2 mb-3">
                           <span className="text-decoration-line-through text-muted small">
-                            {oldPrice}
+                            {oldPriceVal}
                           </span>
                           <span className="fw-bold text-dark">
                             {formattedPrice}
