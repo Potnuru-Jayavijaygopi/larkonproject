@@ -1,11 +1,8 @@
-/**
- * Centralized API Service for Larkon Frontend
- * Connects to Backend Larkon REST APIs (Express + PostgreSQL)
- */
+
 
 export const API_BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:3000/api/v1';
 
-// Token Management
+
 export const getAuthToken = () => {
   try {
     const directToken = localStorage.getItem('accessToken') || localStorage.getItem('token') || sessionStorage.getItem('accessToken');
@@ -54,10 +51,7 @@ export const clearAuthData = () => {
   sessionStorage.removeItem('accessToken');
 };
 
-/**
- * Ensure the client has a valid session token.
- * Automatically authenticates with default admin credentials if no token is found.
- */
+
 export const ensureAuthenticated = async (forceRefresh = false) => {
   if (!forceRefresh) {
     const existingToken = getAuthToken();
@@ -87,9 +81,7 @@ export const ensureAuthenticated = async (forceRefresh = false) => {
   return '';
 };
 
-/**
- * Generic HTTP request helper with automatic 401 retry
- */
+
 async function request(endpoint, options = {}, isRetry = false) {
   const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
   const headers = { ...options.headers };
@@ -159,7 +151,7 @@ async function request(endpoint, options = {}, isRetry = false) {
   }
 }
 
-// Categories Endpoints
+
 export const categoryAPI = {
   getAll: async () => {
     const res = await request('/categories', { method: 'GET', requiresAuth: false });
@@ -195,7 +187,7 @@ export const categoryAPI = {
   },
 };
 
-// Products Endpoints
+
 export const productAPI = {
   getAll: async () => {
     const res = await request('/products', { method: 'GET', requiresAuth: false });
@@ -253,7 +245,7 @@ export const orderAPI = {
   update: async (id, data) => (await request(`/orders/${id}`, { method: 'PUT', body: JSON.stringify(data) })).data || {},
 };
 
-// Inventory Endpoints
+
 export const inventoryAPI = {
   getWarehouses: async () => {
     const res = await request('/warehouses', { method: 'GET' });
@@ -294,7 +286,7 @@ export const inventoryAPI = {
   },
 };
 
-// Auth Endpoints
+
 export const authAPI = {
   login: async (email, password) => {
     const res = await request('/auth/login', {
@@ -340,7 +332,7 @@ export const authAPI = {
       body: JSON.stringify(payload),
     });
 
-    // Auto-login to generate JWT access token and save token to localStorage
+
     if (userData.email && userData.password) {
       try {
         const loginRes = await authAPI.login(userData.email, userData.password);
@@ -391,7 +383,7 @@ export const authAPI = {
   },
 };
 
-// Profile API
+
 export const profileAPI = {
   getProfile: async (userId = 1) => {
     try {
@@ -412,7 +404,6 @@ export const profileAPI = {
   },
 };
 
-// Role API
 export const roleAPI = {
   getAll: async () => (await request('/roles', { method: 'GET' })).data || [],
   getById: async (id) => (await request(`/roles/${id}`, { method: 'GET' })).data || {},
@@ -421,7 +412,6 @@ export const roleAPI = {
   delete: async (id) => (await request(`/roles/${id}`, { method: 'DELETE' })).data || {},
 };
 
-// Permission API
 export const permissionAPI = {
   getAll: async () => (await request('/permissions', { method: 'GET' })).data || [],
   getById: async (id) => (await request(`/permissions/${id}`, { method: 'GET' })).data || {},
@@ -430,7 +420,7 @@ export const permissionAPI = {
   delete: async (id) => (await request(`/permissions/${id}`, { method: 'DELETE' })).data || {},
 };
 
-// Customer API
+
 export const customerAPI = {
   getAll: async () => (await request('/customers', { method: 'GET' })).data || [],
   getById: async (id) => (await request(`/customers/${id}`, { method: 'GET' })).data || {},
@@ -440,7 +430,6 @@ export const customerAPI = {
   updateStatus: async (id, status) => (await request(`/customers/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) })).data || {},
 };
 
-// Seller API
 export const sellerAPI = {
   getAll: async () => (await request('/sellers', { method: 'GET' })).data || [],
   getById: async (id) => (await request(`/sellers/${id}`, { method: 'GET' })).data || {},
@@ -457,7 +446,7 @@ export const getSellers = async () => (await request('/sellers', { method: 'GET'
 export const createSeller = async (data) => (await request('/sellers', { method: 'POST', body: JSON.stringify(data) })).data || {};
 export const updateSellerStatus = async (id, status) => (await request(`/sellers/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) })).data || {};
 
-// Pricing API
+
 export const pricingAPI = {
   getPlans: async () => {
     try {
@@ -469,7 +458,7 @@ export const pricingAPI = {
   },
 };
 
-// Coupon API
+
 export const couponAPI = {
   getAll: async () => (await request('/coupons', { method: 'GET' })).data || [],
   getById: async (id) => (await request(`/coupons/${id}`, { method: 'GET' })).data || {},
@@ -479,7 +468,7 @@ export const couponAPI = {
   validate: async (data) => (await request('/coupons/validate', { method: 'POST', body: JSON.stringify(data) })).data || {},
 };
 
-// Review API
+
 export const reviewAPI = {
   getAll: async () => (await request('/reviews', { method: 'GET' })).data || [],
   getById: async (id) => (await request(`/reviews/${id}`, { method: 'GET' })).data || {},
@@ -488,7 +477,7 @@ export const reviewAPI = {
   delete: async (id) => (await request(`/reviews/${id}`, { method: 'DELETE' })).data || {},
 };
 
-// Email API
+
 export const emailAPI = {
   getAll: async () => (await request('/emails', { method: 'GET' })).data || [],
   getById: async (id) => (await request(`/emails/${id}`, { method: 'GET' })).data || {},
@@ -498,7 +487,7 @@ export const emailAPI = {
   getLabels: async () => (await request('/email-labels', { method: 'GET' })).data || [],
 };
 
-// Chat API
+
 export const chatAPI = {
   getConversations: async () => (await request('/chat/conversations', { method: 'GET' })).data || [],
   getMessages: async (id) => (await request(`/chat/conversations/${id}/messages`, { method: 'GET' })).data || [],
@@ -508,7 +497,7 @@ export const chatAPI = {
   search: async (q) => (await request(`/chat/conversations/search?q=${encodeURIComponent(q)}`, { method: 'GET' })).data || [],
 };
 
-// Image helpers
+
 export const formatImageUrl = (imgUrl) => {
   if (!imgUrl) return '';
   if (typeof imgUrl !== 'string') return '';
@@ -539,7 +528,6 @@ export const parseProductImages = (imageField) => {
   return [];
 };
 
-// Invoice API
 export const invoiceAPI = {
   getAll: async () => (await request('/invoices', { method: 'GET' })).data || [],
   getById: async (id) => (await request(`/invoices/${id}`, { method: 'GET' })).data || {},
@@ -630,7 +618,7 @@ export const getFaqs = async () => (await request('/faqs', { method: 'GET', requ
 export const getHelpCenter = async () => (await request('/help-center', { method: 'GET', requiresAuth: false })).data || {};
 export const getPrivacyPolicy = async () => (await request('/privacy-policy', { method: 'GET', requiresAuth: false })).data || {};
 
-// Formatting helpers
+
 export const formatToInputDate = (dateStr) => {
   if (!dateStr) return '';
   try {
