@@ -6,7 +6,7 @@ import Dot2 from "../../assets/dot-2.png";
 import Dot3 from "../../assets/dot-3.png";
 import Dot4 from "../../assets/dot-4.png";
 
-const API_BASE = "http://localhost:3000/api/v1";
+const API_BASE = import.meta.env?.VITE_API_URL || "http://localhost:3000/api/v1";
 const getAuthToken = async () => {
     let token = localStorage.getItem("token") || localStorage.getItem("accessToken");
     if (token) return token;

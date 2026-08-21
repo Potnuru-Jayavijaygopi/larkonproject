@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import TodoSearch from "../../assets/todosearch.png";
 import PrivacyIcon1 from "../../assets/privacyicon-1.png";
 
-const API_BASE = "http://localhost:3000/api/v1";
+const API_BASE = import.meta.env?.VITE_API_URL || "http://localhost:3000/api/v1";
 
 function PrivacyPolicy() {
     const containerRef = useRef(null);

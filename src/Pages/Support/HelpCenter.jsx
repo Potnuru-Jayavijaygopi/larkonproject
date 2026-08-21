@@ -10,7 +10,7 @@ import HelpIcon7 from "../../assets/helpicon-7.png";
 import HelpIcon8 from "../../assets/helpicon-8.png";
 import Todo2 from "../../assets/todo-2.png";
 
-const API_BASE = "http://localhost:3000/api/v1";
+const API_BASE = import.meta.env?.VITE_API_URL || "http://localhost:3000/api/v1";
 
 const helpIcons = [
     HelpIcon1,
