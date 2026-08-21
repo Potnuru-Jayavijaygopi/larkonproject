@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3000/api/v1';
+const BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 const DEFAULT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4NzA1OTU0NX0.gDbs8i2lSpmw2T98bK9sqz2U4Y78qllOIuhC6ABXEhE';
 
