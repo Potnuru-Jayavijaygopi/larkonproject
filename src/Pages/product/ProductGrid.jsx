@@ -69,7 +69,7 @@ function ProductGrid({ onNavigate }) {
   const [favoriteItems, setFavoriteItems] = useState({});
   const [searchFilter, setSearchFilter] = useState("");
 
-  // Filter States (Initialized so all products show by default)
+  
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [pricePreset, setPricePreset] = useState("all");
   const [customMinPrice, setCustomMinPrice] = useState("");
@@ -78,7 +78,6 @@ function ProductGrid({ onNavigate }) {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedRating, setSelectedRating] = useState(null);
 
-  // Accordion open/collapse states
   const [openSections, setOpenSections] = useState({
     categories: true,
     price: true,
